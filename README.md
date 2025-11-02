@@ -4,8 +4,8 @@ Cloud Genesis is a cloud‑agnostic migration and modernisation framework
 designed for large enterprises. It provides a modular set of
 configuration files, platform adapters, IaC modules, policy bundles and
 orchestration workflows for migrating workloads between on‑premise
-environments and public clouds, as well as between public clouds.  By
-separating **configuration**, **execution** and **governance**
+environments and public clouds, as well as between public clouds.  
+By separating **configuration**, **execution** and **governance**
 concerns, the framework scales to complex organisations and helps
 teams adopt consistent guardrails across their entire estate.
 
