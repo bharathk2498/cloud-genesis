@@ -33,7 +33,13 @@ teams adopt consistent guardrails across their entire estate.
   conduct, contributing guidelines, security policy, editor config
   and CI workflows (in `ci/`) to enforce linting, schema validation
   and security scans.  Templates for pull request checks are
-  provided out of the box.
+ provided out of the box.
+
+- **Collaboration & lifecycle management** – The `.github/` folder
+  contains code ownership declarations (`CODEOWNERS`), issue and pull
+  request templates and a Dependabot configuration.  These help
+  large teams manage contributions, triage issues and keep
+  dependencies up to date in an automated fashion.
 
 ## Directory overview
 
