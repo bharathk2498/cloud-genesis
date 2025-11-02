@@ -1,0 +1,34 @@
+# Ignore Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignore Node modules
+node_modules/
+
+# Ignore virtual environments
+.env
+.venv/
+
+# Ignore Terraform state and logs
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Ignore IDE/editor settings
+.idea/
+.vscode/
+
+# Ignore build artifacts
+dist/
+build/
+coverage/
+*.egg-info/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore secrets
+.env.*
+*.secret
