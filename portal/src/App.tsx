@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
@@ -14,16 +15,18 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:id" element={<ProjectDetail />} />
-            <Route path="/discovery" element={<Discovery />} />
-            <Route path="/migrations" element={<Migrations />} />
-            <Route path="/analytics" element={<Analytics />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Public Landing Page */}
+          <Route path="/" element={<Landing />} />
+          
+          {/* Application Portal (Protected) */}
+          <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/projects" element={<Layout><Projects /></Layout>} />
+          <Route path="/projects/:id" element={<Layout><ProjectDetail /></Layout>} />
+          <Route path="/discovery" element={<Layout><Discovery /></Layout>} />
+          <Route path="/migrations" element={<Layout><Migrations /></Layout>} />
+          <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+        </Routes>
       </Router>
     </QueryClientProvider>
   );
