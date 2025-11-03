@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cloud Genesis - Enterprise Cloud Security and DevSecOps Automation Platform">
-    <title>Cloud Genesis | Enterprise Security Platform</title>
+    <title>Cloud Genesis - Enterprise Security Platform</title>
     <style>
         * {
             margin: 0;
@@ -15,10 +14,14 @@
         :root {
             --primary: #0066ff;
             --secondary: #00d4ff;
+            --success: #00c853;
+            --warning: #ffa000;
             --dark: #0a0e27;
             --card: #151a36;
+            --card-hover: #1a1f42;
             --text: #ffffff;
             --text-dim: #b0b8d4;
+            --border: rgba(0, 102, 255, 0.2);
         }
 
         body {
@@ -29,7 +32,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -41,7 +44,7 @@
             background: rgba(10, 14, 39, 0.95);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+            border-bottom: 1px solid var(--border);
         }
 
         nav .container {
@@ -59,15 +62,10 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
         .nav-links a {
             color: var(--text-dim);
             text-decoration: none;
+            margin-left: 30px;
             font-weight: 500;
             transition: color 0.3s;
         }
@@ -76,251 +74,403 @@
             color: var(--primary);
         }
 
-        .btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 10px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.2s;
+        .main-content {
+            padding-top: 80px;
+            min-height: 100vh;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .hero {
-            padding: 150px 0 80px;
+        .welcome-screen {
             text-align: center;
+            padding: 80px 20px;
         }
 
-        .hero h1 {
-            font-size: 56px;
+        .welcome-screen h1 {
+            font-size: 48px;
             margin-bottom: 20px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .hero p {
+        .welcome-screen p {
             font-size: 20px;
             color: var(--text-dim);
-            max-width: 700px;
-            margin: 0 auto 40px;
+            margin-bottom: 50px;
         }
 
-        .hero-btns {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 60px;
-        }
-
-        .btn-large {
-            padding: 15px 40px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-
-        .stat-card {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 102, 255, 0.2);
-        }
-
-        .stat-card h3 {
-            font-size: 36px;
-            color: var(--secondary);
-        }
-
-        .stat-card p {
-            color: var(--text-dim);
-            font-size: 14px;
-        }
-
-        section {
-            padding: 80px 0;
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 42px;
-            margin-bottom: 60px;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .feature {
+        .cloud-selector {
+            max-width: 600px;
+            margin: 0 auto;
             background: var(--card);
             padding: 40px;
             border-radius: 16px;
-            border: 1px solid rgba(0, 102, 255, 0.15);
+            border: 1px solid var(--border);
+        }
+
+        .cloud-selector h2 {
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .cloud-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .cloud-option {
+            background: var(--dark);
+            padding: 30px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .cloud-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .cloud-option.selected {
+            border-color: var(--secondary);
+            background: var(--card-hover);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .cloud-option img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .cloud-option h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .dashboard {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .provider-badge {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .provider-badge img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .provider-info h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .provider-info p {
+            color: var(--text-dim);
+        }
+
+        .change-provider {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
             transition: all 0.3s;
         }
 
-        .feature:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 60px rgba(0, 102, 255, 0.15);
+        .change-provider:hover {
+            background: var(--primary);
+            color: white;
         }
 
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+        .progress-bar {
+            background: var(--card);
+            padding: 20px 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
         }
 
-        .feature h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .feature p {
-            color: var(--text-dim);
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .feature ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .feature li {
-            color: var(--text-dim);
-            padding: 8px 0;
-            padding-left: 25px;
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
             position: relative;
         }
 
-        .feature li:before {
-            content: '→';
+        .progress-line {
             position: absolute;
+            top: 20px;
             left: 0;
-            color: var(--secondary);
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
         }
 
-        .tech-stack {
-            background: linear-gradient(180deg, var(--dark), #0f1433);
+        .progress-line-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s;
         }
 
-        .stack-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+        .step {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            flex: 1;
         }
 
-        .stack-category h3 {
-            color: var(--secondary);
-            margin-bottom: 15px;
-            font-size: 20px;
-            text-align: left;
-        }
-
-        .tech-tags {
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark);
+            border: 2px solid var(--border);
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 700;
+            transition: all 0.3s;
         }
 
-        .tech-tag {
-            background: rgba(0, 102, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 102, 255, 0.3);
+        .step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .step.active .step-circle {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .step-label {
             font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        .step.active .step-label {
+            color: var(--secondary);
             font-weight: 600;
         }
 
-        .cta {
-            text-align: center;
-            padding: 100px 0;
+        .step-content {
+            display: none;
         }
 
-        .cta h2 {
-            margin-bottom: 20px;
+        .step-content.active {
+            display: block;
         }
 
-        .cta p {
-            color: var(--text-dim);
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
-
-        footer {
+        .content-card {
             background: var(--card);
-            padding: 60px 0 20px;
-            border-top: 1px solid rgba(0, 102, 255, 0.1);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
         }
 
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-section h4 {
-            margin-bottom: 15px;
+        .content-card h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
             color: var(--secondary);
         }
 
-        .footer-section a {
-            display: block;
-            color: var(--text-dim);
-            text-decoration: none;
-            margin-bottom: 10px;
-            transition: color 0.3s;
+        .task-list {
+            list-style: none;
         }
 
-        .footer-section a:hover {
+        .task-item {
+            background: var(--dark);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            border-color: var(--primary);
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .task-checkbox:hover {
+            border-color: var(--primary);
+        }
+
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-content h4 {
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .task-content p {
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #000;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-dim);
+            border: 2px solid var(--border);
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
             color: var(--primary);
         }
 
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 102, 255, 0.1);
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: var(--dark);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .info-box h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box p {
             color: var(--text-dim);
             font-size: 14px;
         }
 
+        .warning-box {
+            background: rgba(255, 160, 0, 0.1);
+            border: 1px solid var(--warning);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .warning-box h4 {
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
+            .cloud-options {
+                grid-template-columns: 1fr;
             }
-            .nav-links {
+            .progress-steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .progress-line {
                 display: none;
             }
-            .features, .stack-grid {
-                grid-template-columns: 1fr;
+            .action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -330,195 +480,343 @@
         <div class="container">
             <div class="logo">Cloud Genesis</div>
             <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#stack">Technology</a>
-                <a href="#docs">Docs</a>
-                <a href="https://github.com/bharathk2498/cloud-genesis" class="btn">GitHub</a>
+                <a href="https://github.com/bharathk2498/cloud-genesis">GitHub</a>
+                <a href="#">Documentation</a>
             </div>
         </div>
     </nav>
 
-    <div class="hero">
-        <div class="container">
-            <h1>Enterprise Cloud Security at Scale</h1>
-            <p>Automated security orchestration, compliance monitoring, and DevSecOps integration for modern cloud infrastructure</p>
-            <div class="hero-btns">
-                <button class="btn-large btn-primary" onclick="window.open('https://github.com/bharathk2498/cloud-genesis')">Get Started</button>
-                <button class="btn-large btn-outline" onclick="window.open('https://github.com/bharathk2498/cloud-genesis#readme')">Documentation</button>
+    <div class="main-content">
+        <div id="welcomeScreen" class="welcome-screen">
+            <div class="container">
+                <h1>Welcome to Cloud Genesis</h1>
+                <p>Enterprise Cloud Security Platform with automated DevSecOps integration</p>
+                
+                <div class="cloud-selector">
+                    <h2>Select Your Cloud Provider</h2>
+                    <div class="cloud-options">
+                        <div class="cloud-option" data-provider="aws">
+                            <div style="font-size: 50px;">☁️</div>
+                            <h3>AWS</h3>
+                            <p>Amazon Web Services</p>
+                        </div>
+                        <div class="cloud-option" data-provider="azure">
+                            <div style="font-size: 50px;">🌐</div>
+                            <h3>Azure</h3>
+                            <p>Microsoft Azure</p>
+                        </div>
+                        <div class="cloud-option" data-provider="gcp">
+                            <div style="font-size: 50px;">☁️</div>
+                            <h3>GCP</h3>
+                            <p>Google Cloud</p>
+                        </div>
+                    </div>
+                    <button id="startBtn" class="btn" disabled>Start Setup</button>
+                </div>
             </div>
-            <div class="stats">
-                <div class="stat-card">
-                    <h3>99.9%</h3>
-                    <p>Uptime SLA</p>
+        </div>
+
+        <div id="dashboard" class="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <div class="provider-badge">
+                        <div id="providerIcon" style="font-size: 50px;"></div>
+                        <div class="provider-info">
+                            <h2 id="providerName"></h2>
+                            <p>Security Setup Wizard</p>
+                        </div>
+                    </div>
+                    <button class="change-provider" onclick="resetSelection()">Change Provider</button>
                 </div>
-                <div class="stat-card">
-                    <h3>3x</h3>
-                    <p>Faster Deploy</p>
+
+                <div class="progress-bar">
+                    <div class="progress-steps">
+                        <div class="progress-line">
+                            <div class="progress-line-fill" id="progressFill"></div>
+                        </div>
+                        <div class="step active" data-step="1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Prerequisites</div>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Configuration</div>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Security</div>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Deploy</div>
+                        </div>
+                        <div class="step" data-step="5">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">Verify</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h3>Zero</h3>
-                    <p>Trust Security</p>
-                </div>
-                <div class="stat-card">
-                    <h3>24/7</h3>
-                    <p>Monitoring</p>
+
+                <div id="stepContent"></div>
+
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">Previous</button>
+                    <button class="btn" id="nextBtn" onclick="nextStep()">Next Step</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <section id="features">
-        <div class="container">
-            <h2>Enterprise Features</h2>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Advanced Threat Detection</h3>
-                    <p>Real-time anomaly detection powered by ML algorithms identifying zero-day threats across your infrastructure</p>
-                    <ul>
-                        <li>Machine Learning threat models</li>
-                        <li>Behavioral analytics engine</li>
-                        <li>Automated incident response</li>
-                    </ul>
-                </div>
+    <script>
+        let selectedProvider = null;
+        let currentStep = 1;
+        const totalSteps = 5;
 
-                <div class="feature">
-                    <div class="feature-icon">☁️</div>
-                    <h3>Multi-Cloud Security</h3>
-                    <p>Unified security posture across AWS, Azure, and GCP with single pane of glass management</p>
-                    <ul>
-                        <li>Cross-cloud compliance checks</li>
-                        <li>Unified policy management</li>
-                        <li>Cost optimization insights</li>
-                    </ul>
-                </div>
+        const providerData = {
+            aws: {
+                name: 'Amazon Web Services',
+                icon: '☁️',
+                steps: {
+                    1: {
+                        title: 'Prerequisites Check',
+                        tasks: [
+                            { title: 'AWS CLI Installed', desc: 'Install AWS CLI version 2 or higher', code: 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\nunzip awscliv2.zip\nsudo ./aws/install' },
+                            { title: 'AWS Account Access', desc: 'Ensure you have AWS account with admin privileges', code: 'aws configure' },
+                            { title: 'Terraform Installed', desc: 'Install Terraform for infrastructure as code', code: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/' }
+                        ]
+                    },
+                    2: {
+                        title: 'AWS Configuration Setup',
+                        tasks: [
+                            { title: 'Configure AWS Credentials', desc: 'Set up your AWS access keys and default region', code: 'aws configure\nAWS Access Key ID: YOUR_ACCESS_KEY\nAWS Secret Access Key: YOUR_SECRET_KEY\nDefault region: us-east-1\nDefault output format: json' },
+                            { title: 'Create S3 Bucket for State', desc: 'Create S3 bucket to store Terraform state', code: 'aws s3 mb s3://cloud-genesis-tfstate-$(date +%s)\naws s3api put-bucket-versioning --bucket cloud-genesis-tfstate --versioning-configuration Status=Enabled' },
+                            { title: 'Setup VPC and Networking', desc: 'Configure your VPC, subnets, and security groups', code: 'terraform init\nterraform plan -var="provider=aws"\nterraform apply -auto-approve' }
+                        ]
+                    },
+                    3: {
+                        title: 'Security Configuration',
+                        tasks: [
+                            { title: 'Enable CloudTrail Logging', desc: 'Enable AWS CloudTrail for audit logging', code: 'aws cloudtrail create-trail --name cloud-genesis-audit --s3-bucket-name audit-logs\naws cloudtrail start-logging --name cloud-genesis-audit' },
+                            { title: 'Configure IAM Roles', desc: 'Set up least privilege IAM roles and policies', code: 'aws iam create-role --role-name CloudGenesisRole --assume-role-policy-document file://trust-policy.json\naws iam attach-role-policy --role-name CloudGenesisRole --policy-arn arn:aws:iam::aws:policy/SecurityAudit' },
+                            { title: 'Enable GuardDuty', desc: 'Activate AWS GuardDuty for threat detection', code: 'aws guardduty create-detector --enable' }
+                        ]
+                    },
+                    4: {
+                        title: 'Deploy Cloud Genesis',
+                        tasks: [
+                            { title: 'Clone Repository', desc: 'Get the Cloud Genesis codebase', code: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis' },
+                            { title: 'Configure Environment', desc: 'Set up environment variables', code: 'cp .env.sample .env\nexport CLOUD_PROVIDER=aws\nexport AWS_REGION=us-east-1' },
+                            { title: 'Deploy Infrastructure', desc: 'Deploy Cloud Genesis to AWS', code: 'docker-compose up -d\nkubectl apply -f k8s/aws/' }
+                        ]
+                    },
+                    5: {
+                        title: 'Verification and Testing',
+                        tasks: [
+                            { title: 'Verify Deployment', desc: 'Check all services are running', code: 'kubectl get pods -n cloud-genesis\naws ecs list-tasks --cluster cloud-genesis' },
+                            { title: 'Run Security Scan', desc: 'Execute initial security audit', code: 'python scripts/security-scan.py --provider aws' },
+                            { title: 'Access Dashboard', desc: 'Open Cloud Genesis dashboard and configure monitoring', code: 'kubectl port-forward svc/cloud-genesis-ui 8080:80\nopen http://localhost:8080' }
+                        ]
+                    }
+                }
+            },
+            azure: {
+                name: 'Microsoft Azure',
+                icon: '🌐',
+                steps: {
+                    1: {
+                        title: 'Prerequisites Check',
+                        tasks: [
+                            { title: 'Azure CLI Installed', desc: 'Install Azure CLI', code: 'curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash' },
+                            { title: 'Azure Subscription', desc: 'Ensure active Azure subscription', code: 'az login\naz account show' },
+                            { title: 'Terraform Installed', desc: 'Install Terraform for IaC', code: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/' }
+                        ]
+                    },
+                    2: {
+                        title: 'Azure Configuration',
+                        tasks: [
+                            { title: 'Create Resource Group', desc: 'Set up Azure resource group', code: 'az group create --name CloudGenesisRG --location eastus' },
+                            { title: 'Configure Storage Account', desc: 'Create storage for Terraform state', code: 'az storage account create --name cloudgenesisstate --resource-group CloudGenesisRG --location eastus --sku Standard_LRS' },
+                            { title: 'Setup Virtual Network', desc: 'Configure Azure VNet and subnets', code: 'az network vnet create --resource-group CloudGenesisRG --name CloudGenesisVNet --address-prefix 10.0.0.0/16\naz network vnet subnet create --resource-group CloudGenesisRG --vnet-name CloudGenesisVNet --name default --address-prefixes 10.0.1.0/24' }
+                        ]
+                    },
+                    3: {
+                        title: 'Security Configuration',
+                        tasks: [
+                            { title: 'Enable Azure Security Center', desc: 'Activate security monitoring', code: 'az security pricing create --name VirtualMachines --tier standard\naz security auto-provisioning-setting update --auto-provision On --name default' },
+                            { title: 'Configure Azure AD', desc: 'Set up identity and access management', code: 'az ad sp create-for-rbac --name CloudGenesisApp --role Contributor --scopes /subscriptions/YOUR_SUBSCRIPTION_ID' },
+                            { title: 'Enable Defender', desc: 'Activate Microsoft Defender for Cloud', code: 'az security pricing create --name CloudPosture --tier standard' }
+                        ]
+                    },
+                    4: {
+                        title: 'Deploy Cloud Genesis',
+                        tasks: [
+                            { title: 'Clone Repository', desc: 'Get Cloud Genesis code', code: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis' },
+                            { title: 'Configure Environment', desc: 'Setup Azure environment variables', code: 'cp .env.sample .env\nexport CLOUD_PROVIDER=azure\nexport AZURE_SUBSCRIPTION_ID=your_subscription_id' },
+                            { title: 'Deploy to AKS', desc: 'Deploy Cloud Genesis on Azure Kubernetes', code: 'az aks create --resource-group CloudGenesisRG --name CloudGenesisCluster\naz aks get-credentials --resource-group CloudGenesisRG --name CloudGenesisCluster\nkubectl apply -f k8s/azure/' }
+                        ]
+                    },
+                    5: {
+                        title: 'Verification and Testing',
+                        tasks: [
+                            { title: 'Verify Deployment', desc: 'Check all services are operational', code: 'kubectl get pods -n cloud-genesis\naz container list --resource-group CloudGenesisRG' },
+                            { title: 'Run Security Scan', desc: 'Execute security audit', code: 'python scripts/security-scan.py --provider azure' },
+                            { title: 'Access Dashboard', desc: 'Open monitoring dashboard', code: 'kubectl port-forward svc/cloud-genesis-ui 8080:80\nopen http://localhost:8080' }
+                        ]
+                    }
+                }
+            },
+            gcp: {
+                name: 'Google Cloud Platform',
+                icon: '☁️',
+                steps: {
+                    1: {
+                        title: 'Prerequisites Check',
+                        tasks: [
+                            { title: 'gcloud SDK Installed', desc: 'Install Google Cloud SDK', code: 'curl https://sdk.cloud.google.com | bash\nexec -l $SHELL\ngcloud init' },
+                            { title: 'GCP Project Access', desc: 'Ensure GCP project with billing enabled', code: 'gcloud projects list\ngcloud config set project YOUR_PROJECT_ID' },
+                            { title: 'Terraform Installed', desc: 'Install Terraform', code: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/' }
+                        ]
+                    },
+                    2: {
+                        title: 'GCP Configuration',
+                        tasks: [
+                            { title: 'Enable Required APIs', desc: 'Enable necessary GCP APIs', code: 'gcloud services enable compute.googleapis.com\ngcloud services enable container.googleapis.com\ngcloud services enable cloudresourcemanager.googleapis.com' },
+                            { title: 'Create GCS Bucket', desc: 'Set up Cloud Storage for Terraform state', code: 'gsutil mb -l us-central1 gs://cloud-genesis-tfstate-$(date +%s)\ngsutil versioning set on gs://cloud-genesis-tfstate' },
+                            { title: 'Setup VPC Network', desc: 'Configure VPC and firewall rules', code: 'gcloud compute networks create cloud-genesis-vpc --subnet-mode=custom\ngcloud compute networks subnets create cloud-genesis-subnet --network=cloud-genesis-vpc --region=us-central1 --range=10.0.0.0/24' }
+                        ]
+                    },
+                    3: {
+                        title: 'Security Configuration',
+                        tasks: [
+                            { title: 'Enable Cloud Logging', desc: 'Activate audit logging', code: 'gcloud logging sinks create cloud-genesis-audit storage.googleapis.com/cloud-genesis-audit-logs' },
+                            { title: 'Configure IAM', desc: 'Set up service accounts and IAM roles', code: 'gcloud iam service-accounts create cloud-genesis-sa --display-name="Cloud Genesis Service Account"\ngcloud projects add-iam-policy-binding YOUR_PROJECT_ID --member="serviceAccount:cloud-genesis-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com" --role="roles/editor"' },
+                            { title: 'Enable Security Command Center', desc: 'Activate GCP SCC', code: 'gcloud scc sources create --organization=YOUR_ORG_ID --display-name="Cloud Genesis"' }
+                        ]
+                    },
+                    4: {
+                        title: 'Deploy Cloud Genesis',
+                        tasks: [
+                            { title: 'Clone Repository', desc: 'Get Cloud Genesis source', code: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis' },
+                            { title: 'Configure Environment', desc: 'Set GCP environment variables', code: 'cp .env.sample .env\nexport CLOUD_PROVIDER=gcp\nexport GCP_PROJECT_ID=your_project_id' },
+                            { title: 'Deploy to GKE', desc: 'Deploy on Google Kubernetes Engine', code: 'gcloud container clusters create cloud-genesis-cluster --zone=us-central1-a\ngcloud container clusters get-credentials cloud-genesis-cluster --zone=us-central1-a\nkubectl apply -f k8s/gcp/' }
+                        ]
+                    },
+                    5: {
+                        title: 'Verification and Testing',
+                        tasks: [
+                            { title: 'Verify Deployment', desc: 'Check deployment status', code: 'kubectl get pods -n cloud-genesis\ngcloud compute instances list' },
+                            { title: 'Run Security Scan', desc: 'Execute initial security audit', code: 'python scripts/security-scan.py --provider gcp' },
+                            { title: 'Access Dashboard', desc: 'Open Cloud Genesis UI', code: 'kubectl port-forward svc/cloud-genesis-ui 8080:80\nopen http://localhost:8080' }
+                        ]
+                    }
+                }
+            }
+        };
 
-                <div class="feature">
-                    <div class="feature-icon">🔐</div>
-                    <h3>Zero Trust Architecture</h3>
-                    <p>Identity-based access controls, micro-segmentation, and continuous verification at every layer</p>
-                    <ul>
-                        <li>Identity verification</li>
-                        <li>Least privilege enforcement</li>
-                        <li>Micro-segmentation automation</li>
-                    </ul>
-                </div>
+        document.querySelectorAll('.cloud-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.cloud-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedProvider = this.dataset.provider;
+                document.getElementById('startBtn').disabled = false;
+            });
+        });
 
-                <div class="feature">
-                    <div class="feature-icon">⚙️</div>
-                    <h3>DevSecOps Pipeline</h3>
-                    <p>Security integrated into CI/CD with automated scanning, testing, and remediation workflows</p>
-                    <ul>
-                        <li>SAST and DAST integration</li>
-                        <li>Container security scanning</li>
-                        <li>IaC validation</li>
-                    </ul>
-                </div>
+        document.getElementById('startBtn').addEventListener('click', function() {
+            if (selectedProvider) {
+                showDashboard();
+            }
+        });
 
-                <div class="feature">
-                    <div class="feature-icon">📊</div>
-                    <h3>Compliance Automation</h3>
-                    <p>Automated monitoring for SOC 2, ISO 27001, GDPR, HIPAA, and PCI-DSS frameworks</p>
-                    <ul>
-                        <li>Continuous compliance monitoring</li>
-                        <li>Automated audit reports</li>
-                        <li>Policy as Code enforcement</li>
-                    </ul>
-                </div>
+        function showDashboard() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            
+            const provider = providerData[selectedProvider];
+            document.getElementById('providerName').textContent = provider.name;
+            document.getElementById('providerIcon').textContent = provider.icon;
+            
+            loadStep(1);
+        }
 
-                <div class="feature">
-                    <div class="feature-icon">🤖</div>
-                    <h3>AI-Powered Automation</h3>
-                    <p>Intelligent automation for security operations, incident triage, and remediation</p>
-                    <ul>
-                        <li>Automated threat hunting</li>
-                        <li>Smart alert correlation</li>
-                        <li>Self-healing infrastructure</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+        function loadStep(step) {
+            currentStep = step;
+            const provider = providerData[selectedProvider];
+            const stepData = provider.steps[step];
+            
+            let tasksHtml = '<div class="content-card"><h3>' + stepData.title + '</h3><ul class="task-list">';
+            
+            stepData.tasks.forEach((task, index) => {
+                tasksHtml += `
+                    <li class="task-item">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-content">
+                            <h4>${task.title}</h4>
+                            <p>${task.desc}</p>
+                            <div class="code-block">${task.code}</div>
+                        </div>
+                    </li>
+                `;
+            });
+            
+            tasksHtml += '</ul></div>';
+            
+            document.getElementById('stepContent').innerHTML = tasksHtml;
+            
+            updateProgressBar();
+            updateStepIndicators();
+            updateNavigationButtons();
+        }
 
-    <section id="stack" class="tech-stack">
-        <div class="container">
-            <h2>Technology Stack</h2>
-            <div class="stack-grid">
-                <div class="stack-category">
-                    <h3>Backend</h3>
-                    <div class="tech-tags">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">FastAPI</span>
-                        <span class="tech-tag">Celery</span>
-                        <span class="tech-tag">Redis</span>
-                    </div>
-                </div>
-                <div class="stack-category">
-                    <h3>Cloud</h3>
-                    <div class="tech-tags">
-                        <span class="tech-tag">AWS</span>
-                        <span class="tech-tag">Azure</span>
-                        <span class="tech-tag">GCP</span>
-                        <span class="tech-tag">Kubernetes</span>
-                    </div>
-                </div>
-                <div class="stack-category">
-                    <h3>Security</h3>
-                    <div class="tech-tags">
-                        <span class="tech-tag">Vault</span>
-                        <span class="tech-tag">Falco</span>
-                        <span class="tech-tag">OPA</span>
-                        <span class="tech-tag">Istio</span>
-                    </div>
-                </div>
-                <div class="stack-category">
-                    <h3>Monitoring</h3>
-                    <div class="tech-tags">
-                        <span class="tech-tag">Prometheus</span>
-                        <span class="tech-tag">Grafana</span>
-                        <span class="tech-tag">ELK</span>
-                        <span class="tech-tag">Jaeger</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        function toggleTask(checkbox) {
+            checkbox.classList.toggle('checked');
+        }
 
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Secure Your Cloud?</h2>
-            <p>Join enterprises worldwide using Cloud Genesis for comprehensive security</p>
-            <div class="hero-btns">
-                <button class="btn-large btn-primary" onclick="window.open('https://github.com/bharathk2498/cloud-genesis')">Get Started</button>
-                <button class="btn-large btn-outline" onclick="window.location.href='mailto:contact@cloudgenesis.io'">Contact Sales</button>
-            </div>
-        </div>
-    </section>
+        function updateProgressBar() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
 
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h4>Cloud Genesis</h4>
-                    <p>Enterprise Security Platform</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <a href="https://github.com/bharathk2498/cloud-genesis">Documentation</a>
-                    <a href="https://github.com/bharathk2498/cloud-genesis#readme">API Reference</a>
-                    <a href="https://github.com/bharathk2498/cloud-genesis/blob/main/CONTRIBUTING.md">Community</a>
-                </div>
-                <div class="footer-section">
-                    <h4>Legal</h4>
-                    <a href="https://github.com/bharathk2498/cloud-genesis/blob/main/LICENSE">License</a>
-                    <a href="https://github.com/bharathk2498/cloud-genesis/blob/main/SECURITY.md">Security</a>
-                    <a href="https://github.com/bharathk2498/cloud-genesis/blob/main/CODE_OF_CONDUCT.md">Conduct</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>Built for enterprises by security professionals - MIT License</p>
-            </div>
-        </div>
-    </footer>
+        function updateStepIndicators() {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'Complete Setup' : 'Next Step';
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                loadStep(currentStep + 1);
+            } else {
+                alert('Setup Complete! Your Cloud Genesis platform is configured on ' + providerData[selectedProvider].name);
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                loadStep(currentStep - 1);
+            }
+        }
+
+        function resetSelection() {
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('welcomeScreen').style.display = 'block';
+            selectedProvider = null;
+            currentStep = 1;
+            document.getElementById('startBtn').disabled = true;
+            document.querySelectorAll('.cloud-option').forEach(opt => opt.classList.remove('selected'));
+        }
+    </script>
 </body>
 </html>
