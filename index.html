@@ -53,6 +53,12 @@
             padding: 15px 20px;
         }
 
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .logo {
             font-size: 24px;
             font-weight: 700;
@@ -61,11 +67,47 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(0, 102, 255, 0.2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 102, 255, 0.4);
+            border-color: var(--primary);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .nav-links a {
             color: var(--text-dim);
             text-decoration: none;
-            margin-left: 30px;
             font-weight: 500;
+            font-size: 14px;
         }
 
         .main-content {
@@ -620,13 +662,30 @@
                 flex-direction: column;
                 gap: 15px;
             }
+            .nav-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <nav>
         <div class="container">
-            <div class="logo">Cloud Genesis</div>
+            <div class="nav-left">
+                <div class="logo">Cloud Genesis</div>
+                <div class="nav-buttons" id="navButtons">
+                    <button class="nav-btn" id="homeBtn" onclick="goToHome()" style="display: none;">
+                        <span>🏠</span>
+                        <span>Home</span>
+                    </button>
+                    <button class="nav-btn" id="backBtn" onclick="goBack()" style="display: none;">
+                        <span>←</span>
+                        <span>Back</span>
+                    </button>
+                </div>
+            </div>
             <div class="nav-links">
                 <a href="https://github.com/bharathk2498/cloud-genesis">GitHub</a>
                 <a href="#">Documentation</a>
@@ -812,6 +871,7 @@
         let selectedDestination = null;
         let currentStep = 1;
         let completedSteps = new Set();
+        let navigationHistory = [];
 
         const migrationSteps = [
             { id: 1, name: 'Discovery Assessment', icon: '🔍' },
@@ -837,6 +897,30 @@
             azure: { name: 'Microsoft Azure', icon: '🌐' },
             gcp: { name: 'Google Cloud', icon: '☁️' }
         };
+
+        function updateNavButtons() {
+            const isOnDashboard = document.getElementById('dashboard').classList.contains('active');
+            document.getElementById('homeBtn').style.display = isOnDashboard ? 'flex' : 'none';
+            document.getElementById('backBtn').style.display = isOnDashboard && navigationHistory.length > 0 ? 'flex' : 'none';
+        }
+
+        function goToHome() {
+            if (confirm('Are you sure you want to go to home? Your progress will be saved.')) {
+                document.getElementById('dashboard').classList.remove('active');
+                document.getElementById('welcomeScreen').style.display = 'block';
+                navigationHistory = [];
+                updateNavButtons();
+            }
+        }
+
+        function goBack() {
+            if (navigationHistory.length > 0) {
+                const previousStep = navigationHistory.pop();
+                currentStep = previousStep;
+                loadStep(currentStep);
+                updateNavButtons();
+            }
+        }
 
         document.querySelectorAll('#sourceOptions .endpoint-option').forEach(option => {
             option.addEventListener('click', function() {
@@ -908,6 +992,7 @@
             loadProgress();
             renderSidebar();
             loadStep(1);
+            updateNavButtons();
         }
 
         function renderSidebar() {
@@ -921,6 +1006,9 @@
         }
 
         function loadStep(stepNum) {
+            if (stepNum !== currentStep && currentStep > 0) {
+                navigationHistory.push(currentStep);
+            }
             currentStep = stepNum;
             const isCompleted = completedSteps.has(stepNum);
             
@@ -971,6 +1059,7 @@
             });
             
             updateNavigationButtons();
+            updateNavButtons();
         }
 
         function completeStep(stepNum) {
@@ -1089,6 +1178,8 @@
                 document.getElementById('reportForm').reset();
             }, 3000);
         }
+
+        updateNavButtons();
     </script>
 </body>
 </html>
