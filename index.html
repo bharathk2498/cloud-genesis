@@ -15,6 +15,7 @@
             --primary: #0066ff;
             --secondary: #00d4ff;
             --success: #00c853;
+            --warning: #ffa000;
             --dark: #0a0e27;
             --card: #151a36;
             --text: #ffffff;
@@ -94,11 +95,6 @@
             border: 1px solid var(--border);
         }
 
-        .migration-selector h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-
         .migration-flow {
             display: flex;
             align-items: center;
@@ -148,16 +144,6 @@
             font-size: 30px;
             width: 50px;
             text-align: center;
-        }
-
-        .endpoint-info h4 {
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-
-        .endpoint-info p {
-            font-size: 13px;
-            color: var(--text-dim);
         }
 
         .migration-arrow {
@@ -227,15 +213,76 @@
             color: var(--secondary);
         }
 
-        .change-migration {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
+        .progress-section {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        .progress-bar-container {
+            background: var(--dark);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 600;
-            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .report-button {
+            background: var(--success);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .report-button:hover {
+            background: #00a844;
         }
 
         .sidebar-layout {
@@ -261,6 +308,9 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .step-item:hover {
@@ -272,16 +322,19 @@
             border-color: var(--secondary);
         }
 
+        .step-item.completed {
+            opacity: 0.8;
+        }
+
         .step-number {
-            display: inline-block;
             width: 30px;
             height: 30px;
             border-radius: 50%;
             background: var(--dark);
             text-align: center;
             line-height: 30px;
-            margin-right: 10px;
             font-weight: 600;
+            flex-shrink: 0;
         }
 
         .step-item.active .step-number {
@@ -292,8 +345,15 @@
             background: var(--success);
         }
 
-        .content-area {
-            min-height: 600px;
+        .step-item.completed .step-number::after {
+            content: '✓';
+            position: absolute;
+            margin-left: -15px;
+        }
+
+        .step-name {
+            flex: 1;
+            font-size: 14px;
         }
 
         .content-card {
@@ -308,6 +368,37 @@
             font-size: 24px;
             margin-bottom: 20px;
             color: var(--secondary);
+        }
+
+        .step-completion-section {
+            background: rgba(0, 200, 83, 0.1);
+            border: 2px solid var(--success);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .complete-step-btn {
+            background: var(--success);
+            color: white;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .complete-step-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .complete-step-btn.completed {
+            background: var(--dark);
+            border: 2px solid var(--success);
         }
 
         .method-tabs {
@@ -325,7 +416,6 @@
             cursor: pointer;
             font-weight: 600;
             border-bottom: 3px solid transparent;
-            transition: all 0.3s;
         }
 
         .method-tab.active {
@@ -427,17 +517,87 @@
             cursor: pointer;
         }
 
-        .info-box {
-            background: rgba(0, 102, 255, 0.1);
-            border: 1px solid var(--primary);
-            padding: 15px;
-            border-radius: 8px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: var(--secondary);
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 30px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .info-box h4 {
-            color: var(--secondary);
-            margin-bottom: 10px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .success-message {
+            background: rgba(0, 200, 83, 0.2);
+            border: 1px solid var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            color: var(--success);
         }
 
         @media (max-width: 1024px) {
@@ -449,6 +609,10 @@
             }
             .migration-arrow {
                 transform: rotate(90deg);
+            }
+            .progress-stats {
+                flex-direction: column;
+                gap: 15px;
             }
         }
     </style>
@@ -468,7 +632,7 @@
         <div id="welcomeScreen" class="welcome-screen">
             <div class="container">
                 <h1>Cloud Genesis Migration Platform</h1>
-                <p style="font-size: 18px; color: var(--text-dim); margin-bottom: 40px;">Seamless workload migration from on-premise to cloud or between cloud providers</p>
+                <p style="font-size: 18px; color: var(--text-dim); margin-bottom: 40px;">Enterprise workload migration from on-premise to cloud or between cloud providers</p>
                 
                 <div class="migration-selector">
                     <h2>Configure Your Migration Path</h2>
@@ -481,28 +645,28 @@
                                     <div class="endpoint-icon">🏢</div>
                                     <div class="endpoint-info">
                                         <h4>On-Premise</h4>
-                                        <p>Physical or virtual datacenter</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">Physical datacenter</p>
                                     </div>
                                 </div>
                                 <div class="endpoint-option" data-source="aws">
                                     <div class="endpoint-icon">☁️</div>
                                     <div class="endpoint-info">
                                         <h4>Amazon AWS</h4>
-                                        <p>EC2, RDS, S3 workloads</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">EC2, RDS workloads</p>
                                     </div>
                                 </div>
                                 <div class="endpoint-option" data-source="azure">
                                     <div class="endpoint-icon">🌐</div>
                                     <div class="endpoint-info">
                                         <h4>Microsoft Azure</h4>
-                                        <p>VMs, SQL, Storage workloads</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">VM, SQL workloads</p>
                                     </div>
                                 </div>
                                 <div class="endpoint-option" data-source="gcp">
                                     <div class="endpoint-icon">☁️</div>
                                     <div class="endpoint-info">
                                         <h4>Google Cloud</h4>
-                                        <p>Compute, Cloud SQL workloads</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">Compute workloads</p>
                                     </div>
                                 </div>
                             </div>
@@ -517,21 +681,21 @@
                                     <div class="endpoint-icon">☁️</div>
                                     <div class="endpoint-info">
                                         <h4>Amazon AWS</h4>
-                                        <p>Migrate to AWS ecosystem</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">Migrate to AWS</p>
                                     </div>
                                 </div>
                                 <div class="endpoint-option" data-destination="azure">
                                     <div class="endpoint-icon">🌐</div>
                                     <div class="endpoint-info">
                                         <h4>Microsoft Azure</h4>
-                                        <p>Migrate to Azure cloud</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">Migrate to Azure</p>
                                     </div>
                                 </div>
                                 <div class="endpoint-option" data-destination="gcp">
                                     <div class="endpoint-icon">☁️</div>
                                     <div class="endpoint-info">
                                         <h4>Google Cloud</h4>
-                                        <p>Migrate to GCP platform</p>
+                                        <p style="font-size: 13px; color: var(--text-dim);">Migrate to GCP</p>
                                     </div>
                                 </div>
                             </div>
@@ -546,7 +710,13 @@
         <div id="dashboard" class="dashboard">
             <div class="container">
                 <div class="migration-header">
-                    <h2 style="margin-bottom: 20px;">Migration Plan</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>Migration Dashboard</h2>
+                        <button class="report-button" onclick="openReportModal()">
+                            <span>📧</span>
+                            <span>Send Progress Report</span>
+                        </button>
+                    </div>
                     <div class="migration-path">
                         <div class="path-item">
                             <div class="path-icon" id="sourceIcon"></div>
@@ -564,7 +734,31 @@
                             </div>
                         </div>
                     </div>
-                    <button class="change-migration" onclick="resetSelection()">Change Migration Path</button>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <h3>Migration Progress</h3>
+                        <div class="progress-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="completedSteps">0</div>
+                                <div class="stat-label">Completed</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalSteps">15</div>
+                                <div class="stat-label">Total Steps</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="progressPercent">0%</div>
+                                <div class="stat-label">Progress</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBar" style="width: 0%">
+                            <span id="progressText">0% Complete</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="sidebar-layout">
@@ -580,27 +774,55 @@
         </div>
     </div>
 
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Send Migration Report</h2>
+                <button class="close-modal" onclick="closeReportModal()">&times;</button>
+            </div>
+            <form id="reportForm" onsubmit="sendReport(event)">
+                <div class="form-group">
+                    <label>Manager Email</label>
+                    <input type="email" id="managerEmail" placeholder="manager@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label>CC Recipients (comma separated)</label>
+                    <input type="text" id="ccEmails" placeholder="team@company.com, stakeholder@company.com">
+                </div>
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea id="reportNotes" placeholder="Add any additional context or notes for the report..."></textarea>
+                </div>
+                <button type="submit" class="btn">Send Report</button>
+                <div id="successMessage" class="success-message" style="display: none;">
+                    Report sent successfully to <span id="sentToEmail"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         let selectedSource = null;
         let selectedDestination = null;
         let currentStep = 1;
+        let completedSteps = new Set();
 
         const migrationSteps = [
-            { id: 1, name: 'Discovery & Assessment', icon: '🔍' },
+            { id: 1, name: 'Discovery Assessment', icon: '🔍' },
             { id: 2, name: 'Prerequisites', icon: '📚' },
             { id: 3, name: 'Network Connectivity', icon: '🌐' },
-            { id: 4, name: 'Data Migration Strategy', icon: '📄' },
+            { id: 4, name: 'Data Migration', icon: '📄' },
             { id: 5, name: 'Compute Migration', icon: '🖥' },
             { id: 6, name: 'Database Migration', icon: '📦' },
             { id: 7, name: 'Storage Migration', icon: '🗄' },
             { id: 8, name: 'Application Migration', icon: '📦' },
             { id: 9, name: 'Load Balancer Setup', icon: '⚖️' },
             { id: 10, name: 'DNS Cutover', icon: '🌍' },
-            { id: 11, name: 'Testing & Validation', icon: '✔️' },
+            { id: 11, name: 'Testing Validation', icon: '✔️' },
             { id: 12, name: 'Monitoring Setup', icon: '📊' },
             { id: 13, name: 'Backup Configuration', icon: '💾' },
             { id: 14, name: 'Cutover Execution', icon: '🚀' },
-            { id: 15, name: 'Post-Migration Optimization', icon: '⚙️' }
+            { id: 15, name: 'Post-Migration', icon: '⚙️' }
         ];
 
         const providers = {
@@ -648,6 +870,7 @@
             document.getElementById('destName').textContent = providers[selectedDestination].name;
             document.getElementById('destIcon').textContent = providers[selectedDestination].icon;
             
+            loadProgress();
             renderSidebar();
             loadStep(1);
         }
@@ -655,18 +878,57 @@
         function renderSidebar() {
             const sidebar = document.getElementById('stepsSidebar');
             sidebar.innerHTML = migrationSteps.map(step => `
-                <div class="step-item ${step.id === 1 ? 'active' : ''}" onclick="loadStep(${step.id})">
+                <div class="step-item ${step.id === 1 ? 'active' : ''} ${completedSteps.has(step.id) ? 'completed' : ''}" onclick="loadStep(${step.id})">
                     <span class="step-number">${step.id}</span>
-                    <span>${step.icon} ${step.name}</span>
+                    <span class="step-name">${step.icon} ${step.name}</span>
                 </div>
             `).join('');
         }
 
         function loadStep(stepNum) {
             currentStep = stepNum;
-            const stepContent = getStepContent(stepNum);
+            const isCompleted = completedSteps.has(stepNum);
             
-            document.getElementById('contentArea').innerHTML = stepContent;
+            let content = '<div class="content-card">';
+            content += '<h3>Step ' + stepNum + ': ' + migrationSteps[stepNum - 1].name + '</h3>';
+            content += '<p style="color: var(--text-dim); margin-bottom: 30px;">Complete the tasks below for this migration phase</p>';
+            
+            content += '<div class="task-item">';
+            content += '<div class="task-header">';
+            content += '<div class="task-checkbox" onclick="toggleTask(this)"></div>';
+            content += '<div class="task-title">Main Migration Task</div>';
+            content += '</div>';
+            content += '<div class="task-description">Execute primary migration activities for this step</div>';
+            
+            content += '<div class="method-tabs">';
+            content += '<button class="method-tab active" onclick="showMethod(this, 0)">CLI Commands</button>';
+            content += '<button class="method-tab" onclick="showMethod(this, 1)">Console Steps</button>';
+            content += '</div>';
+            
+            content += '<div class="method-content active" data-method="0">';
+            content += '<div class="code-block">cloud-genesis-cli migrate --step ' + stepNum + ' --source ' + selectedSource + ' --destination ' + selectedDestination + '\n\n# Validate completion\ncloud-genesis-cli validate --step ' + stepNum + '</div>';
+            content += '</div>';
+            
+            content += '<div class="method-content" data-method="1">';
+            content += '<div class="ui-steps"><ol>';
+            content += '<li>Access migration console for ' + providers[selectedDestination].name + '</li>';
+            content += '<li>Navigate to step ' + stepNum + ' wizard</li>';
+            content += '<li>Follow guided instructions</li>';
+            content += '<li>Validate task completion</li>';
+            content += '<li>Document any issues</li>';
+            content += '</ol></div></div>';
+            
+            content += '</div>';
+            
+            content += '<div class="step-completion-section">';
+            content += '<h4>' + (isCompleted ? '✓ Step Completed' : 'Complete This Step') + '</h4>';
+            content += '<p style="color: var(--text-dim); margin: 10px 0;">' + (isCompleted ? 'This step has been marked as complete' : 'Mark this step as complete when all tasks are finished') + '</p>';
+            content += '<button class="complete-step-btn ' + (isCompleted ? 'completed' : '') + '" onclick="' + (isCompleted ? 'uncompleteStep(' + stepNum + ')' : 'completeStep(' + stepNum + ')') + '">' + (isCompleted ? '✓ Completed - Click to Undo' : '✓ Mark Step as Complete') + '</button>';
+            content += '</div>';
+            
+            content += '</div>';
+            
+            document.getElementById('contentArea').innerHTML = content;
             
             document.querySelectorAll('.step-item').forEach((item, idx) => {
                 item.classList.remove('active');
@@ -676,210 +938,53 @@
             updateNavigationButtons();
         }
 
-        function getStepContent(stepNum) {
-            const migrationPath = `${selectedSource}-to-${selectedDestination}`;
-            const steps = getMigrationSteps(migrationPath);
-            const stepData = steps[stepNum];
+        function completeStep(stepNum) {
+            completedSteps.add(stepNum);
+            saveProgress();
+            updateProgress();
+            renderSidebar();
+            loadStep(stepNum);
+        }
+
+        function uncompleteStep(stepNum) {
+            completedSteps.delete(stepNum);
+            saveProgress();
+            updateProgress();
+            renderSidebar();
+            loadStep(stepNum);
+        }
+
+        function updateProgress() {
+            const completed = completedSteps.size;
+            const total = migrationSteps.length;
+            const percent = Math.round((completed / total) * 100);
             
-            if (!stepData) return '<div class="content-card"><h3>Step not configured</h3></div>';
-            
-            let content = '<div class="content-card">';
-            content += '<h3>' + stepData.title + '</h3>';
-            
-            if (stepData.info) {
-                content += '<div class="info-box"><h4>Migration Note</h4><p>' + stepData.info + '</p></div>';
+            document.getElementById('completedSteps').textContent = completed;
+            document.getElementById('totalSteps').textContent = total;
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = percent + '% Complete';
+        }
+
+        function saveProgress() {
+            localStorage.setItem('migrationProgress', JSON.stringify(Array.from(completedSteps)));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('migrationProgress');
+            if (saved) {
+                completedSteps = new Set(JSON.parse(saved));
+                updateProgress();
             }
-            
-            stepData.tasks.forEach((task, index) => {
-                content += '<div class="task-item">';
-                content += '<div class="task-header">';
-                content += '<div class="task-checkbox" onclick="toggleTask(this)"></div>';
-                content += '<div class="task-title">' + task.title + '</div>';
-                content += '</div>';
-                content += '<div class="task-description">' + task.description + '</div>';
-                
-                if (task.cli || task.ui) {
-                    content += '<div class="method-tabs">';
-                    if (task.cli) content += '<button class="method-tab active" onclick="showMethod(this, \'cli\', ' + index + ')">CLI Commands</button>';
-                    if (task.ui) content += '<button class="method-tab' + (!task.cli ? ' active' : '') + '" onclick="showMethod(this, \'ui\', ' + index + ')">Console Steps</button>';
-                    content += '</div>';
-                    
-                    if (task.cli) {
-                        content += '<div class="method-content active" data-method="cli-' + index + '">';
-                        content += '<div class="code-block">' + task.cli + '</div>';
-                        content += '</div>';
-                    }
-                    
-                    if (task.ui) {
-                        content += '<div class="method-content' + (!task.cli ? ' active' : '') + '" data-method="ui-' + index + '">';
-                        content += '<div class="ui-steps"><ol>';
-                        task.ui.forEach(step => {
-                            content += '<li>' + step + '</li>';
-                        });
-                        content += '</ol></div></div>';
-                    }
-                }
-                
-                content += '</div>';
-            });
-            
-            content += '</div>';
-            return content;
         }
 
-        function getMigrationSteps(path) {
-            const commonSteps = {
-                1: {
-                    title: 'Discovery and Asset Assessment',
-                    info: 'Comprehensive inventory of all workloads, applications, databases, and dependencies to be migrated',
-                    tasks: [
-                        {
-                            title: 'Install Discovery Agent',
-                            description: 'Deploy automated discovery tools to map your infrastructure',
-                            cli: selectedSource === 'onprem' ? 
-                                'wget https://github.com/bharathk2498/cloud-genesis/releases/download/v1.0/discovery-agent-linux.tar.gz\ntar -xzf discovery-agent-linux.tar.gz\nsudo ./install-discovery-agent.sh\nsudo systemctl start cloud-genesis-discovery' :
-                                'aws application-discovery describe-configurations\naws discovery list-servers\nazure migrate project show --name MyMigration\ngcloud compute instances list --format=json',
-                            ui: selectedSource === 'onprem' ? [
-                                'Download Cloud Genesis Discovery Agent',
-                                'Run installer on each server/VM to be discovered',
-                                'Agent will scan OS, applications, network, storage',
-                                'Access discovery dashboard at https://portal.cloudgenesis.io',
-                                'Review discovered assets, dependencies, and migration readiness'
-                            ] : [
-                                'Open source cloud console',
-                                'Navigate to resource inventory',
-                                'Export complete asset list with tags and metadata',
-                                'Document all VMs, databases, storage, networking',
-                                'Map application dependencies using network flow logs'
-                            ]
-                        },
-                        {
-                            title: 'Application Dependency Mapping',
-                            description: 'Identify all application interdependencies and communication patterns',
-                            cli: 'cloud-genesis-cli dependency-map --source ' + selectedSource + ' --scan-depth full\ncloud-genesis-cli generate-report --format json --output dependencies.json',
-                            ui: [
-                                'Run network traffic analysis for 7 days',
-                                'Identify all application-to-application communications',
-                                'Document database connections and API endpoints',
-                                'Create dependency graph showing relationships',
-                                'Prioritize applications by complexity and dependencies'
-                            ]
-                        },
-                        {
-                            title: 'Migration Readiness Assessment',
-                            description: 'Evaluate each workload for cloud readiness and migration complexity',
-                            cli: 'cloud-genesis-cli assess-readiness --target ' + selectedDestination + '\ncloud-genesis-cli generate-tco-analysis',
-                            ui: [
-                                'Score each workload: Easy, Moderate, Complex',
-                                'Identify blockers: licensing, architecture, dependencies',
-                                'Calculate estimated downtime for each application',
-                                'Generate Total Cost of Ownership (TCO) comparison',
-                                'Create prioritized migration wave plan'
-                            ]
-                        }
-                    ]
-                },
-                2: {
-                    title: 'Migration Prerequisites and Tools',
-                    info: 'Setup all required accounts, tools, and connectivity for migration',
-                    tasks: [
-                        {
-                            title: 'Install Migration Tools',
-                            description: 'Setup necessary CLI tools and migration utilities',
-                            cli: getMigrationToolsInstall(selectedDestination),
-                            ui: [
-                                'Create account on ' + providers[selectedDestination].name,
-                                'Setup billing and payment methods',
-                                'Enable required APIs and services',
-                                'Install cloud provider CLI tools',
-                                'Install Cloud Genesis migration toolkit'
-                            ]
-                        },
-                        {
-                            title: 'Configure Credentials',
-                            description: 'Setup authentication for both source and destination',
-                            cli: getCredentialsSetup(selectedSource, selectedDestination),
-                            ui: [
-                                'Generate API keys for source environment',
-                                'Create service accounts in destination cloud',
-                                'Configure IAM roles with migration permissions',
-                                'Store credentials in secure vault',
-                                'Test authentication to both environments'
-                            ]
-                        },
-                        {
-                            title: 'Prepare Target Environment',
-                            description: 'Create foundational infrastructure in destination cloud',
-                            cli: getTargetSetup(selectedDestination),
-                            ui: [
-                                'Create VPC/VNet with appropriate CIDR ranges',
-                                'Setup subnets matching source network topology',
-                                'Configure security groups and firewall rules',
-                                'Create resource groups and organizational structure',
-                                'Setup tagging and naming conventions'
-                            ]
-                        }
-                    ]
-                }
-            };
-            
-            for (let i = 3; i <= 15; i++) {
-                commonSteps[i] = getDetailedMigrationStep(i, selectedSource, selectedDestination);
-            }
-            
-            return commonSteps;
-        }
-
-        function getMigrationToolsInstall(dest) {
-            const tools = {
-                aws: 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\nunzip awscliv2.zip\nsudo ./aws/install\nwget https://github.com/bharathk2498/cloud-genesis/releases/download/v1.0/cg-migration-aws.deb\nsudo dpkg -i cg-migration-aws.deb',
-                azure: 'curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash\nwget https://github.com/bharathk2498/cloud-genesis/releases/download/v1.0/cg-migration-azure.deb\nsudo dpkg -i cg-migration-azure.deb',
-                gcp: 'curl https://sdk.cloud.google.com | bash\nexec -l $SHELL\ngcloud init\nwget https://github.com/bharathk2498/cloud-genesis/releases/download/v1.0/cg-migration-gcp.deb\nsudo dpkg -i cg-migration-gcp.deb'
-            };
-            return tools[dest];
-        }
-
-        function getCredentialsSetup(source, dest) {
-            return `# Configure source credentials\ncloud-genesis-cli configure --source ${source}\n\n# Configure destination credentials\ncloud-genesis-cli configure --destination ${dest}\n\n# Test connectivity\ncloud-genesis-cli test-connection --all`;
-        }
-
-        function getTargetSetup(dest) {
-            const setup = {
-                aws: 'aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications "ResourceType=vpc,Tags=[{Key=Name,Value=MigrationVPC}]"\naws ec2 create-subnet --vpc-id VPC_ID --cidr-block 10.0.1.0/24\naws ec2 create-internet-gateway\naws ec2 attach-internet-gateway --vpc-id VPC_ID --internet-gateway-id IGW_ID',
-                azure: 'az group create --name MigrationRG --location eastus\naz network vnet create --resource-group MigrationRG --name MigrationVNet --address-prefix 10.0.0.0/16\naz network vnet subnet create --resource-group MigrationRG --vnet-name MigrationVNet --name DefaultSubnet --address-prefixes 10.0.1.0/24',
-                gcp: 'gcloud compute networks create migration-vpc --subnet-mode=custom\ngcloud compute networks subnets create migration-subnet --network=migration-vpc --region=us-central1 --range=10.0.1.0/24'
-            };
-            return setup[dest];
-        }
-
-        function getDetailedMigrationStep(stepNum, source, dest) {
-            return {
-                title: migrationSteps[stepNum - 1].name,
-                info: `Step ${stepNum} of comprehensive migration from ${providers[source].name} to ${providers[dest].name}`,
-                tasks: [
-                    {
-                        title: `Execute ${migrationSteps[stepNum - 1].name}`,
-                        description: `Complete ${migrationSteps[stepNum - 1].name.toLowerCase()} phase of migration`,
-                        cli: `cloud-genesis-cli migrate --step ${stepNum} --source ${source} --destination ${dest}\ncloud-genesis-cli validate --step ${stepNum}`,
-                        ui: [
-                            `Follow Cloud Genesis UI wizard for step ${stepNum}`,
-                            `Review automated recommendations`,
-                            `Execute migration tasks`,
-                            `Validate completion criteria`,
-                            `Document any issues or deviations`
-                        ]
-                    }
-                ]
-            };
-        }
-
-        function showMethod(button, method, index) {
+        function showMethod(button, index) {
             const parent = button.parentElement.parentElement;
             parent.querySelectorAll('.method-tab').forEach(tab => tab.classList.remove('active'));
             parent.querySelectorAll('.method-content').forEach(content => content.classList.remove('active'));
             
             button.classList.add('active');
-            parent.querySelector('[data-method="' + method + '-' + index + '"]').classList.add('active');
+            parent.querySelectorAll('.method-content')[index].classList.add('active');
         }
 
         function toggleTask(checkbox) {
@@ -891,7 +996,7 @@
                 loadStep(currentStep + 1);
                 window.scrollTo(0, 0);
             } else {
-                alert('🎉 Migration Complete! Your workloads are now running on ' + providers[selectedDestination].name);
+                alert('🎉 Migration Complete! All 15 steps finished.');
             }
         }
 
@@ -907,14 +1012,47 @@
             document.getElementById('nextBtn').textContent = currentStep === migrationSteps.length ? 'Complete Migration' : 'Next Step';
         }
 
-        function resetSelection() {
-            document.getElementById('dashboard').classList.remove('active');
-            document.getElementById('welcomeScreen').style.display = 'block';
-            selectedSource = null;
-            selectedDestination = null;
-            currentStep = 1;
-            document.querySelectorAll('.endpoint-option').forEach(opt => opt.classList.remove('selected'));
-            document.getElementById('startMigrationBtn').disabled = true;
+        function openReportModal() {
+            document.getElementById('reportModal').classList.add('active');
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').classList.remove('active');
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function sendReport(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('managerEmail').value;
+            const cc = document.getElementById('ccEmails').value;
+            const notes = document.getElementById('reportNotes').value;
+            
+            const completed = completedSteps.size;
+            const total = migrationSteps.length;
+            const percent = Math.round((completed / total) * 100);
+            
+            const reportData = {
+                migrationPath: providers[selectedSource].name + ' to ' + providers[selectedDestination].name,
+                progress: percent + '%',
+                completedSteps: completed,
+                totalSteps: total,
+                completedStepsList: Array.from(completedSteps).map(id => migrationSteps[id - 1].name),
+                notes: notes,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            console.log('Sending report to:', email);
+            console.log('CC:', cc);
+            console.log('Report Data:', reportData);
+            
+            document.getElementById('sentToEmail').textContent = email;
+            document.getElementById('successMessage').style.display = 'block';
+            
+            setTimeout(() => {
+                closeReportModal();
+                document.getElementById('reportForm').reset();
+            }, 3000);
         }
     </script>
 </body>
