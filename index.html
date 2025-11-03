@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Genesis - Enterprise Security Platform</title>
+    <title>Cloud Genesis - Complete Enterprise Setup</title>
     <style>
         * {
             margin: 0;
@@ -15,10 +15,8 @@
             --primary: #0066ff;
             --secondary: #00d4ff;
             --success: #00c853;
-            --warning: #ffa000;
             --dark: #0a0e27;
             --card: #151a36;
-            --card-hover: #1a1f42;
             --text: #ffffff;
             --text-dim: #b0b8d4;
             --border: rgba(0, 102, 255, 0.2);
@@ -67,11 +65,6 @@
             text-decoration: none;
             margin-left: 30px;
             font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
         }
 
         .main-content {
@@ -81,7 +74,7 @@
 
         .welcome-screen {
             text-align: center;
-            padding: 80px 20px;
+            padding: 60px 20px;
         }
 
         .welcome-screen h1 {
@@ -92,14 +85,8 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .welcome-screen p {
-            font-size: 20px;
-            color: var(--text-dim);
-            margin-bottom: 50px;
-        }
-
         .cloud-selector {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             background: var(--card);
             padding: 40px;
@@ -107,16 +94,11 @@
             border: 1px solid var(--border);
         }
 
-        .cloud-selector h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-
         .cloud-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            margin: 30px 0;
         }
 
         .cloud-option {
@@ -136,19 +118,7 @@
 
         .cloud-option.selected {
             border-color: var(--secondary);
-            background: var(--card-hover);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-        }
-
-        .cloud-option img {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 15px;
-        }
-
-        .cloud-option h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
+            background: rgba(0, 212, 255, 0.1);
         }
 
         .btn {
@@ -160,12 +130,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
             width: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
         }
 
         .btn:disabled {
@@ -186,10 +151,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             background: var(--card);
-            padding: 30px;
-            border-radius: 16px;
+            padding: 25px 30px;
+            border-radius: 12px;
             border: 1px solid var(--border);
         }
 
@@ -199,18 +164,8 @@
             gap: 15px;
         }
 
-        .provider-badge img {
-            width: 50px;
-            height: 50px;
-        }
-
-        .provider-info h2 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .provider-info p {
-            color: var(--text-dim);
+        .provider-badge div:first-child {
+            font-size: 40px;
         }
 
         .change-provider {
@@ -221,84 +176,68 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s;
         }
 
-        .change-provider:hover {
-            background: var(--primary);
-            color: white;
+        .sidebar-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
         }
 
-        .progress-bar {
+        .steps-sidebar {
             background: var(--card);
-            padding: 20px 30px;
+            padding: 20px;
             border-radius: 12px;
             border: 1px solid var(--border);
-            margin-bottom: 30px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
         }
 
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
+        .step-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
         }
 
-        .progress-line {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--border);
-            z-index: 0;
+        .step-item:hover {
+            background: rgba(0, 102, 255, 0.1);
         }
 
-        .progress-line-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.5s;
+        .step-item.active {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 212, 255, 0.2));
+            border-color: var(--secondary);
         }
 
-        .step {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            flex: 1;
+        .step-item.completed {
+            opacity: 0.7;
         }
 
-        .step-circle {
-            width: 40px;
-            height: 40px;
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: var(--dark);
-            border: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            font-weight: 700;
-            transition: all 0.3s;
-        }
-
-        .step.completed .step-circle {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
-        .step.active .step-circle {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-color: var(--secondary);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .step-label {
-            font-size: 14px;
-            color: var(--text-dim);
-        }
-
-        .step.active .step-label {
-            color: var(--secondary);
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
             font-weight: 600;
+        }
+
+        .step-item.active .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .step-item.completed .step-number {
+            background: var(--success);
+        }
+
+        .content-area {
+            min-height: 600px;
         }
 
         .step-content {
@@ -311,10 +250,10 @@
 
         .content-card {
             background: var(--card);
-            padding: 40px;
-            border-radius: 16px;
+            padding: 30px;
+            border-radius: 12px;
             border: 1px solid var(--border);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .content-card h3 {
@@ -323,8 +262,35 @@
             color: var(--secondary);
         }
 
-        .task-list {
-            list-style: none;
+        .method-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .method-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .method-tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .method-content {
+            display: none;
+        }
+
+        .method-content.active {
+            display: block;
         }
 
         .task-item {
@@ -333,14 +299,13 @@
             border-radius: 8px;
             border: 1px solid var(--border);
             margin-bottom: 15px;
-            display: flex;
-            align-items: start;
-            gap: 15px;
-            transition: all 0.3s;
         }
 
-        .task-item:hover {
-            border-color: var(--primary);
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .task-checkbox {
@@ -349,16 +314,9 @@
             border: 2px solid var(--border);
             border-radius: 6px;
             cursor: pointer;
-            flex-shrink: 0;
-            margin-top: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .task-checkbox:hover {
-            border-color: var(--primary);
         }
 
         .task-checkbox.checked {
@@ -372,18 +330,16 @@
             font-weight: bold;
         }
 
-        .task-content {
+        .task-title {
             flex: 1;
-        }
-
-        .task-content h4 {
-            margin-bottom: 8px;
             font-size: 18px;
+            font-weight: 600;
         }
 
-        .task-content p {
+        .task-description {
             color: var(--text-dim);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            line-height: 1.8;
         }
 
         .code-block {
@@ -391,10 +347,27 @@
             padding: 15px;
             border-radius: 6px;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 13px;
             overflow-x: auto;
             border: 1px solid var(--border);
-            margin-top: 10px;
+            margin: 10px 0;
+        }
+
+        .ui-steps {
+            color: var(--text-dim);
+        }
+
+        .ui-steps ol {
+            padding-left: 20px;
+        }
+
+        .ui-steps li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .ui-steps strong {
+            color: var(--text);
         }
 
         .action-buttons {
@@ -407,70 +380,18 @@
             background: transparent;
             color: var(--text-dim);
             border: 2px solid var(--border);
-            padding: 15px 40px;
+            padding: 12px 30px;
             border-radius: 8px;
-            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .info-box {
-            background: var(--dark);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .info-box h4 {
-            color: var(--secondary);
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .info-box p {
-            color: var(--text-dim);
-            font-size: 14px;
-        }
-
-        .warning-box {
-            background: rgba(255, 160, 0, 0.1);
-            border: 1px solid var(--warning);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .warning-box h4 {
-            color: var(--warning);
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .cloud-options {
+        @media (max-width: 1024px) {
+            .sidebar-layout {
                 grid-template-columns: 1fr;
             }
-            .progress-steps {
-                flex-direction: column;
-                gap: 20px;
-            }
-            .progress-line {
-                display: none;
-            }
-            .action-buttons {
-                flex-direction: column;
+            .steps-sidebar {
+                position: static;
             }
         }
     </style>
@@ -489,29 +410,30 @@
     <div class="main-content">
         <div id="welcomeScreen" class="welcome-screen">
             <div class="container">
-                <h1>Welcome to Cloud Genesis</h1>
-                <p>Enterprise Cloud Security Platform with automated DevSecOps integration</p>
+                <h1>Cloud Genesis Enterprise Setup</h1>
+                <p style="font-size: 18px; color: var(--text-dim); margin-bottom: 40px;">Complete infrastructure deployment with CLI and UI instructions</p>
                 
                 <div class="cloud-selector">
-                    <h2>Select Your Cloud Provider</h2>
+                    <h2 style="margin-bottom: 10px;">Select Your Cloud Provider</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 30px;">Choose your target cloud platform to begin comprehensive setup</p>
                     <div class="cloud-options">
                         <div class="cloud-option" data-provider="aws">
                             <div style="font-size: 50px;">☁️</div>
                             <h3>AWS</h3>
-                            <p>Amazon Web Services</p>
+                            <p style="font-size: 14px; color: var(--text-dim);">Amazon Web Services</p>
                         </div>
                         <div class="cloud-option" data-provider="azure">
                             <div style="font-size: 50px;">🌐</div>
                             <h3>Azure</h3>
-                            <p>Microsoft Azure</p>
+                            <p style="font-size: 14px; color: var(--text-dim);">Microsoft Azure</p>
                         </div>
                         <div class="cloud-option" data-provider="gcp">
                             <div style="font-size: 50px;">☁️</div>
                             <h3>GCP</h3>
-                            <p>Google Cloud</p>
+                            <p style="font-size: 14px; color: var(--text-dim);">Google Cloud</p>
                         </div>
                     </div>
-                    <button id="startBtn" class="btn" disabled>Start Setup</button>
+                    <button id="startBtn" class="btn" disabled>Start Complete Setup</button>
                 </div>
             </div>
         </div>
@@ -520,44 +442,19 @@
             <div class="container">
                 <div class="dashboard-header">
                     <div class="provider-badge">
-                        <div id="providerIcon" style="font-size: 50px;"></div>
-                        <div class="provider-info">
-                            <h2 id="providerName"></h2>
-                            <p>Security Setup Wizard</p>
+                        <div id="providerIcon"></div>
+                        <div>
+                            <h2 id="providerName" style="margin-bottom: 5px;"></h2>
+                            <p style="color: var(--text-dim);">Complete Enterprise Setup</p>
                         </div>
                     </div>
                     <button class="change-provider" onclick="resetSelection()">Change Provider</button>
                 </div>
 
-                <div class="progress-bar">
-                    <div class="progress-steps">
-                        <div class="progress-line">
-                            <div class="progress-line-fill" id="progressFill"></div>
-                        </div>
-                        <div class="step active" data-step="1">
-                            <div class="step-circle">1</div>
-                            <div class="step-label">Prerequisites</div>
-                        </div>
-                        <div class="step" data-step="2">
-                            <div class="step-circle">2</div>
-                            <div class="step-label">Configuration</div>
-                        </div>
-                        <div class="step" data-step="3">
-                            <div class="step-circle">3</div>
-                            <div class="step-label">Security</div>
-                        </div>
-                        <div class="step" data-step="4">
-                            <div class="step-circle">4</div>
-                            <div class="step-label">Deploy</div>
-                        </div>
-                        <div class="step" data-step="5">
-                            <div class="step-circle">5</div>
-                            <div class="step-label">Verify</div>
-                        </div>
-                    </div>
+                <div class="sidebar-layout">
+                    <div class="steps-sidebar" id="stepsSidebar"></div>
+                    <div class="content-area" id="contentArea"></div>
                 </div>
-
-                <div id="stepContent"></div>
 
                 <div class="action-buttons">
                     <button class="btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">Previous</button>
@@ -570,146 +467,882 @@
     <script>
         let selectedProvider = null;
         let currentStep = 1;
-        const totalSteps = 5;
 
-        const providerData = {
-            aws: {
-                name: 'Amazon Web Services',
-                icon: '☁️',
-                steps: {
-                    1: {
-                        title: 'Prerequisites Check',
-                        tasks: [
-                            { title: 'AWS CLI Installed', desc: 'Install AWS CLI version 2 or higher', code: 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\nunzip awscliv2.zip\nsudo ./aws/install' },
-                            { title: 'AWS Account Access', desc: 'Ensure you have AWS account with admin privileges', code: 'aws configure' },
-                            { title: 'Terraform Installed', desc: 'Install Terraform for infrastructure as code', code: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/' }
+        const steps = [
+            { id: 1, name: 'Prerequisites', icon: '📚' },
+            { id: 2, name: 'IAM & Permissions', icon: '🔐' },
+            { id: 3, name: 'Network Setup', icon: '🌐' },
+            { id: 4, name: 'Storage Configuration', icon: '🗄' },
+            { id: 5, name: 'Compute Resources', icon: '🖥' },
+            { id: 6, name: 'Database Setup', icon: '📦' },
+            { id: 7, name: 'Load Balancing', icon: '⚖️' },
+            { id: 8, name: 'Security Groups', icon: '🛡' },
+            { id: 9, name: 'Monitoring & Logging', icon: '📊' },
+            { id: 10, name: 'Backup & DR', icon: '💾' },
+            { id: 11, name: 'DNS & CDN', icon: '🌍' },
+            { id: 12, name: 'Cost Management', icon: '💰' },
+            { id: 13, name: 'Deploy Application', icon: '🚀' },
+            { id: 14, name: 'Security Hardening', icon: '🔒' },
+            { id: 15, name: 'Final Verification', icon: '✔️' }
+        ];
+
+        const awsSteps = {
+            1: {
+                title: 'Prerequisites and Environment Setup',
+                tasks: [
+                    {
+                        title: 'Install AWS CLI',
+                        description: 'Install AWS Command Line Interface for programmatic access',
+                        cli: 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\nunzip awscliv2.zip\nsudo ./aws/install\naws --version',
+                        ui: [
+                            'Download AWS CLI from https://aws.amazon.com/cli/',
+                            'Run the installer for your operating system',
+                            'Verify installation by opening terminal and typing aws --version'
                         ]
                     },
-                    2: {
-                        title: 'AWS Configuration Setup',
-                        tasks: [
-                            { title: 'Configure AWS Credentials', desc: 'Set up your AWS access keys and default region', code: 'aws configure\nAWS Access Key ID: YOUR_ACCESS_KEY\nAWS Secret Access Key: YOUR_SECRET_KEY\nDefault region: us-east-1\nDefault output format: json' },
-                            { title: 'Create S3 Bucket for State', desc: 'Create S3 bucket to store Terraform state', code: 'aws s3 mb s3://cloud-genesis-tfstate-$(date +%s)\naws s3api put-bucket-versioning --bucket cloud-genesis-tfstate --versioning-configuration Status=Enabled' },
-                            { title: 'Setup VPC and Networking', desc: 'Configure your VPC, subnets, and security groups', code: 'terraform init\nterraform plan -var="provider=aws"\nterraform apply -auto-approve' }
+                    {
+                        title: 'Configure AWS Credentials',
+                        description: 'Set up access keys for AWS account authentication',
+                        cli: 'aws configure\n# Enter AWS Access Key ID\n# Enter AWS Secret Access Key\n# Default region: us-east-1\n# Default output format: json',
+                        ui: [
+                            'Log in to AWS Console at https://console.aws.amazon.com',
+                            'Navigate to IAM > Users > Your User > Security Credentials',
+                            'Click Create Access Key',
+                            'Download and save credentials securely',
+                            'Run aws configure in terminal and enter the credentials'
                         ]
                     },
-                    3: {
-                        title: 'Security Configuration',
-                        tasks: [
-                            { title: 'Enable CloudTrail Logging', desc: 'Enable AWS CloudTrail for audit logging', code: 'aws cloudtrail create-trail --name cloud-genesis-audit --s3-bucket-name audit-logs\naws cloudtrail start-logging --name cloud-genesis-audit' },
-                            { title: 'Configure IAM Roles', desc: 'Set up least privilege IAM roles and policies', code: 'aws iam create-role --role-name CloudGenesisRole --assume-role-policy-document file://trust-policy.json\naws iam attach-role-policy --role-name CloudGenesisRole --policy-arn arn:aws:iam::aws:policy/SecurityAudit' },
-                            { title: 'Enable GuardDuty', desc: 'Activate AWS GuardDuty for threat detection', code: 'aws guardduty create-detector --enable' }
-                        ]
-                    },
-                    4: {
-                        title: 'Deploy Cloud Genesis',
-                        tasks: [
-                            { title: 'Clone Repository', desc: 'Get the Cloud Genesis codebase', code: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis' },
-                            { title: 'Configure Environment', desc: 'Set up environment variables', code: 'cp .env.sample .env\nexport CLOUD_PROVIDER=aws\nexport AWS_REGION=us-east-1' },
-                            { title: 'Deploy Infrastructure', desc: 'Deploy Cloud Genesis to AWS', code: 'docker-compose up -d\nkubectl apply -f k8s/aws/' }
-                        ]
-                    },
-                    5: {
-                        title: 'Verification and Testing',
-                        tasks: [
-                            { title: 'Verify Deployment', desc: 'Check all services are running', code: 'kubectl get pods -n cloud-genesis\naws ecs list-tasks --cluster cloud-genesis' },
-                            { title: 'Run Security Scan', desc: 'Execute initial security audit', code: 'python scripts/security-scan.py --provider aws' },
-                            { title: 'Access Dashboard', desc: 'Open Cloud Genesis dashboard and configure monitoring', code: 'kubectl port-forward svc/cloud-genesis-ui 8080:80\nopen http://localhost:8080' }
+                    {
+                        title: 'Install Terraform',
+                        description: 'Install Terraform for Infrastructure as Code',
+                        cli: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/\nterraform --version',
+                        ui: [
+                            'Visit https://www.terraform.io/downloads',
+                            'Download Terraform for your OS',
+                            'Extract and add to system PATH',
+                            'Verify by running terraform --version'
                         ]
                     }
-                }
+                ]
             },
-            azure: {
-                name: 'Microsoft Azure',
-                icon: '🌐',
-                steps: {
-                    1: {
-                        title: 'Prerequisites Check',
-                        tasks: [
-                            { title: 'Azure CLI Installed', desc: 'Install Azure CLI', code: 'curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash' },
-                            { title: 'Azure Subscription', desc: 'Ensure active Azure subscription', code: 'az login\naz account show' },
-                            { title: 'Terraform Installed', desc: 'Install Terraform for IaC', code: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/' }
+            2: {
+                title: 'Identity and Access Management',
+                tasks: [
+                    {
+                        title: 'Create IAM Roles',
+                        description: 'Set up IAM roles with least privilege access',
+                        cli: 'aws iam create-role --role-name CloudGenesisRole --assume-role-policy-document file://trust-policy.json\naws iam attach-role-policy --role-name CloudGenesisRole --policy-arn arn:aws:iam::aws:policy/AdministratorAccess',
+                        ui: [
+                            'Open AWS Console > IAM > Roles',
+                            'Click Create Role',
+                            'Select Trusted Entity: AWS Service > EC2',
+                            'Attach Policies: AmazonEC2FullAccess, AmazonS3FullAccess, CloudWatchFullAccess',
+                            'Name: CloudGenesisRole',
+                            'Click Create Role'
                         ]
                     },
-                    2: {
-                        title: 'Azure Configuration',
-                        tasks: [
-                            { title: 'Create Resource Group', desc: 'Set up Azure resource group', code: 'az group create --name CloudGenesisRG --location eastus' },
-                            { title: 'Configure Storage Account', desc: 'Create storage for Terraform state', code: 'az storage account create --name cloudgenesisstate --resource-group CloudGenesisRG --location eastus --sku Standard_LRS' },
-                            { title: 'Setup Virtual Network', desc: 'Configure Azure VNet and subnets', code: 'az network vnet create --resource-group CloudGenesisRG --name CloudGenesisVNet --address-prefix 10.0.0.0/16\naz network vnet subnet create --resource-group CloudGenesisRG --vnet-name CloudGenesisVNet --name default --address-prefixes 10.0.1.0/24' }
+                    {
+                        title: 'Create IAM Users',
+                        description: 'Create dedicated users for team members',
+                        cli: 'aws iam create-user --user-name cloud-genesis-admin\naws iam attach-user-policy --user-name cloud-genesis-admin --policy-arn arn:aws:iam::aws:policy/AdministratorAccess\naws iam create-access-key --user-name cloud-genesis-admin',
+                        ui: [
+                            'Navigate to IAM > Users > Add Users',
+                            'Username: cloud-genesis-admin',
+                            'Access type: Programmatic and Console',
+                            'Attach policies: AdministratorAccess',
+                            'Download credentials CSV',
+                            'Enable MFA for enhanced security'
                         ]
                     },
-                    3: {
-                        title: 'Security Configuration',
-                        tasks: [
-                            { title: 'Enable Azure Security Center', desc: 'Activate security monitoring', code: 'az security pricing create --name VirtualMachines --tier standard\naz security auto-provisioning-setting update --auto-provision On --name default' },
-                            { title: 'Configure Azure AD', desc: 'Set up identity and access management', code: 'az ad sp create-for-rbac --name CloudGenesisApp --role Contributor --scopes /subscriptions/YOUR_SUBSCRIPTION_ID' },
-                            { title: 'Enable Defender', desc: 'Activate Microsoft Defender for Cloud', code: 'az security pricing create --name CloudPosture --tier standard' }
-                        ]
-                    },
-                    4: {
-                        title: 'Deploy Cloud Genesis',
-                        tasks: [
-                            { title: 'Clone Repository', desc: 'Get Cloud Genesis code', code: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis' },
-                            { title: 'Configure Environment', desc: 'Setup Azure environment variables', code: 'cp .env.sample .env\nexport CLOUD_PROVIDER=azure\nexport AZURE_SUBSCRIPTION_ID=your_subscription_id' },
-                            { title: 'Deploy to AKS', desc: 'Deploy Cloud Genesis on Azure Kubernetes', code: 'az aks create --resource-group CloudGenesisRG --name CloudGenesisCluster\naz aks get-credentials --resource-group CloudGenesisRG --name CloudGenesisCluster\nkubectl apply -f k8s/azure/' }
-                        ]
-                    },
-                    5: {
-                        title: 'Verification and Testing',
-                        tasks: [
-                            { title: 'Verify Deployment', desc: 'Check all services are operational', code: 'kubectl get pods -n cloud-genesis\naz container list --resource-group CloudGenesisRG' },
-                            { title: 'Run Security Scan', desc: 'Execute security audit', code: 'python scripts/security-scan.py --provider azure' },
-                            { title: 'Access Dashboard', desc: 'Open monitoring dashboard', code: 'kubectl port-forward svc/cloud-genesis-ui 8080:80\nopen http://localhost:8080' }
+                    {
+                        title: 'Enable MFA',
+                        description: 'Enable Multi-Factor Authentication for security',
+                        cli: 'aws iam enable-mfa-device --user-name cloud-genesis-admin --serial-number arn:aws:iam::ACCOUNT_ID:mfa/cloud-genesis-admin --authentication-code-1 CODE1 --authentication-code-2 CODE2',
+                        ui: [
+                            'Go to IAM > Users > Select User',
+                            'Click Security Credentials tab',
+                            'Under Multi-factor authentication, click Assign MFA device',
+                            'Choose Virtual MFA device',
+                            'Scan QR code with authenticator app',
+                            'Enter two consecutive MFA codes',
+                            'Click Assign MFA'
                         ]
                     }
-                }
+                ]
             },
-            gcp: {
-                name: 'Google Cloud Platform',
-                icon: '☁️',
-                steps: {
-                    1: {
-                        title: 'Prerequisites Check',
-                        tasks: [
-                            { title: 'gcloud SDK Installed', desc: 'Install Google Cloud SDK', code: 'curl https://sdk.cloud.google.com | bash\nexec -l $SHELL\ngcloud init' },
-                            { title: 'GCP Project Access', desc: 'Ensure GCP project with billing enabled', code: 'gcloud projects list\ngcloud config set project YOUR_PROJECT_ID' },
-                            { title: 'Terraform Installed', desc: 'Install Terraform', code: 'wget https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip\nunzip terraform_1.6.0_linux_amd64.zip\nsudo mv terraform /usr/local/bin/' }
+            3: {
+                title: 'Virtual Private Cloud and Networking',
+                tasks: [
+                    {
+                        title: 'Create VPC',
+                        description: 'Create isolated virtual network for your resources',
+                        cli: 'aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications "ResourceType=vpc,Tags=[{Key=Name,Value=CloudGenesisVPC}]"',
+                        ui: [
+                            'Open VPC Console',
+                            'Click Create VPC',
+                            'Name: CloudGenesisVPC',
+                            'IPv4 CIDR: 10.0.0.0/16',
+                            'IPv6 CIDR: No IPv6',
+                            'Tenancy: Default',
+                            'Click Create VPC'
                         ]
                     },
-                    2: {
-                        title: 'GCP Configuration',
-                        tasks: [
-                            { title: 'Enable Required APIs', desc: 'Enable necessary GCP APIs', code: 'gcloud services enable compute.googleapis.com\ngcloud services enable container.googleapis.com\ngcloud services enable cloudresourcemanager.googleapis.com' },
-                            { title: 'Create GCS Bucket', desc: 'Set up Cloud Storage for Terraform state', code: 'gsutil mb -l us-central1 gs://cloud-genesis-tfstate-$(date +%s)\ngsutil versioning set on gs://cloud-genesis-tfstate' },
-                            { title: 'Setup VPC Network', desc: 'Configure VPC and firewall rules', code: 'gcloud compute networks create cloud-genesis-vpc --subnet-mode=custom\ngcloud compute networks subnets create cloud-genesis-subnet --network=cloud-genesis-vpc --region=us-central1 --range=10.0.0.0/24' }
+                    {
+                        title: 'Create Subnets',
+                        description: 'Create public and private subnets across availability zones',
+                        cli: 'aws ec2 create-subnet --vpc-id VPC_ID --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications "ResourceType=subnet,Tags=[{Key=Name,Value=PublicSubnet1}]"\naws ec2 create-subnet --vpc-id VPC_ID --cidr-block 10.0.2.0/24 --availability-zone us-east-1b --tag-specifications "ResourceType=subnet,Tags=[{Key=Name,Value=PrivateSubnet1}]"',
+                        ui: [
+                            'In VPC Console, select Subnets',
+                            'Click Create Subnet',
+                            'Select VPC: CloudGenesisVPC',
+                            'Create Public Subnet: Name=PublicSubnet1, AZ=us-east-1a, CIDR=10.0.1.0/24',
+                            'Create Public Subnet: Name=PublicSubnet2, AZ=us-east-1b, CIDR=10.0.3.0/24',
+                            'Create Private Subnet: Name=PrivateSubnet1, AZ=us-east-1a, CIDR=10.0.2.0/24',
+                            'Create Private Subnet: Name=PrivateSubnet2, AZ=us-east-1b, CIDR=10.0.4.0/24'
                         ]
                     },
-                    3: {
-                        title: 'Security Configuration',
-                        tasks: [
-                            { title: 'Enable Cloud Logging', desc: 'Activate audit logging', code: 'gcloud logging sinks create cloud-genesis-audit storage.googleapis.com/cloud-genesis-audit-logs' },
-                            { title: 'Configure IAM', desc: 'Set up service accounts and IAM roles', code: 'gcloud iam service-accounts create cloud-genesis-sa --display-name="Cloud Genesis Service Account"\ngcloud projects add-iam-policy-binding YOUR_PROJECT_ID --member="serviceAccount:cloud-genesis-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com" --role="roles/editor"' },
-                            { title: 'Enable Security Command Center', desc: 'Activate GCP SCC', code: 'gcloud scc sources create --organization=YOUR_ORG_ID --display-name="Cloud Genesis"' }
+                    {
+                        title: 'Configure Internet Gateway',
+                        description: 'Enable internet access for public subnets',
+                        cli: 'aws ec2 create-internet-gateway --tag-specifications "ResourceType=internet-gateway,Tags=[{Key=Name,Value=CloudGenesisIGW}]"\naws ec2 attach-internet-gateway --vpc-id VPC_ID --internet-gateway-id IGW_ID',
+                        ui: [
+                            'Go to VPC > Internet Gateways',
+                            'Click Create Internet Gateway',
+                            'Name: CloudGenesisIGW',
+                            'Click Create',
+                            'Select the IGW > Actions > Attach to VPC',
+                            'Select CloudGenesisVPC',
+                            'Click Attach'
                         ]
                     },
-                    4: {
-                        title: 'Deploy Cloud Genesis',
-                        tasks: [
-                            { title: 'Clone Repository', desc: 'Get Cloud Genesis source', code: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis' },
-                            { title: 'Configure Environment', desc: 'Set GCP environment variables', code: 'cp .env.sample .env\nexport CLOUD_PROVIDER=gcp\nexport GCP_PROJECT_ID=your_project_id' },
-                            { title: 'Deploy to GKE', desc: 'Deploy on Google Kubernetes Engine', code: 'gcloud container clusters create cloud-genesis-cluster --zone=us-central1-a\ngcloud container clusters get-credentials cloud-genesis-cluster --zone=us-central1-a\nkubectl apply -f k8s/gcp/' }
-                        ]
-                    },
-                    5: {
-                        title: 'Verification and Testing',
-                        tasks: [
-                            { title: 'Verify Deployment', desc: 'Check deployment status', code: 'kubectl get pods -n cloud-genesis\ngcloud compute instances list' },
-                            { title: 'Run Security Scan', desc: 'Execute initial security audit', code: 'python scripts/security-scan.py --provider gcp' },
-                            { title: 'Access Dashboard', desc: 'Open Cloud Genesis UI', code: 'kubectl port-forward svc/cloud-genesis-ui 8080:80\nopen http://localhost:8080' }
+                    {
+                        title: 'Setup Route Tables',
+                        description: 'Configure routing for public and private subnets',
+                        cli: 'aws ec2 create-route-table --vpc-id VPC_ID --tag-specifications "ResourceType=route-table,Tags=[{Key=Name,Value=PublicRouteTable}]"\naws ec2 create-route --route-table-id RTB_ID --destination-cidr-block 0.0.0.0/0 --gateway-id IGW_ID',
+                        ui: [
+                            'Navigate to VPC > Route Tables',
+                            'Click Create Route Table',
+                            'Name: PublicRouteTable, VPC: CloudGenesisVPC',
+                            'Select route table > Routes > Edit Routes',
+                            'Add Route: Destination=0.0.0.0/0, Target=Internet Gateway',
+                            'Go to Subnet Associations > Edit',
+                            'Associate PublicSubnet1 and PublicSubnet2'
                         ]
                     }
-                }
+                ]
+            },
+            4: {
+                title: 'Storage Configuration',
+                tasks: [
+                    {
+                        title: 'Create S3 Buckets',
+                        description: 'Set up object storage for application data',
+                        cli: 'aws s3 mb s3://cloud-genesis-app-data-$(date +%s)\naws s3 mb s3://cloud-genesis-backup-$(date +%s)\naws s3api put-bucket-versioning --bucket BUCKET_NAME --versioning-configuration Status=Enabled',
+                        ui: [
+                            'Open S3 Console',
+                            'Click Create Bucket',
+                            'Bucket Name: cloud-genesis-app-data-[timestamp]',
+                            'Region: us-east-1',
+                            'Block all public access: Enabled',
+                            'Versioning: Enabled',
+                            'Encryption: Enable Server-side encryption with Amazon S3 managed keys',
+                            'Click Create Bucket',
+                            'Repeat for backup bucket'
+                        ]
+                    },
+                    {
+                        title: 'Configure S3 Lifecycle Policies',
+                        description: 'Automate data archival and deletion',
+                        cli: 'aws s3api put-bucket-lifecycle-configuration --bucket BUCKET_NAME --lifecycle-configuration file://lifecycle-policy.json',
+                        ui: [
+                            'Select bucket > Management tab',
+                            'Click Create lifecycle rule',
+                            'Rule name: ArchiveOldData',
+                            'Scope: Apply to all objects',
+                            'Lifecycle rule actions: Transition to Glacier after 90 days',
+                            'Expire objects after 365 days',
+                            'Click Create Rule'
+                        ]
+                    },
+                    {
+                        title: 'Setup EBS Volumes',
+                        description: 'Create block storage volumes for EC2 instances',
+                        cli: 'aws ec2 create-volume --availability-zone us-east-1a --size 100 --volume-type gp3 --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=CloudGenesisData}]"',
+                        ui: [
+                            'Open EC2 Console > Volumes',
+                            'Click Create Volume',
+                            'Volume Type: General Purpose SSD (gp3)',
+                            'Size: 100 GB',
+                            'IOPS: 3000',
+                            'Throughput: 125 MB/s',
+                            'Availability Zone: us-east-1a',
+                            'Encryption: Enabled',
+                            'Click Create Volume'
+                        ]
+                    }
+                ]
+            },
+            5: {
+                title: 'Compute Resources',
+                tasks: [
+                    {
+                        title: 'Launch EC2 Instances',
+                        description: 'Deploy virtual servers for applications',
+                        cli: 'aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --instance-type t3.medium --key-name CloudGenesisKey --subnet-id SUBNET_ID --security-group-ids SG_ID --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=CloudGenesisApp}]"',
+                        ui: [
+                            'Open EC2 Console > Instances',
+                            'Click Launch Instance',
+                            'Name: CloudGenesisApp',
+                            'AMI: Amazon Linux 2023',
+                            'Instance Type: t3.medium',
+                            'Key pair: Create new or select existing',
+                            'Network: CloudGenesisVPC, Subnet: PublicSubnet1',
+                            'Auto-assign public IP: Enable',
+                            'Storage: 30 GB gp3',
+                            'Click Launch Instance'
+                        ]
+                    },
+                    {
+                        title: 'Configure Auto Scaling',
+                        description: 'Setup automatic scaling based on demand',
+                        cli: 'aws autoscaling create-auto-scaling-group --auto-scaling-group-name CloudGenesisASG --launch-configuration-name CloudGenesisLC --min-size 2 --max-size 10 --desired-capacity 2 --vpc-zone-identifier "SUBNET_ID1,SUBNET_ID2"',
+                        ui: [
+                            'Navigate to EC2 > Auto Scaling Groups',
+                            'Click Create Auto Scaling Group',
+                            'Name: CloudGenesisASG',
+                            'Launch Template: Create from existing instance',
+                            'VPC: CloudGenesisVPC',
+                            'Subnets: Select both public subnets',
+                            'Desired: 2, Minimum: 2, Maximum: 10',
+                            'Scaling Policies: Target Tracking > CPU 70%',
+                            'Click Create'
+                        ]
+                    },
+                    {
+                        title: 'Setup ECS Cluster',
+                        description: 'Create container orchestration cluster',
+                        cli: 'aws ecs create-cluster --cluster-name cloud-genesis-cluster\naws ecs register-task-definition --cli-input-json file://task-definition.json',
+                        ui: [
+                            'Open ECS Console',
+                            'Click Create Cluster',
+                            'Cluster name: cloud-genesis-cluster',
+                            'Infrastructure: AWS Fargate',
+                            'Monitoring: Enable Container Insights',
+                            'Click Create',
+                            'Go to Task Definitions > Create new',
+                            'Launch type: Fargate',
+                            'Configure container settings'
+                        ]
+                    }
+                ]
+            },
+            6: {
+                title: 'Database Configuration',
+                tasks: [
+                    {
+                        title: 'Create RDS Instance',
+                        description: 'Deploy managed relational database',
+                        cli: 'aws rds create-db-instance --db-instance-identifier cloudgenesis-db --db-instance-class db.t3.medium --engine postgres --master-username admin --master-user-password PASSWORD --allocated-storage 100 --vpc-security-group-ids SG_ID --db-subnet-group-name CloudGenesisDBSubnetGroup',
+                        ui: [
+                            'Open RDS Console',
+                            'Click Create Database',
+                            'Creation method: Standard Create',
+                            'Engine: PostgreSQL 15.x',
+                            'Templates: Production',
+                            'DB Instance: cloudgenesis-db',
+                            'Master username: admin',
+                            'Master password: Create strong password',
+                            'Instance type: db.t3.medium',
+                            'Storage: 100 GB gp3',
+                            'VPC: CloudGenesisVPC',
+                            'Subnet group: Create new DB subnet group with private subnets',
+                            'Public access: No',
+                            'Enable automated backups: 7 days retention',
+                            'Click Create'
+                        ]
+                    },
+                    {
+                        title: 'Setup Read Replicas',
+                        description: 'Create read replicas for high availability',
+                        cli: 'aws rds create-db-instance-read-replica --db-instance-identifier cloudgenesis-db-replica --source-db-instance-identifier cloudgenesis-db --db-instance-class db.t3.medium --availability-zone us-east-1b',
+                        ui: [
+                            'Select primary database > Actions',
+                            'Click Create Read Replica',
+                            'Replica ID: cloudgenesis-db-replica',
+                            'Instance class: db.t3.medium',
+                            'Availability Zone: us-east-1b',
+                            'Public access: No',
+                            'Click Create'
+                        ]
+                    },
+                    {
+                        title: 'Configure DynamoDB',
+                        description: 'Setup NoSQL database for session management',
+                        cli: 'aws dynamodb create-table --table-name CloudGenesisSessions --attribute-definitions AttributeName=SessionID,AttributeType=S --key-schema AttributeName=SessionID,KeyType=HASH --billing-mode PAY_PER_REQUEST',
+                        ui: [
+                            'Open DynamoDB Console',
+                            'Click Create Table',
+                            'Table name: CloudGenesisSessions',
+                            'Partition key: SessionID (String)',
+                            'Table settings: Customize settings',
+                            'Capacity mode: On-demand',
+                            'Encryption: AWS owned key',
+                            'Enable Point-in-time recovery',
+                            'Click Create'
+                        ]
+                    }
+                ]
+            },
+            7: {
+                title: 'Load Balancing',
+                tasks: [
+                    {
+                        title: 'Create Application Load Balancer',
+                        description: 'Setup ALB for traffic distribution',
+                        cli: 'aws elbv2 create-load-balancer --name CloudGenesisALB --subnets SUBNET_ID1 SUBNET_ID2 --security-groups SG_ID --scheme internet-facing --type application',
+                        ui: [
+                            'Open EC2 > Load Balancers',
+                            'Click Create Load Balancer',
+                            'Type: Application Load Balancer',
+                            'Name: CloudGenesisALB',
+                            'Scheme: Internet-facing',
+                            'IP type: IPv4',
+                            'VPC: CloudGenesisVPC',
+                            'Subnets: Select both public subnets',
+                            'Security Group: Create new allowing HTTP/HTTPS',
+                            'Click Create'
+                        ]
+                    },
+                    {
+                        title: 'Configure Target Groups',
+                        description: 'Setup target groups for routing',
+                        cli: 'aws elbv2 create-target-group --name CloudGenesisTargets --protocol HTTP --port 80 --vpc-id VPC_ID --health-check-path /health',
+                        ui: [
+                            'Navigate to Target Groups',
+                            'Click Create Target Group',
+                            'Target type: Instances',
+                            'Name: CloudGenesisTargets',
+                            'Protocol: HTTP, Port: 80',
+                            'VPC: CloudGenesisVPC',
+                            'Health check path: /health',
+                            'Register targets: Select EC2 instances',
+                            'Click Create'
+                        ]
+                    },
+                    {
+                        title: 'Setup SSL Certificates',
+                        description: 'Configure HTTPS with SSL/TLS',
+                        cli: 'aws acm request-certificate --domain-name cloudgenesis.example.com --validation-method DNS',
+                        ui: [
+                            'Open Certificate Manager',
+                            'Click Request Certificate',
+                            'Certificate type: Public certificate',
+                            'Domain: cloudgenesis.example.com',
+                            'Add wildcard: *.cloudgenesis.example.com',
+                            'Validation: DNS validation',
+                            'Click Request',
+                            'Create CNAME records in Route 53 for validation',
+                            'Wait for validation',
+                            'Attach to ALB listener'
+                        ]
+                    }
+                ]
+            },
+            8: {
+                title: 'Security Groups and Firewall Rules',
+                tasks: [
+                    {
+                        title: 'Create Security Groups',
+                        description: 'Define firewall rules for resources',
+                        cli: 'aws ec2 create-security-group --group-name CloudGenesisWeb --description "Web tier security group" --vpc-id VPC_ID\naws ec2 authorize-security-group-ingress --group-id SG_ID --protocol tcp --port 443 --cidr 0.0.0.0/0',
+                        ui: [
+                            'Open EC2 > Security Groups',
+                            'Click Create Security Group',
+                            'Name: CloudGenesisWeb',
+                            'Description: Web tier security',
+                            'VPC: CloudGenesisVPC',
+                            'Inbound Rules:',
+                            '  - Type: HTTPS, Port: 443, Source: 0.0.0.0/0',
+                            '  - Type: HTTP, Port: 80, Source: 0.0.0.0/0',
+                            'Outbound: Allow all',
+                            'Repeat for App and DB tiers with appropriate rules',
+                            'Click Create'
+                        ]
+                    },
+                    {
+                        title: 'Configure Network ACLs',
+                        description: 'Setup subnet-level network access control',
+                        cli: 'aws ec2 create-network-acl --vpc-id VPC_ID\naws ec2 create-network-acl-entry --network-acl-id ACL_ID --ingress --rule-number 100 --protocol tcp --port-range From=443,To=443 --cidr-block 0.0.0.0/0 --rule-action allow',
+                        ui: [
+                            'Navigate to VPC > Network ACLs',
+                            'Click Create Network ACL',
+                            'Name: CloudGenesisPublicACL',
+                            'VPC: CloudGenesisVPC',
+                            'Click Create',
+                            'Edit Inbound Rules:',
+                            '  - Rule 100: Allow HTTP (80) from 0.0.0.0/0',
+                            '  - Rule 110: Allow HTTPS (443) from 0.0.0.0/0',
+                            '  - Rule 120: Allow SSH (22) from your IP',
+                            'Associate with public subnets'
+                        ]
+                    },
+                    {
+                        title: 'Enable AWS WAF',
+                        description: 'Deploy Web Application Firewall',
+                        cli: 'aws wafv2 create-web-acl --name CloudGenesisWAF --scope REGIONAL --default-action Allow={} --rules file://waf-rules.json',
+                        ui: [
+                            'Open AWS WAF Console',
+                            'Click Create Web ACL',
+                            'Name: CloudGenesisWAF',
+                            'Resource type: Regional (ALB)',
+                            'Associate with ALB',
+                            'Add managed rule groups:',
+                            '  - Core rule set',
+                            '  - Known bad inputs',
+                            '  - SQL database',
+                            'Add rate-based rule: 2000 requests per 5 minutes',
+                            'Click Create'
+                        ]
+                    }
+                ]
+            },
+            9: {
+                title: 'Monitoring and Logging',
+                tasks: [
+                    {
+                        title: 'Enable CloudWatch Monitoring',
+                        description: 'Setup comprehensive monitoring',
+                        cli: 'aws cloudwatch put-metric-alarm --alarm-name HighCPU --alarm-description "CPU exceeds 80%" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold',
+                        ui: [
+                            'Open CloudWatch Console',
+                            'Navigate to Alarms > Create Alarm',
+                            'Select metric: EC2 > Per-Instance Metrics > CPUUtilization',
+                            'Conditions: Greater than 80',
+                            'Period: 5 minutes',
+                            'Create SNS topic for notifications',
+                            'Add email endpoint',
+                            'Repeat for Memory, Disk, Network metrics',
+                            'Click Create Alarm'
+                        ]
+                    },
+                    {
+                        title: 'Setup CloudTrail',
+                        description: 'Enable audit logging for compliance',
+                        cli: 'aws cloudtrail create-trail --name CloudGenesisAudit --s3-bucket-name audit-logs-bucket\naws cloudtrail start-logging --name CloudGenesisAudit',
+                        ui: [
+                            'Open CloudTrail Console',
+                            'Click Create Trail',
+                            'Trail name: CloudGenesisAudit',
+                            'Apply to all regions: Yes',
+                            'Create new S3 bucket: cloudgenesis-audit-logs',
+                            'Enable log file validation',
+                            'Enable CloudWatch Logs',
+                            'Create new log group',
+                            'Enable SNS notifications',
+                            'Click Create Trail'
+                        ]
+                    },
+                    {
+                        title: 'Configure VPC Flow Logs',
+                        description: 'Capture network traffic logs',
+                        cli: 'aws ec2 create-flow-logs --resource-type VPC --resource-ids VPC_ID --traffic-type ALL --log-destination-type cloud-watch-logs --log-group-name /aws/vpc/flowlogs',
+                        ui: [
+                            'Go to VPC Console',
+                            'Select CloudGenesisVPC',
+                            'Actions > Create Flow Log',
+                            'Filter: All',
+                            'Destination: Send to CloudWatch Logs',
+                            'Create log group: /aws/vpc/cloudgenesis',
+                            'IAM role: Create new role',
+                            'Click Create'
+                        ]
+                    }
+                ]
+            },
+            10: {
+                title: 'Backup and Disaster Recovery',
+                tasks: [
+                    {
+                        title: 'Configure AWS Backup',
+                        description: 'Automate backup processes',
+                        cli: 'aws backup create-backup-plan --backup-plan file://backup-plan.json',
+                        ui: [
+                            'Open AWS Backup Console',
+                            'Click Create Backup Plan',
+                            'Build new plan',
+                            'Plan name: CloudGenesisDailyBackup',
+                            'Rule name: DailyRule',
+                            'Backup frequency: Daily',
+                            'Backup window: Start 1 AM',
+                            'Lifecycle: Delete after 30 days',
+                            'Assign resources: Select EC2, RDS, EBS',
+                            'Click Create Plan'
+                        ]
+                    },
+                    {
+                        title: 'Setup RDS Snapshots',
+                        description: 'Configure automated database backups',
+                        cli: 'aws rds modify-db-instance --db-instance-identifier cloudgenesis-db --backup-retention-period 7 --preferred-backup-window "03:00-04:00" --apply-immediately',
+                        ui: [
+                            'Open RDS Console',
+                            'Select cloudgenesis-db',
+                            'Click Modify',
+                            'Backup retention: 7 days',
+                            'Backup window: 03:00-04:00 UTC',
+                            'Enable automated backups to another region',
+                            'Copy tags to snapshots: Yes',
+                            'Click Continue > Apply Immediately'
+                        ]
+                    },
+                    {
+                        title: 'Create AMI Backups',
+                        description: 'Create machine images for quick recovery',
+                        cli: 'aws ec2 create-image --instance-id INSTANCE_ID --name "CloudGenesisBackup-$(date +%Y%m%d)" --description "Daily backup" --no-reboot',
+                        ui: [
+                            'Go to EC2 > Instances',
+                            'Select instance',
+                            'Actions > Image and templates > Create image',
+                            'Name: CloudGenesisBackup-YYYYMMDD',
+                            'Description: Daily automated backup',
+                            'No reboot: Enabled',
+                            'Click Create Image',
+                            'Setup lifecycle manager for automatic AMI creation'
+                        ]
+                    }
+                ]
+            },
+            11: {
+                title: 'DNS and Content Delivery',
+                tasks: [
+                    {
+                        title: 'Configure Route 53',
+                        description: 'Setup DNS for domain management',
+                        cli: 'aws route53 create-hosted-zone --name cloudgenesis.com --caller-reference $(date +%s)\naws route53 change-resource-record-sets --hosted-zone-id ZONE_ID --change-batch file://dns-records.json',
+                        ui: [
+                            'Open Route 53 Console',
+                            'Click Create Hosted Zone',
+                            'Domain name: cloudgenesis.com',
+                            'Type: Public hosted zone',
+                            'Click Create',
+                            'Create Record Sets:',
+                            '  - A record: Point to ALB',
+                            '  - CNAME www: Point to root domain',
+                            'Update nameservers at domain registrar',
+                            'Enable DNSSEC for security'
+                        ]
+                    },
+                    {
+                        title: 'Setup CloudFront CDN',
+                        description: 'Deploy content delivery network',
+                        cli: 'aws cloudfront create-distribution --distribution-config file://cloudfront-config.json',
+                        ui: [
+                            'Open CloudFront Console',
+                            'Click Create Distribution',
+                            'Origin Domain: Select ALB',
+                            'Origin Protocol: HTTPS only',
+                            'Viewer Protocol: Redirect HTTP to HTTPS',
+                            'Allowed Methods: GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE',
+                            'Cache Policy: CachingOptimized',
+                            'Origin Request Policy: AllViewerExceptHostHeader',
+                            'WAF: Associate CloudGenesisWAF',
+                            'Alternate domain: cloudgenesis.com, www.cloudgenesis.com',
+                            'SSL Certificate: Select from ACM',
+                            'Click Create Distribution'
+                        ]
+                    },
+                    {
+                        title: 'Configure Health Checks',
+                        description: 'Setup Route 53 health monitoring',
+                        cli: 'aws route53 create-health-check --health-check-config IPAddress=ALB_IP,Port=443,Type=HTTPS,ResourcePath=/health',
+                        ui: [
+                            'In Route 53, navigate to Health Checks',
+                            'Click Create Health Check',
+                            'Name: CloudGenesisHealthCheck',
+                            'Endpoint: Domain name',
+                            'Domain: cloudgenesis.com',
+                            'Port: 443',
+                            'Path: /health',
+                            'Check interval: 30 seconds',
+                            'Failure threshold: 3',
+                            'Enable CloudWatch alarm',
+                            'Click Create'
+                        ]
+                    }
+                ]
+            },
+            12: {
+                title: 'Cost Management and Optimization',
+                tasks: [
+                    {
+                        title: 'Setup Cost Explorer',
+                        description: 'Monitor and analyze spending',
+                        cli: 'aws ce get-cost-and-usage --time-period Start=2024-01-01,End=2024-01-31 --granularity MONTHLY --metrics BlendedCost',
+                        ui: [
+                            'Open AWS Cost Management Console',
+                            'Navigate to Cost Explorer',
+                            'Click Enable Cost Explorer',
+                            'Create custom reports:',
+                            '  - Monthly cost by service',
+                            '  - Daily cost trends',
+                            '  - Reserved Instance coverage',
+                            'Save reports to dashboard',
+                            'Schedule automated delivery via email'
+                        ]
+                    },
+                    {
+                        title: 'Configure Budget Alerts',
+                        description: 'Setup spending alerts and limits',
+                        cli: 'aws budgets create-budget --account-id ACCOUNT_ID --budget file://monthly-budget.json --notifications-with-subscribers file://budget-notifications.json',
+                        ui: [
+                            'Navigate to AWS Budgets',
+                            'Click Create Budget',
+                            'Type: Cost budget',
+                            'Name: CloudGenesisMonthlyBudget',
+                            'Period: Monthly',
+                            'Budgeted amount: $5000',
+                            'Alert thresholds:',
+                            '  - 80% of budgeted amount',
+                            '  - 100% of budgeted amount',
+                            'Email notifications: Add addresses',
+                            'Click Create Budget'
+                        ]
+                    },
+                    {
+                        title: 'Purchase Reserved Instances',
+                        description: 'Optimize costs with reserved capacity',
+                        cli: 'aws ec2 describe-reserved-instances-offerings --instance-type t3.medium --offering-type "All Upfront" --product-description Linux/UNIX',
+                        ui: [
+                            'Go to EC2 > Reserved Instances',
+                            'Click Purchase Reserved Instances',
+                            'Instance type: t3.medium',
+                            'Term: 1 year',
+                            'Payment: All upfront (maximum savings)',
+                            'Quantity: Based on utilization report',
+                            'Review savings comparison',
+                            'Click Purchase',
+                            'Consider Savings Plans for flexibility'
+                        ]
+                    }
+                ]
+            },
+            13: {
+                title: 'Deploy Cloud Genesis Application',
+                tasks: [
+                    {
+                        title: 'Clone Repository',
+                        description: 'Get Cloud Genesis source code',
+                        cli: 'git clone https://github.com/bharathk2498/cloud-genesis.git\ncd cloud-genesis\nls -la',
+                        ui: [
+                            'Open terminal or command prompt',
+                            'Navigate to desired directory',
+                            'Run: git clone https://github.com/bharathk2498/cloud-genesis.git',
+                            'Change into directory: cd cloud-genesis',
+                            'Review README.md for specific instructions'
+                        ]
+                    },
+                    {
+                        title: 'Configure Environment',
+                        description: 'Setup environment variables and configuration',
+                        cli: 'cp .env.sample .env\nexport CLOUD_PROVIDER=aws\nexport AWS_REGION=us-east-1\nexport DB_HOST=cloudgenesis-db.xxxxx.us-east-1.rds.amazonaws.com\nexport DB_NAME=cloudgenesis\nexport DB_USER=admin\nexport DB_PASSWORD=your_secure_password',
+                        ui: [
+                            'Copy .env.sample to .env',
+                            'Edit .env file with your settings:',
+                            '  CLOUD_PROVIDER=aws',
+                            '  AWS_REGION=us-east-1',
+                            '  DB_HOST=your-rds-endpoint',
+                            '  DB_NAME=cloudgenesis',
+                            '  DB_USER=admin',
+                            '  DB_PASSWORD=your_password',
+                            '  S3_BUCKET=your-app-bucket',
+                            'Save file securely'
+                        ]
+                    },
+                    {
+                        title: 'Deploy with Docker',
+                        description: 'Build and deploy containerized application',
+                        cli: 'docker-compose build\ndocker-compose up -d\ndocker-compose ps\ndocker-compose logs -f',
+                        ui: [
+                            'Ensure Docker Desktop is running',
+                            'Open terminal in project directory',
+                            'Run: docker-compose build',
+                            'Wait for build to complete',
+                            'Run: docker-compose up -d',
+                            'Verify: docker-compose ps',
+                            'Check logs: docker-compose logs',
+                            'Access application at http://localhost:8080'
+                        ]
+                    },
+                    {
+                        title: 'Deploy to ECS',
+                        description: 'Deploy containers to Amazon ECS',
+                        cli: 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com\ndocker build -t cloud-genesis .\ndocker tag cloud-genesis:latest ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/cloud-genesis:latest\ndocker push ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/cloud-genesis:latest\naws ecs create-service --cluster cloud-genesis-cluster --service-name cloud-genesis-api --task-definition cloud-genesis-task --desired-count 2 --launch-type FARGATE',
+                        ui: [
+                            'Open ECS Console',
+                            'Select cloud-genesis-cluster',
+                            'Click Create Service',
+                            'Launch type: Fargate',
+                            'Task definition: Select latest revision',
+                            'Service name: cloud-genesis-api',
+                            'Number of tasks: 2',
+                            'VPC: CloudGenesisVPC',
+                            'Subnets: Private subnets',
+                            'Security group: App security group',
+                            'Load balancer: Application Load Balancer',
+                            'Target group: CloudGenesisTargets',
+                            'Enable auto-scaling',
+                            'Click Create Service'
+                        ]
+                    }
+                ]
+            },
+            14: {
+                title: 'Security Hardening',
+                tasks: [
+                    {
+                        title: 'Enable GuardDuty',
+                        description: 'Activate intelligent threat detection',
+                        cli: 'aws guardduty create-detector --enable\naws guardduty create-ip-set --detector-id DETECTOR_ID --name TrustedIPs --format TXT --location s3://bucket/trusted-ips.txt --activate',
+                        ui: [
+                            'Open GuardDuty Console',
+                            'Click Get Started',
+                            'Click Enable GuardDuty',
+                            'Enable S3 Protection',
+                            'Enable EKS Protection',
+                            'Configure findings export to S3',
+                            'Setup CloudWatch Events for findings',
+                            'Create SNS topic for alerts',
+                            'Review sample findings'
+                        ]
+                    },
+                    {
+                        title: 'Configure Security Hub',
+                        description: 'Centralize security findings',
+                        cli: 'aws securityhub enable-security-hub\naws securityhub batch-enable-standards --standards-subscription-requests StandardsArn=arn:aws:securityhub:us-east-1::standards/aws-foundational-security-best-practices/v/1.0.0',
+                        ui: [
+                            'Open Security Hub Console',
+                            'Click Enable Security Hub',
+                            'Enable security standards:',
+                            '  - AWS Foundational Security Best Practices',
+                            '  - CIS AWS Foundations Benchmark',
+                            '  - PCI DSS',
+                            'Integrate findings from:',
+                            '  - GuardDuty',
+                            '  - Inspector',
+                            '  - Macie',
+                            'Configure custom insights',
+                            'Setup automated responses'
+                        ]
+                    },
+                    {
+                        title: 'Enable AWS Config',
+                        description: 'Track resource configuration changes',
+                        cli: 'aws configservice put-configuration-recorder --configuration-recorder name=CloudGenesisRecorder,roleARN=arn:aws:iam::ACCOUNT_ID:role/config-role\naws configservice start-configuration-recorder --configuration-recorder-name CloudGenesisRecorder',
+                        ui: [
+                            'Open AWS Config Console',
+                            'Click Get Started',
+                            'Resource types to record: All',
+                            'S3 bucket: Create new',
+                            'SNS topic: Create new',
+                            'AWS Config role: Create new',
+                            'Enable managed rules:',
+                            '  - encrypted-volumes',
+                            '  - rds-multi-az-support',
+                            '  - s3-bucket-public-read-prohibited',
+                            'Click Confirm'
+                        ]
+                    },
+                    {
+                        title: 'Implement Secrets Manager',
+                        description: 'Securely store and rotate secrets',
+                        cli: 'aws secretsmanager create-secret --name CloudGenesis/DB/Password --secret-string "MySecurePassword123!"\naws secretsmanager rotate-secret --secret-id CloudGenesis/DB/Password --rotation-lambda-arn LAMBDA_ARN',
+                        ui: [
+                            'Open Secrets Manager Console',
+                            'Click Store a new secret',
+                            'Secret type: Credentials for RDS database',
+                            'Username: admin',
+                            'Password: Generate or enter',
+                            'Encryption key: aws/secretsmanager',
+                            'Database: Select cloudgenesis-db',
+                            'Secret name: CloudGenesis/DB/Password',
+                            'Enable automatic rotation: 30 days',
+                            'Click Store',
+                            'Update application to use Secrets Manager SDK'
+                        ]
+                    }
+                ]
+            },
+            15: {
+                title: 'Final Verification and Testing',
+                tasks: [
+                    {
+                        title: 'Verify All Services',
+                        description: 'Comprehensive health check across all resources',
+                        cli: 'aws ec2 describe-instances --filters "Name=tag:Name,Values=CloudGenesisApp" --query "Reservations[].Instances[].State.Name"\naws rds describe-db-instances --db-instance-identifier cloudgenesis-db --query "DBInstances[].DBInstanceStatus"\naws elbv2 describe-target-health --target-group-arn TARGET_GROUP_ARN',
+                        ui: [
+                            'EC2 Dashboard: Verify all instances running',
+                            'RDS Dashboard: Confirm database available',
+                            'ECS Dashboard: Check service tasks running',
+                            'Load Balancer: Verify targets healthy',
+                            'CloudFront: Ensure distribution deployed',
+                            'Route 53: Test DNS resolution',
+                            'Security Groups: Review all rules',
+                            'CloudWatch: Check no critical alarms'
+                        ]
+                    },
+                    {
+                        title: 'Run Security Scan',
+                        description: 'Execute comprehensive security audit',
+                        cli: 'cd cloud-genesis\npython scripts/security-scan.py --provider aws --region us-east-1 --full-scan\npython scripts/compliance-check.py --standards all',
+                        ui: [
+                            'Open Security Hub Console',
+                            'Review Security Score',
+                            'Check failed findings',
+                            'Run AWS Trusted Advisor checks',
+                            'Review Cost Optimization recommendations',
+                            'Check Performance recommendations',
+                            'Verify Service Limits',
+                            'Generate compliance report',
+                            'Address any HIGH or CRITICAL findings'
+                        ]
+                    },
+                    {
+                        title: 'Performance Testing',
+                        description: 'Load test application and verify scaling',
+                        cli: 'kubectl run load-test --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://cloudgenesis.com; done"\nwatch -n 5 "aws cloudwatch get-metric-statistics --namespace AWS/ApplicationELB --metric-name TargetResponseTime --dimensions Name=LoadBalancer,Value=ALB_NAME --statistics Average --start-time $(date -u -d '5 minutes ago' +%Y-%m-%dT%H:%M:%S) --end-time $(date -u +%Y-%m-%dT%H:%M:%S) --period 300"',
+                        ui: [
+                            'Use Apache JMeter or similar tool',
+                            'Configure load test:',
+                            '  - URL: https://cloudgenesis.com',
+                            '  - Users: 100 concurrent',
+                            '  - Ramp-up: 60 seconds',
+                            '  - Duration: 10 minutes',
+                            'Monitor CloudWatch during test:',
+                            '  - ALB Request Count',
+                            '  - Target Response Time',
+                            '  - EC2 CPU Utilization',
+                            '  - Auto Scaling activities',
+                            'Verify scaling triggers correctly',
+                            'Check application logs for errors'
+                        ]
+                    },
+                    {
+                        title: 'Access Production Dashboard',
+                        description: 'Login to Cloud Genesis management console',
+                        cli: 'echo "Dashboard URL: https://cloudgenesis.com/dashboard"\necho "Default credentials in Secrets Manager"\naws secretsmanager get-secret-value --secret-id CloudGenesis/Admin/Credentials --query SecretString --output text',
+                        ui: [
+                            'Open browser and navigate to https://cloudgenesis.com',
+                            'Verify SSL certificate is valid',
+                            'Login with admin credentials',
+                            'Complete initial setup wizard',
+                            'Configure notification preferences',
+                            'Setup additional user accounts',
+                            'Review dashboard widgets',
+                            'Test all major features',
+                            'Bookmark important pages',
+                            'SETUP COMPLETE - Your enterprise cloud infrastructure is live!'
+                        ]
+                    }
+                ]
             }
         };
 
@@ -722,91 +1355,109 @@
             });
         });
 
-        document.getElementById('startBtn').addEventListener('click', function() {
-            if (selectedProvider) {
-                showDashboard();
-            }
-        });
+        document.getElementById('startBtn').addEventListener('click', showDashboard);
 
         function showDashboard() {
+            if (!selectedProvider) return;
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('dashboard').classList.add('active');
             
-            const provider = providerData[selectedProvider];
-            document.getElementById('providerName').textContent = provider.name;
-            document.getElementById('providerIcon').textContent = provider.icon;
+            document.getElementById('providerName').textContent = selectedProvider === 'aws' ? 'Amazon Web Services' : selectedProvider === 'azure' ? 'Microsoft Azure' : 'Google Cloud Platform';
+            document.getElementById('providerIcon').textContent = selectedProvider === 'azure' ? '🌐' : '☁️';
             
+            renderSidebar();
             loadStep(1);
         }
 
-        function loadStep(step) {
-            currentStep = step;
-            const provider = providerData[selectedProvider];
-            const stepData = provider.steps[step];
+        function renderSidebar() {
+            const sidebar = document.getElementById('stepsSidebar');
+            sidebar.innerHTML = steps.map(step => `
+                <div class="step-item ${step.id === 1 ? 'active' : ''}" onclick="loadStep(${step.id})">
+                    <span class="step-number">${step.id}</span>
+                    <span>${step.icon} ${step.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function loadStep(stepNum) {
+            currentStep = stepNum;
+            const stepData = awsSteps[stepNum];
             
-            let tasksHtml = '<div class="content-card"><h3>' + stepData.title + '</h3><ul class="task-list">';
+            let content = '<div class="step-content active">';
+            content += '<div class="content-card">';
+            content += '<h3>' + stepData.title + '</h3>';
             
             stepData.tasks.forEach((task, index) => {
-                tasksHtml += `
-                    <li class="task-item">
-                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
-                        <div class="task-content">
-                            <h4>${task.title}</h4>
-                            <p>${task.desc}</p>
-                            <div class="code-block">${task.code}</div>
-                        </div>
-                    </li>
-                `;
+                content += '<div class="task-item">';
+                content += '<div class="task-header">';
+                content += '<div class="task-checkbox" onclick="toggleTask(this)"></div>';
+                content += '<div class="task-title">' + task.title + '</div>';
+                content += '</div>';
+                content += '<div class="task-description">' + task.description + '</div>';
+                
+                content += '<div class="method-tabs">';
+                content += '<button class="method-tab active" onclick="showMethod(this, \'cli\', ' + index + ')">CLI Commands</button>';
+                content += '<button class="method-tab" onclick="showMethod(this, \'ui\', ' + index + ')">UI Console</button>';
+                content += '</div>';
+                
+                content += '<div class="method-content active" data-method="cli-' + index + '">';
+                content += '<div class="code-block">' + task.cli + '</div>';
+                content += '</div>';
+                
+                content += '<div class="method-content" data-method="ui-' + index + '">';
+                content += '<div class="ui-steps"><ol>';
+                task.ui.forEach(step => {
+                    content += '<li>' + step + '</li>';
+                });
+                content += '</ol></div></div>';
+                
+                content += '</div>';
             });
             
-            tasksHtml += '</ul></div>';
+            content += '</div></div>';
             
-            document.getElementById('stepContent').innerHTML = tasksHtml;
+            document.getElementById('contentArea').innerHTML = content;
             
-            updateProgressBar();
-            updateStepIndicators();
+            document.querySelectorAll('.step-item').forEach((item, idx) => {
+                item.classList.remove('active');
+                if (idx + 1 === stepNum) item.classList.add('active');
+            });
+            
             updateNavigationButtons();
+        }
+
+        function showMethod(button, method, index) {
+            const parent = button.parentElement.parentElement;
+            parent.querySelectorAll('.method-tab').forEach(tab => tab.classList.remove('active'));
+            parent.querySelectorAll('.method-content').forEach(content => content.classList.remove('active'));
+            
+            button.classList.add('active');
+            parent.querySelector('[data-method="' + method + '-' + index + '"]').classList.add('active');
         }
 
         function toggleTask(checkbox) {
             checkbox.classList.toggle('checked');
         }
 
-        function updateProgressBar() {
-            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        function updateStepIndicators() {
-            document.querySelectorAll('.step').forEach((step, index) => {
-                const stepNum = index + 1;
-                step.classList.remove('active', 'completed');
-                
-                if (stepNum < currentStep) {
-                    step.classList.add('completed');
-                } else if (stepNum === currentStep) {
-                    step.classList.add('active');
-                }
-            });
-        }
-
-        function updateNavigationButtons() {
-            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
-            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'Complete Setup' : 'Next Step';
-        }
-
         function nextStep() {
-            if (currentStep < totalSteps) {
+            if (currentStep < steps.length) {
                 loadStep(currentStep + 1);
+                window.scrollTo(0, 0);
             } else {
-                alert('Setup Complete! Your Cloud Genesis platform is configured on ' + providerData[selectedProvider].name);
+                alert('🎉 Setup Complete! Your Cloud Genesis platform is fully deployed and operational.');
             }
         }
 
         function previousStep() {
             if (currentStep > 1) {
                 loadStep(currentStep - 1);
+                window.scrollTo(0, 0);
             }
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = currentStep === steps.length ? 'Complete Setup' : 'Next Step';
         }
 
         function resetSelection() {
