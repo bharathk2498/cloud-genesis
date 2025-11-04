@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Genesis - Enterprise Cloud Migration Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -28,12 +29,33 @@
             background: var(--dark);
             color: var(--text);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+
+        /* 3D Canvas Backgrounds */
+        .canvas-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .canvas-3d-welcome {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
         nav {
@@ -113,11 +135,15 @@
         .main-content {
             padding-top: 80px;
             min-height: 100vh;
+            position: relative;
+            z-index: 1;
         }
 
         .welcome-screen {
             text-align: center;
             padding: 60px 20px;
+            position: relative;
+            min-height: calc(100vh - 80px);
         }
 
         .welcome-screen h1 {
@@ -126,15 +152,27 @@
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 2;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.8)); }
         }
 
         .migration-selector {
             max-width: 900px;
             margin: 40px auto;
-            background: var(--card);
+            background: rgba(21, 26, 54, 0.95);
             padding: 40px;
             border-radius: 16px;
             border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 20px 60px rgba(0, 102, 255, 0.2);
         }
 
         .migration-flow {
@@ -170,16 +208,35 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .endpoint-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .endpoint-option:hover:not(.disabled)::before {
+            left: 100%;
         }
 
         .endpoint-option:hover:not(.disabled) {
             border-color: var(--primary);
             transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
         }
 
         .endpoint-option.selected {
             border-color: var(--secondary);
             background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
         }
 
         .endpoint-option.disabled {
@@ -192,12 +249,24 @@
             font-size: 30px;
             width: 50px;
             text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .migration-arrow {
             font-size: 40px;
             color: var(--secondary);
             flex-shrink: 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
         }
 
         .btn {
@@ -211,6 +280,32 @@
             cursor: pointer;
             width: 100%;
             margin-top: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover:not(:disabled)::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.4);
         }
 
         .btn:disabled {
@@ -228,11 +323,12 @@
         }
 
         .migration-header {
-            background: var(--card);
+            background: rgba(21, 26, 54, 0.95);
             padding: 30px;
             border-radius: 12px;
             border: 1px solid var(--border);
             margin-bottom: 30px;
+            backdrop-filter: blur(10px);
         }
 
         .migration-path {
@@ -250,23 +346,45 @@
             background: var(--dark);
             padding: 20px 30px;
             border-radius: 10px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .path-item:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
         }
 
         .path-icon {
             font-size: 40px;
+            animation: rotate3d 5s linear infinite;
+        }
+
+        @keyframes rotate3d {
+            from { transform: perspective(400px) rotateY(0deg); }
+            to { transform: perspective(400px) rotateY(360deg); }
         }
 
         .path-arrow {
             font-size: 30px;
             color: var(--secondary);
+            animation: slideRight 1.5s ease-in-out infinite;
+        }
+
+        @keyframes slideRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
         }
 
         .progress-section {
-            background: var(--card);
+            background: rgba(21, 26, 54, 0.95);
             padding: 30px;
             border-radius: 12px;
             border: 1px solid var(--border);
             margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            position: relative;
         }
 
         .progress-header {
@@ -284,12 +402,24 @@
 
         .stat-item {
             text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.1);
         }
 
         .stat-value {
             font-size: 32px;
             font-weight: 700;
             color: var(--secondary);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: countUp 1s ease-out;
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .stat-label {
@@ -303,6 +433,7 @@
             border-radius: 15px;
             overflow: hidden;
             position: relative;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .progress-bar-fill {
@@ -314,6 +445,24 @@
             justify-content: center;
             font-weight: 600;
             font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .report-button {
@@ -327,10 +476,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s;
         }
 
         .report-button:hover {
             background: #00a844;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 200, 83, 0.4);
         }
 
         .sidebar-layout {
@@ -340,13 +492,14 @@
         }
 
         .steps-sidebar {
-            background: var(--card);
+            background: rgba(21, 26, 54, 0.95);
             padding: 20px;
             border-radius: 12px;
             border: 1px solid var(--border);
             height: fit-content;
             position: sticky;
             top: 100px;
+            backdrop-filter: blur(10px);
         }
 
         .step-item {
@@ -363,11 +516,19 @@
 
         .step-item:hover {
             background: rgba(0, 102, 255, 0.1);
+            transform: translateX(5px);
         }
 
         .step-item.active {
             background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 212, 255, 0.2));
             border-color: var(--secondary);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .step-item.completed {
@@ -383,10 +544,19 @@
             line-height: 30px;
             font-weight: 600;
             flex-shrink: 0;
+            transition: all 0.3s;
         }
 
         .step-item.active .step-number {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: spin 1s ease-in-out;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            to { transform: rotate(360deg) scale(1); }
         }
 
         .step-item.completed .step-number {
@@ -405,17 +575,26 @@
         }
 
         .content-card {
-            background: var(--card);
+            background: rgba(21, 26, 54, 0.95);
             padding: 30px;
             border-radius: 12px;
             border: 1px solid var(--border);
             margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .content-card h3 {
             font-size: 24px;
             margin-bottom: 20px;
             color: var(--secondary);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
         }
 
         .step-completion-section {
@@ -437,6 +616,32 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 15px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .complete-step-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .complete-step-btn:hover:not(:disabled)::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .complete-step-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 200, 83, 0.4);
         }
 
         .complete-step-btn:disabled {
@@ -464,6 +669,11 @@
             cursor: pointer;
             font-weight: 600;
             border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .method-tab:hover {
+            color: var(--text);
         }
 
         .method-tab.active {
@@ -485,6 +695,13 @@
             border-radius: 8px;
             border: 1px solid var(--border);
             margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 102, 255, 0.2);
         }
 
         .task-header {
@@ -503,11 +720,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .task-checkbox:hover {
+            border-color: var(--success);
+            transform: scale(1.1);
         }
 
         .task-checkbox.checked {
             background: var(--success);
             border-color: var(--success);
+            animation: checkmark 0.5s ease-out;
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
         }
 
         .task-checkbox.checked::after {
@@ -537,6 +767,7 @@
             overflow-x: auto;
             border: 1px solid var(--border);
             margin: 10px 0;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .ui-steps ol {
@@ -563,6 +794,13 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--text);
+            transform: translateY(-2px);
         }
 
         .modal {
@@ -580,6 +818,12 @@
 
         .modal.active {
             display: flex;
+            animation: fadeInModal 0.3s ease-out;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -589,6 +833,12 @@
             border: 1px solid var(--border);
             max-width: 600px;
             width: 90%;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
@@ -609,6 +859,12 @@
             font-size: 30px;
             cursor: pointer;
             line-height: 1;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--text);
+            transform: rotate(90deg);
         }
 
         .form-group {
@@ -631,6 +887,14 @@
             border-radius: 6px;
             color: var(--text);
             font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
         }
 
         .form-group textarea {
@@ -646,6 +910,19 @@
             margin-top: 20px;
             text-align: center;
             color: var(--success);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            box-shadow: 0 0 10px var(--secondary);
         }
 
         @media (max-width: 1024px) {
@@ -671,10 +948,12 @@
     </style>
 </head>
 <body>
+    <canvas class="canvas-3d" id="backgroundCanvas"></canvas>
+
     <nav>
         <div class="container">
             <div class="nav-left">
-                <div class="logo">Cloud Genesis</div>
+                <div class="logo">☁️ Cloud Genesis</div>
                 <div class="nav-buttons" id="navButtons">
                     <button class="nav-btn" id="homeBtn" onclick="goToHome()" style="display: none;">
                         <span>🏠</span>
@@ -695,9 +974,10 @@
 
     <div class="main-content">
         <div id="welcomeScreen" class="welcome-screen">
+            <canvas class="canvas-3d-welcome" id="welcomeCanvas"></canvas>
             <div class="container">
-                <h1>Cloud Genesis Migration Platform</h1>
-                <p style="font-size: 18px; color: var(--text-dim); margin-bottom: 40px;">Enterprise workload migration from on-premise to cloud or between cloud providers</p>
+                <h1>🚀 Cloud Genesis Migration Platform</h1>
+                <p style="font-size: 18px; color: var(--text-dim); margin-bottom: 40px; position: relative; z-index: 2;">Enterprise workload migration from on-premise to cloud or between cloud providers</p>
                 
                 <div class="migration-selector">
                     <h2>Configure Your Migration Path</h2>
@@ -867,11 +1147,14 @@
     </div>
 
     <script>
+        // Global variables
         let selectedSource = null;
         let selectedDestination = null;
         let currentStep = 1;
         let completedSteps = new Set();
         let navigationHistory = [];
+        let welcomeScene, welcomeCamera, welcomeRenderer, welcomeParticles;
+        let bgScene, bgCamera, bgRenderer, bgParticles;
 
         const migrationSteps = [
             { id: 1, name: 'Discovery Assessment', icon: '🔍' },
@@ -897,6 +1180,209 @@
             azure: { name: 'Microsoft Azure', icon: '🌐' },
             gcp: { name: 'Google Cloud', icon: '☁️' }
         };
+
+        // Initialize 3D backgrounds
+        function init3DWelcome() {
+            const canvas = document.getElementById('welcomeCanvas');
+            if (!canvas) return;
+            
+            welcomeScene = new THREE.Scene();
+            welcomeCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            welcomeRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            welcomeRenderer.setSize(window.innerWidth, window.innerHeight);
+            welcomeCamera.position.z = 50;
+
+            // Create particle system
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const colors = [];
+
+            for (let i = 0; i < 2000; i++) {
+                vertices.push(
+                    (Math.random() - 0.5) * 200,
+                    (Math.random() - 0.5) * 200,
+                    (Math.random() - 0.5) * 200
+                );
+                colors.push(
+                    Math.random() * 0.5 + 0.5,
+                    Math.random() * 0.5 + 0.5,
+                    1
+                );
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            welcomeParticles = new THREE.Points(geometry, material);
+            welcomeScene.add(welcomeParticles);
+
+            // Add floating clouds
+            const cloudGeometry = new THREE.IcosahedronGeometry(10, 1);
+            const cloudMaterial = new THREE.MeshBasicMaterial({
+                color: 0x0066ff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+
+            for (let i = 0; i < 5; i++) {
+                const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+                cloud.position.set(
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100
+                );
+                cloud.userData = { 
+                    rotationSpeed: { x: Math.random() * 0.01, y: Math.random() * 0.01 }
+                };
+                welcomeScene.add(cloud);
+            }
+
+            animateWelcome();
+        }
+
+        function animateWelcome() {
+            requestAnimationFrame(animateWelcome);
+
+            if (welcomeParticles) {
+                welcomeParticles.rotation.x += 0.0005;
+                welcomeParticles.rotation.y += 0.001;
+            }
+
+            welcomeScene.children.forEach(child => {
+                if (child.type === 'Mesh' && child.userData.rotationSpeed) {
+                    child.rotation.x += child.userData.rotationSpeed.x;
+                    child.rotation.y += child.userData.rotationSpeed.y;
+                }
+            });
+
+            if (welcomeRenderer && welcomeScene && welcomeCamera) {
+                welcomeRenderer.render(welcomeScene, welcomeCamera);
+            }
+        }
+
+        function init3DBackground() {
+            const canvas = document.getElementById('backgroundCanvas');
+            if (!canvas) return;
+            
+            bgScene = new THREE.Scene();
+            bgCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            bgRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            bgRenderer.setSize(window.innerWidth, window.innerHeight);
+            bgCamera.position.z = 30;
+
+            // Create network visualization
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const colors = [];
+
+            for (let i = 0; i < 1000; i++) {
+                vertices.push(
+                    (Math.random() - 0.5) * 150,
+                    (Math.random() - 0.5) * 150,
+                    (Math.random() - 0.5) * 150
+                );
+                colors.push(0, 0.8, 1);
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 1.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            bgParticles = new THREE.Points(geometry, material);
+            bgScene.add(bgParticles);
+
+            // Add connection lines
+            const lineGeometry = new THREE.BufferGeometry();
+            const lineVertices = [];
+            for (let i = 0; i < 100; i++) {
+                const start = Math.floor(Math.random() * vertices.length / 3) * 3;
+                const end = Math.floor(Math.random() * vertices.length / 3) * 3;
+                lineVertices.push(vertices[start], vertices[start + 1], vertices[start + 2]);
+                lineVertices.push(vertices[end], vertices[end + 1], vertices[end + 2]);
+            }
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lineVertices, 3));
+            
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x00d4ff,
+                transparent: true,
+                opacity: 0.1
+            });
+            
+            const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            bgScene.add(lines);
+
+            animateBackground();
+        }
+
+        function animateBackground() {
+            requestAnimationFrame(animateBackground);
+
+            if (bgParticles) {
+                bgParticles.rotation.x += 0.0003;
+                bgParticles.rotation.y += 0.0005;
+            }
+
+            bgScene.children.forEach(child => {
+                if (child.type === 'LineSegments') {
+                    child.rotation.x += 0.0002;
+                    child.rotation.y += 0.0004;
+                }
+            });
+
+            if (bgRenderer && bgScene && bgCamera) {
+                bgRenderer.render(bgScene, bgCamera);
+            }
+        }
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            if (welcomeRenderer && welcomeCamera) {
+                welcomeCamera.aspect = window.innerWidth / window.innerHeight;
+                welcomeCamera.updateProjectionMatrix();
+                welcomeRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            if (bgRenderer && bgCamera) {
+                bgCamera.aspect = window.innerWidth / window.innerHeight;
+                bgCamera.updateProjectionMatrix();
+                bgRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
+        // Create floating particles effect
+        function createParticles() {
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * window.innerWidth + 'px';
+                particle.style.top = window.innerHeight + 'px';
+                document.body.appendChild(particle);
+
+                const duration = 3000 + Math.random() * 2000;
+                particle.animate([
+                    { transform: 'translateY(0px)', opacity: 0.6 },
+                    { transform: `translateY(-${window.innerHeight + 100}px)`, opacity: 0 }
+                ], {
+                    duration: duration,
+                    easing: 'linear'
+                });
+
+                setTimeout(() => particle.remove(), duration);
+            }, 200);
+        }
 
         function updateNavButtons() {
             const isOnDashboard = document.getElementById('dashboard').classList.contains('active');
@@ -1029,7 +1515,7 @@
             content += '</div>';
             
             content += '<div class="method-content active" data-method="0">';
-            content += '<div class="code-block">cloud-genesis-cli migrate --step ' + stepNum + ' --source ' + selectedSource + ' --destination ' + selectedDestination + '\n\n# Validate completion\ncloud-genesis-cli validate --step ' + stepNum + '</div>';
+            content += '<div class="code-block">cloud-genesis-cli migrate --step ' + stepNum + ' --source ' + selectedSource + ' --destination ' + selectedDestination + '\\n\\n# Validate completion\\ncloud-genesis-cli validate --step ' + stepNum + '</div>';
             content += '</div>';
             
             content += '<div class="method-content" data-method="1">';
@@ -1179,7 +1665,13 @@
             }, 3000);
         }
 
-        updateNavButtons();
+        // Initialize everything
+        window.addEventListener('load', () => {
+            init3DWelcome();
+            init3DBackground();
+            createParticles();
+            updateNavButtons();
+        });
     </script>
 </body>
 </html>
