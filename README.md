@@ -8,7 +8,7 @@ environments and public clouds, as well as between public clouds.
 
 ## 🚀 **NEW: Interactive Migration Hub**
 
-**[📚 Launch Migration Hub →](https://bharathk2498.github.io/cloud-genesis/docs/migration-hub/)**
+**[📚 Launch Migration Hub →](https://bharathk2498.github.io/cloud-genesis/docs/migration-hub/landing.html)**
 
 Professional-grade, interactive web-based migration guides featuring:
 - **On-Premises → Cloud migrations** (AWS, Azure, GCP)
@@ -63,7 +63,7 @@ teams adopt consistent guardrails across their entire estate.
 ## Directory overview
 
 | Path                         | Purpose |
-|-----------------------------|---------|
+|-----------------------------|---------| 
 | **`docs/migration-hub/`**   | **Interactive migration guides (START HERE for migrations)** |
 | `.env.sample`               | Sample environment variables used by scripts and orchestrators |
 | `.gitignore`                | Ignore patterns for local tooling, build artefacts and secrets |
@@ -91,7 +91,7 @@ teams adopt consistent guardrails across their entire estate.
 
 ### For Interactive Migration Guides
 
-1. **[Open the Migration Hub →](https://bharathk2498.github.io/cloud-genesis/docs/migration-hub/)**
+1. **[Open the Migration Hub →](https://bharathk2498.github.io/cloud-genesis/docs/migration-hub/landing.html)**
 2. Choose your migration type (On-Prem → Cloud or Cloud → Cloud)
 3. Select your target cloud provider
 4. Follow the comprehensive 6-phase guide with detailed instructions
