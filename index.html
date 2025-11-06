@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Genesis - Enterprise Cloud Migration Platform</title>
-    <!-- Updated: 2025-11-06 - Force rebuild -->
+    <!-- Updated: 2025-11-06 - Fixed migration steps display -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -623,6 +623,13 @@
             box-shadow: 0 4px 20px var(--shadow);
         }
 
+        .content-card h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
         .content-card h3 {
             font-size: 28px;
             margin-bottom: 25px;
@@ -644,41 +651,65 @@
             font-weight: 600;
         }
 
-        .step-tabs {
-            display: flex;
-            gap: 10px;
+        .content-card p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .content-card ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        .content-card ol li {
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .content-card ul {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        .content-card ul li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .detailed-header {
             margin-bottom: 30px;
-            border-bottom: 2px solid var(--border);
         }
 
-        .step-tab {
-            background: transparent;
-            border: none;
-            padding: 15px 25px;
+        .step-meta {
             color: var(--text-dim);
-            font-weight: 600;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            font-size: 16px;
+            font-size: 18px;
+            margin-top: 10px;
         }
 
-        .step-tab:hover {
-            color: var(--text);
-            background: rgba(0, 102, 255, 0.05);
+        .section-block {
+            margin-bottom: 40px;
         }
 
-        .step-tab.active {
-            color: var(--secondary);
-            border-bottom-color: var(--secondary);
+        .example-box, .warning-box, .tip-box {
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid;
         }
 
-        .step-tab-content {
-            display: none;
+        .example-box {
+            background: rgba(0, 200, 83, 0.1);
+            border-color: var(--success);
         }
 
-        .step-tab-content.active {
-            display: block;
+        .warning-box {
+            background: rgba(255, 160, 0, 0.1);
+            border-color: var(--warning);
+        }
+
+        .tip-box {
+            background: rgba(0, 102, 255, 0.1);
+            border-color: var(--primary);
         }
 
         .instruction-section {
@@ -1639,31 +1670,16 @@
 
         function loadStep(stepNum) {
             currentStep = stepNum;
-            const stepDetail = getStepDetail(stepNum, selectedSource, selectedDestination);
             const isCompleted = completedSteps.has(stepNum);
+            
+            // Get content from migrationGuides object (loaded from migration-details.js)
+            const stepContent = migrationGuides && migrationGuides[stepNum] 
+                ? migrationGuides[stepNum] 
+                : `<div class="section-block"><p>Detailed guide for Step ${stepNum} is being developed. This step focuses on ${migrationSteps[stepNum - 1].name}.</p></div>`;
             
             const content = `
                 <div class="content-card">
-                    <h3>Step ${stepNum}: ${migrationSteps[stepNum - 1].name}</h3>
-                    
-                    <div class="step-tabs">
-                        <button class="step-tab active" onclick="switchStepTab(event, 'overview')">Overview</button>
-                        <button class="step-tab" onclick="switchStepTab(event, 'howto')">How to Execute</button>
-                        <button class="step-tab" onclick="switchStepTab(event, 'validation')">Validation</button>
-                    </div>
-
-                    <div class="step-tab-content active" data-tab="overview">
-                        ${stepDetail.overview}
-                    </div>
-
-                    <div class="step-tab-content" data-tab="howto">
-                        ${stepDetail.howto}
-                    </div>
-
-                    <div class="step-tab-content" data-tab="validation">
-                        ${stepDetail.validation}
-                    </div>
-
+                    ${stepContent}
                     <div style="margin-top: 30px;">
                         <button class="btn" onclick="completeStep(${stepNum})">${isCompleted ? '✓ Step Completed - Click to Undo' : 'Mark Step as Complete'}</button>
                     </div>
@@ -1679,15 +1695,6 @@
 
             document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
             document.getElementById('nextBtn').textContent = currentStep === 15 ? 'Complete Migration' : 'Next Step →';
-        }
-
-        function switchStepTab(event, tabName) {
-            const parent = event.target.parentElement.parentElement;
-            parent.querySelectorAll('.step-tab').forEach(tab => tab.classList.remove('active'));
-            parent.querySelectorAll('.step-tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            parent.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         }
 
         function completeStep(stepNum) {
