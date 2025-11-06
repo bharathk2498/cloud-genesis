@@ -134,24 +134,6 @@
             transform: translateY(-1px);
         }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--text);
-        }
-
         .main-content {
             padding-top: 100px;
             min-height: 100vh;
@@ -647,6 +629,95 @@
             font-weight: 700;
         }
 
+        .content-card h4 {
+            font-size: 22px;
+            margin: 30px 0 20px 0;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .content-card h5 {
+            font-size: 18px;
+            margin: 25px 0 15px 0;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .step-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .step-tab {
+            background: transparent;
+            border: none;
+            padding: 15px 25px;
+            color: var(--text-dim);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .step-tab:hover {
+            color: var(--text);
+            background: rgba(0, 102, 255, 0.05);
+        }
+
+        .step-tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .step-tab-content {
+            display: none;
+        }
+
+        .step-tab-content.active {
+            display: block;
+        }
+
+        .instruction-section {
+            margin-bottom: 30px;
+        }
+
+        .instruction-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .instruction-list li {
+            counter-increment: step-counter;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: var(--darker);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            position: relative;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .instruction-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -20px;
+            top: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
         .task-item {
             background: var(--darker);
             padding: 30px;
@@ -846,6 +917,30 @@
             background: rgba(0, 102, 255, 0.1);
         }
 
+        .prerequisite-box {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid var(--secondary);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .prerequisite-box h5 {
+            color: var(--secondary);
+            margin-top: 0;
+        }
+
+        .prerequisite-box ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .prerequisite-box li {
+            margin-bottom: 10px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
         @media (max-width: 1200px) {
             .sidebar-layout {
                 grid-template-columns: 1fr;
@@ -883,6 +978,12 @@
             .tabs-container {
                 overflow-x: auto;
             }
+            .instruction-list li::before {
+                left: -15px;
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -899,10 +1000,6 @@
                         <span>Home</span>
                     </button>
                 </div>
-            </div>
-            <div class="nav-links">
-                <a href="https://github.com/bharathk2498/cloud-genesis">GitHub</a>
-                <a href="#">Documentation</a>
             </div>
         </div>
     </nav>
@@ -1352,6 +1449,7 @@
         </div>
     </div>
 
+    <script src="migration-details.js"></script>
     <script>
         let selectedSource = null;
         let selectedDestination = null;
@@ -1540,28 +1638,37 @@
 
         function loadStep(stepNum) {
             currentStep = stepNum;
+            const stepDetail = getStepDetail(stepNum, selectedSource, selectedDestination);
             const isCompleted = completedSteps.has(stepNum);
+            
             const content = `
                 <div class="content-card">
                     <h3>Step ${stepNum}: ${migrationSteps[stepNum - 1].name}</h3>
-                    <div class="alert-box alert-info">
-                        <strong>Migration Objective:</strong> Complete this critical migration phase following industry best practices, security guidelines, and compliance requirements for enterprise workload transitions.
+                    
+                    <div class="step-tabs">
+                        <button class="step-tab active" onclick="switchStepTab(event, 'overview')">Overview</button>
+                        <button class="step-tab" onclick="switchStepTab(event, 'howto')">How to Execute</button>
+                        <button class="step-tab" onclick="switchStepTab(event, 'validation')">Validation</button>
                     </div>
-                    <div class="task-item">
-                        <div class="task-header">
-                            <div class="task-checkbox ${isCompleted ? 'checked' : ''}" onclick="toggleTask(this)"></div>
-                            <div class="task-title">Primary Migration Task</div>
-                        </div>
-                        <div class="task-description">Execute comprehensive migration activities for ${migrationSteps[stepNum - 1].name}. Follow the detailed instructions and verify all prerequisites before proceeding with the migration execution.</div>
-                        <div class="code-block">cloud-genesis-cli migrate --step ${stepNum} --source ${selectedSource} --destination ${selectedDestination}
 
-cloud-genesis-cli validate --step ${stepNum}
-
-cloud-genesis-cli health-check --comprehensive</div>
+                    <div class="step-tab-content active" data-tab="overview">
+                        ${stepDetail.overview}
                     </div>
-                    <button class="btn" onclick="completeStep(${stepNum})">${isCompleted ? '✓ Step Completed' : 'Mark Step as Complete'}</button>
+
+                    <div class="step-tab-content" data-tab="howto">
+                        ${stepDetail.howto}
+                    </div>
+
+                    <div class="step-tab-content" data-tab="validation">
+                        ${stepDetail.validation}
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <button class="btn" onclick="completeStep(${stepNum})">${isCompleted ? '✓ Step Completed - Click to Undo' : 'Mark Step as Complete'}</button>
+                    </div>
                 </div>
             `;
+            
             document.getElementById('contentArea').innerHTML = content;
             
             document.querySelectorAll('.step-item').forEach((item, idx) => {
@@ -1571,6 +1678,15 @@ cloud-genesis-cli health-check --comprehensive</div>
 
             document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
             document.getElementById('nextBtn').textContent = currentStep === 15 ? 'Complete Migration' : 'Next Step →';
+        }
+
+        function switchStepTab(event, tabName) {
+            const parent = event.target.parentElement.parentElement;
+            parent.querySelectorAll('.step-tab').forEach(tab => tab.classList.remove('active'));
+            parent.querySelectorAll('.step-tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            parent.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         }
 
         function completeStep(stepNum) {
