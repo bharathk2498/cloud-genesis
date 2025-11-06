@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Cloud Migration Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+
+        .landing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .migration-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .migration-card:hover {
+            transform: translateY(-8px);
+            border-color: #60a5fa;
+            box-shadow: 0 20px 40px rgba(96, 165, 250, 0.2);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .card-features li {
+            color: #cbd5e1;
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .card-features li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background: rgba(96, 165, 250, 0.1);
+            border-left: 4px solid #60a5fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .info-box h3 {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .landing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>☁️ Enterprise Cloud Migration Hub</h1>
+            <p class="subtitle">Professional-grade migration strategies & step-by-step execution guides</p>
+        </header>
+
+        <div class="info-box">
+            <h3>🎯 Choose Your Migration Path</h3>
+            <p>Select the type of migration you're planning. Each path has specialized guides optimized for your scenario.</p>
+        </div>
+
+        <div class="landing-grid">
+            <div class="migration-card" onclick="window.location.href='guide.html?type=onprem'">
+                <span class="card-icon">🏢 → ☁️</span>
+                <h2 class="card-title">On-Premises to Cloud</h2>
+                <p class="card-description">
+                    Migrate your datacenter, private servers, or on-premises infrastructure to AWS, Azure, or Google Cloud.
+                </p>
+                <ul class="card-features">
+                    <li>Datacenter decommissioning strategies</li>
+                    <li>Physical-to-virtual server migration</li>
+                    <li>Network connectivity planning (VPN, Direct Connect)</li>
+                    <li>Hybrid cloud configurations</li>
+                    <li>Legacy application modernization</li>
+                    <li>Compliance & data residency handling</li>
+                </ul>
+            </div>
+
+            <div class="migration-card" onclick="window.location.href='guide.html?type=cloud'">
+                <span class="card-icon">☁️ → ☁️</span>
+                <h2 class="card-title">Cloud-to-Cloud Migration</h2>
+                <p class="card-description">
+                    Migrate between cloud providers (AWS ↔ Azure ↔ GCP) or consolidate multi-cloud environments.
+                </p>
+                <ul class="card-features">
+                    <li>Cross-cloud service mapping (EC2 → VM → Compute Engine)</li>
+                    <li>Multi-cloud cost optimization</li>
+                    <li>Zero-downtime migration strategies</li>
+                    <li>API & SDK translation guides</li>
+                    <li>Cloud-native service migration</li>
+                    <li>Data transfer optimization (cross-region, cross-cloud)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
