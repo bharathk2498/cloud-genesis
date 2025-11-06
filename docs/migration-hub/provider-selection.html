@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Cloud Provider - Migration Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .back-btn {
+            background: #334155;
+            color: #e2e8f0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .back-btn:hover { background: #475569; }
+        
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .route-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            color: #0f172a;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .provider-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #475569;
+            border-radius: 16px;
+            padding: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .provider-card.aws { border-color: #ff9900; }
+        .provider-card.azure { border-color: #0078d4; }
+        .provider-card.gcp { border-color: #4285f4; }
+        
+        .provider-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(96, 165, 250, 0.3);
+        }
+        
+        .provider-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        
+        .provider-name {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .provider-card.aws .provider-name { color: #ff9900; }
+        .provider-card.azure .provider-name { color: #0078d4; }
+        .provider-card.gcp .provider-name { color: #4285f4; }
+        
+        .provider-description {
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .features-list {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 1.25rem;
+            list-style: none;
+        }
+        
+        .features-list li {
+            padding: 0.5rem 0;
+            color: #94a3b8;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+        }
+        
+        .provider-card.aws .features-list li::before { color: #ff9900; }
+        .provider-card.azure .features-list li::before { color: #0078d4; }
+        .provider-card.gcp .features-list li::before { color: #4285f4; }
+        
+        .complexity-badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .complexity-low { background: #10b981; color: #064e3b; }
+        .complexity-medium { background: #f59e0b; color: #78350f; }
+        .complexity-high { background: #ef4444; color: #7f1d1d; }
+        
+        /* Cloud-to-Cloud Matrix */
+        .migration-matrix {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .matrix-title {
+            font-size: 1.8rem;
+            color: #a78bfa;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .migration-route {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .migration-route:hover {
+            border-color: #60a5fa;
+            transform: translateY(-4px);
+        }
+        
+        .route-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .route-description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .provider-grid { grid-template-columns: 1fr; }
+            .matrix-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="landing.html" class="back-btn">← Back to Migration Paths</a>
+        
+        <header>
+            <div class="route-badge" id="routeBadge"></div>
+            <h1 id="pageTitle">Select Your Target Cloud Provider</h1>
+            <p class="subtitle" id="pageSubtitle"></p>
+        </header>
+        
+        <div id="onPremProviders" style="display: none;">
+            <div class="provider-grid">
+                <div class="provider-card aws" onclick="navigateToGuide('aws')">
+                    <span class="provider-icon">🟠</span>
+                    <h3 class="provider-name">Amazon Web Services (AWS)</h3>
+                    <p class="provider-description">
+                        Market leader with 200+ services. Best for comprehensive cloud solutions with mature tooling.
+                    </p>
+                    <ul class="features-list">
+                        <li>AWS Application Migration Service (MGN)</li>
+                        <li>Most mature migration tooling</li>
+                        <li>Largest service portfolio</li>
+                        <li>Global infrastructure footprint</li>
+                        <li>Strong enterprise support</li>
+                    </ul>
+                    <span class="complexity-badge complexity-medium">Complexity: Medium</span>
+                </div>
+                
+                <div class="provider-card azure" onclick="navigateToGuide('azure')">
+                    <span class="provider-icon">🔵</span>
+                    <h3 class="provider-name">Microsoft Azure</h3>
+                    <p class="provider-description">
+                        Perfect for Windows workloads and Active Directory integration. Enterprise Microsoft stack.
+                    </p>
+                    <ul class="features-list">
+                        <li>Azure Migrate unified hub</li>
+                        <li>Best Windows/AD integration</li>
+                        <li>Hybrid cloud capabilities</li>
+                        <li>Enterprise agreements</li>
+                        <li>Strong compliance certifications</li>
+                    </ul>
+                    <span class="complexity-badge complexity-medium">Complexity: Medium</span>
+                </div>
+                
+                <div class="provider-card gcp" onclick="navigateToGuide('gcp')">
+                    <span class="provider-icon">🔴</span>
+                    <h3 class="provider-name">Google Cloud Platform (GCP)</h3>
+                    <p class="provider-description">
+                        Best for Kubernetes and ML workloads. Strong data analytics and AI capabilities.
+                    </p>
+                    <ul class="features-list">
+                        <li>Migrate for Compute Engine</li>
+                        <li>Best Kubernetes (GKE) experience</li>
+                        <li>Leading AI/ML services</li>
+                        <li>BigQuery for analytics</li>
+                        <li>Competitive pricing</li>
+                    </ul>
+                    <span class="complexity-badge complexity-medium">Complexity: Medium</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="cloud2CloudMatrix" style="display: none;">
+            <div class="migration-matrix">
+                <h2 class="matrix-title">Cross-Cloud Migration Routes</h2>
+                <div class="matrix-grid">
+                    <div class="migration-route" onclick="navigateToRoute('aws-to-azure')">
+                        <h4 class="route-title">🟠 AWS → 🔵 Azure</h4>
+                        <p class="route-description">
+                            Migrate AWS workloads to Azure. Common for Microsoft ecosystem alignment.
+                        </p>
+                        <span class="complexity-badge complexity-high">Complexity: High</span>
+                    </div>
+                    
+                    <div class="migration-route" onclick="navigateToRoute('aws-to-gcp')">
+                        <h4 class="route-title">🟠 AWS → 🔴 GCP</h4>
+                        <p class="route-description">
+                            Move from AWS to GCP. Popular for ML/analytics workloads and cost optimization.
+                        </p>
+                        <span class="complexity-badge complexity-high">Complexity: High</span>
+                    </div>
+                    
+                    <div class="migration-route" onclick="navigateToRoute('azure-to-aws')">
+                        <h4 class="route-title">🔵 Azure → 🟠 AWS</h4>
+                        <p class="route-description">
+                            Migrate Azure resources to AWS. Often for broader service portfolio access.
+                        </p>
+                        <span class="complexity-badge complexity-high">Complexity: High</span>
+                    </div>
+                    
+                    <div class="migration-route" onclick="navigateToRoute('azure-to-gcp')">
+                        <h4 class="route-title">🔵 Azure → 🔴 GCP</h4>
+                        <p class="route-description">
+                            Transition from Azure to GCP. Common for data analytics modernization.
+                        </p>
+                        <span class="complexity-badge complexity-high">Complexity: High</span>
+                    </div>
+                    
+                    <div class="migration-route" onclick="navigateToRoute('gcp-to-aws')">
+                        <h4 class="route-title">🔴 GCP → 🟠 AWS</h4>
+                        <p class="route-description">
+                            Move from GCP to AWS. Popular for accessing broader service ecosystem.
+                        </p>
+                        <span class="complexity-badge complexity-high">Complexity: High</span>
+                    </div>
+                    
+                    <div class="migration-route" onclick="navigateToRoute('gcp-to-azure')">
+                        <h4 class="route-title">🔴 GCP → 🔵 Azure</h4>
+                        <p class="route-description">
+                            Migrate from GCP to Azure. Often for enterprise Microsoft alignment.
+                        </p>
+                        <span class="complexity-badge complexity-high">Complexity: High</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const migrationType = urlParams.get('type');
+        
+        // Update UI based on migration type
+        if (migrationType === 'onprem') {
+            document.getElementById('routeBadge').textContent = '🏢 → ☁️ On-Premises to Cloud';
+            document.getElementById('pageTitle').textContent = 'Select Your Target Cloud Provider';
+            document.getElementById('pageSubtitle').textContent = 'Choose where to migrate your on-premises workloads';
+            document.getElementById('onPremProviders').style.display = 'block';
+        } else if (migrationType === 'cloud2cloud') {
+            document.getElementById('routeBadge').textContent = '☁️ → ☁️ Cloud to Cloud';
+            document.getElementById('pageTitle').textContent = 'Select Your Migration Route';
+            document.getElementById('pageSubtitle').textContent = 'Choose your source and destination cloud providers';
+            document.getElementById('cloud2CloudMatrix').style.display = 'block';
+        }
+        
+        function navigateToGuide(provider) {
+            window.location.href = `detailed-guide.html?provider=${provider}&type=onprem`;
+        }
+        
+        function navigateToRoute(route) {
+            const [source, target] = route.split('-to-');
+            window.location.href = `detailed-guide.html?source=${source}&target=${target}&type=cloud2cloud`;
+        }
+    </script>
+</body>
+</html>
