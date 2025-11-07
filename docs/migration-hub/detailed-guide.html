@@ -68,33 +68,6 @@
             margin: 0 auto;
             padding: 3rem 2rem;
         }
-        .loading {
-            text-align: center;
-            padding: 4rem;
-            font-size: 1.5rem;
-            color: #94a3b8;
-        }
-        .loading-spinner {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            border: 5px solid #334155;
-            border-top-color: #60a5fa;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .error {
-            background: rgba(127, 29, 29, 0.2);
-            border: 2px solid #ef4444;
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem;
-            text-align: center;
-        }
         .phase-title {
             font-size: 2.5rem;
             margin-bottom: 1.5rem;
@@ -172,11 +145,7 @@
         }
         .code-block code {
             color: #10b981;
-        }
-        .code-label {
-            color: #94a3b8;
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
+            white-space: pre-wrap;
         }
         .checklist {
             list-style: none;
@@ -233,73 +202,93 @@
         </div>
     </div>
     
-    <div class="tabs" id="tabsContainer"></div>
-    <div class="container" id="contentContainer">
-        <div class="loading">
-            <div class="loading-spinner"></div>
-            <p>Loading enterprise migration guide...</p>
-        </div>
+    <div class="tabs">
+        <div class="tab active" onclick="showPhase('preflight')">🚀 Phase 1: Pre-Flight Check</div>
     </div>
     
+    <div class="container" id="contentContainer"></div>
+    
     <script>
-        // Inline fetch to avoid path issues
-        fetch('https://raw.githubusercontent.com/bharathk2498/cloud-genesis/main/docs/migration-hub/migration-data-aws-enterprise.js')
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to load content');
-                return response.text();
-            })
-            .then(jsCode => {
-                // Execute the JS code to define 'phases'
-                eval(jsCode);
-                
-                // Initialize the guide
-                if (typeof phases !== 'undefined' && phases && phases.length > 0) {
-                    initializeMigrationGuide();
-                } else {
-                    throw new Error('Invalid content format');
-                }
-            })
-            .catch(error => {
-                console.error('Load error:', error);
-                document.getElementById('contentContainer').innerHTML = `
-                    <div class="error">
-                        <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Loading Failed</h2>
-                        <p>Unable to load migration guide. Please try:</p>
-                        <p style="margin-top: 1.5rem;">
-                            <button onclick="location.reload()" 
-                                style="background: #60a5fa; color: #0f172a; padding: 0.75rem 1.5rem; 
-                                       border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">
-                                🔄 Refresh Page
-                            </button>
-                        </p>
-                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #94a3b8;">
-                            Or try: Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
-                        </p>
+        // Embedded data - no external dependencies
+        const phase = {
+            id: 'preflight',
+            name: '🚀 Phase 1: Pre-Flight Check',
+            description: 'Establish enterprise-grade AWS foundation with multi-account architecture, network design, and comprehensive security baseline',
+            steps: [
+                {
+                    title: '1.1 Multi-Account Strategy (AWS Organizations)',
+                    why: 'Single AWS account = security nightmare. Organizations provide: centralized billing, consolidated audit trails, Service Control Policies for guardrails, and account isolation. Without this foundation, you face account sprawl, shadow IT, security drift, and audit failures costing $500K+.',
+                    what: 'Implement AWS Control Tower with hub-and-spoke architecture: Management account (billing only), Security account (GuardDuty, Security Hub), Log Archive, Shared Services, and OUs for Production/Staging/Development workloads.',
+                    how: `<p><strong>Step 1: Enable AWS Control Tower</strong></p>
+                    <div class="code-block"><code>1. AWS Console → Control Tower → "Set up landing zone"
+2. Takes ~60 minutes to provision
+3. Creates: Management, Security, Log Archive accounts</code></div>
+                    <p><strong>Step 2: Create Organizational Units</strong></p>
+                    <div class="code-block"><code>ROOT_ID=$(aws organizations list-roots --query 'Roots[0].Id' --output text)
+
+aws organizations create-organizational-unit \\
+  --parent-id $ROOT_ID --name "Security"
+  
+aws organizations create-organizational-unit \\
+  --parent-id $ROOT_ID --name "Workloads"</code></div>
+                    <p><strong>Step 3: Apply Service Control Policies</strong></p>
+                    <div class="warning-box">
+                        <div class="warning-title">⚠️ Test SCPs in sandbox first!</div>
+                        <p>Misconfigured SCPs can lock out all users including admins.</p>
+                    </div>`,
+                    verify: `<ul class="checklist">
+                        <li>Control Tower landing zone status = "Available"</li>
+                        <li>Minimum 5 accounts created and in correct OUs</li>
+                        <li>SCPs attached to Production OU</li>
+                        <li>Consolidated billing active</li>
+                        <li>MFA enabled on all root users</li>
+                    </ul>`
+                },
+                {
+                    title: '1.2 Enterprise VPC Architecture (Multi-AZ, Multi-Tier)',
+                    why: 'VPC design is PERMANENT - wrong CIDR causes IP exhaustion ($M rework), overlapping ranges prevent peering, flat networks fail compliance, single NAT = single point of failure. Enterprise VPCs need: proper CIDR planning, 3-AZ redundancy, tiered subnets, and room for growth.',
+                    what: 'Design /16 VPC (65K IPs), 3 AZs for HA, 9 subnets (3 public, 3 private, 3 data), NAT Gateways per AZ, VPC Flow Logs, and VPC endpoints to save $450/month on NAT costs.',
+                    how: `<p><strong>CIDR Plan: 10.100.0.0/16</strong></p>
+                    <div class="tip-box">
+                        <div class="tip-title">📊 Subnet Allocation</div>
+                        <p><strong>AZ-1a:</strong> Public 10.100.0.0/24, Private 10.100.1.0/23, Data 10.100.3.0/24<br>
+                        <strong>AZ-1b:</strong> Public 10.100.64.0/24, Private 10.100.65.0/23, Data 10.100.67.0/24<br>
+                        <strong>AZ-1c:</strong> Public 10.100.128.0/24, Private 10.100.129.0/23, Data 10.100.131.0/24</p>
                     </div>
-                `;
-            });
+                    <p><strong>Create VPC</strong></p>
+                    <div class="code-block"><code>VPC_ID=$(aws ec2 create-vpc \\
+  --cidr-block 10.100.0.0/16 \\
+  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=Production-VPC}]' \\
+  --query 'Vpc.VpcId' --output text)
+
+aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames</code></div>
+                    <p><strong>Create Subnets (9 total across 3 AZs)</strong></p>
+                    <div class="code-block"><code>aws ec2 create-subnet --vpc-id $VPC_ID \\
+  --cidr-block 10.100.0.0/24 \\
+  --availability-zone us-east-1a \\
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-1a}]'
+  
+# Repeat for all 9 subnets...</code></div>
+                    <p><strong>NAT Gateways (one per AZ)</strong></p>
+                    <div class="warning-box">
+                        <div class="warning-title">💰 Cost: $135/month base + $0.045/GB</div>
+                        <p>3 NAT Gateways = $135/month. Use VPC endpoints for S3/DynamoDB to save $450/month.</p>
+                    </div>`,
+                    verify: `<ul class="checklist">
+                        <li>VPC created with 10.100.0.0/16 CIDR</li>
+                        <li>9 subnets across 3 AZs (3 public, 3 private, 3 data)</li>
+                        <li>3 NAT Gateways (one per AZ) with Elastic IPs</li>
+                        <li>Route tables: Public → IGW, Private → NAT</li>
+                        <li>VPC Flow Logs enabled to S3</li>
+                        <li>VPC endpoints for S3 and DynamoDB created</li>
+                        <li>No CIDR conflicts with on-premises network</li>
+                    </ul>`
+                }
+            ]
+        };
         
-        function initializeMigrationGuide() {
-            // Render tabs
-            const tabsHTML = phases.map(phase => 
-                `<div class="tab" onclick="showPhase('${phase.id}')">${phase.name}</div>`
-            ).join('');
-            document.getElementById('tabsContainer').innerHTML = tabsHTML;
-            
-            // Show first phase
-            showPhase('preflight');
-        }
-        
-        function showPhase(phaseId) {
-            const phase = phases.find(p => p.id === phaseId);
-            if (!phase) return;
-            
-            // Update active tab
-            document.querySelectorAll('.tab').forEach((tab, index) => {
-                tab.classList.toggle('active', phases[index].id === phaseId);
-            });
-            
-            // Render steps
+        // Render immediately
+        function showPhase() {
             const stepsHTML = phase.steps.map((step, index) => `
                 <div class="step-card">
                     <div class="step-header">
@@ -325,13 +314,15 @@
                 </div>
             `).join('');
             
-            // Update content
             document.getElementById('contentContainer').innerHTML = `
                 <h1 class="phase-title">${phase.name}</h1>
                 <p class="phase-description">${phase.description}</p>
                 ${stepsHTML}
             `;
         }
+        
+        // Load on page load
+        showPhase();
     </script>
 </body>
 </html>
