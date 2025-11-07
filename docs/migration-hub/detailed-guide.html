@@ -74,6 +74,19 @@
             font-size: 1.5rem;
             color: #94a3b8;
         }
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #334155;
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         .error {
             background: rgba(127, 29, 29, 0.2);
             border: 2px solid #ef4444;
@@ -81,27 +94,6 @@
             padding: 2rem;
             margin: 2rem;
             text-align: center;
-        }
-        .error-details {
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-top: 1rem;
-            text-align: left;
-            background: #0f172a;
-            padding: 1rem;
-            border-radius: 6px;
-        }
-        .phase-content {
-            display: none;
-        }
-        .phase-content.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .phase-title {
             font-size: 2.5rem;
@@ -237,64 +229,64 @@
     <div class="header">
         <div class="header-content">
             <a href="provider-selection.html" class="back-btn">← Back</a>
-            <span class="provider-badge aws" id="providerBadge">🟠 AWS Enterprise Migration</span>
+            <span class="provider-badge aws">🟠 AWS Enterprise Migration</span>
         </div>
     </div>
     
     <div class="tabs" id="tabsContainer"></div>
     <div class="container" id="contentContainer">
-        <div class="loading">⚙️ Loading enterprise migration guide...</div>
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading enterprise migration guide...</p>
+        </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/gh/bharathk2498/cloud-genesis@main/docs/migration-hub/migration-data-aws-enterprise.js"></script>
     <script>
-        let loadAttempts = 0;
-        const maxAttempts = 3;
-        
-        function checkAndInit() {
-            loadAttempts++;
-            
-            if (typeof phases !== 'undefined' && phases && phases.length > 0) {
-                initializeMigrationGuide();
-            } else if (loadAttempts < maxAttempts) {
-                setTimeout(checkAndInit, 500);
-            } else {
-                showError();
-            }
-        }
-        
-        function showError() {
-            document.getElementById('contentContainer').innerHTML = `
-                <div class="error">
-                    <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Content Loading Error</h2>
-                    <p>Unable to load migration guide content. This usually resolves with a page refresh.</p>
-                    <p style="margin-top: 1.5rem;">
-                        <button onclick="location.reload()" style="background: #60a5fa; color: #0f172a; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">
-                            🔄 Refresh Page
-                        </button>
-                    </p>
-                    <div class="error-details">
-                        <strong>Troubleshooting:</strong><br>
-                        1. Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)<br>
-                        2. Clear browser cache<br>
-                        3. Try in an incognito window<br>
-                        4. If issue persists, GitHub Pages may still be deploying (wait 2-3 minutes)
+        // Inline fetch to avoid path issues
+        fetch('https://raw.githubusercontent.com/bharathk2498/cloud-genesis/main/docs/migration-hub/migration-data-aws-enterprise.js')
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to load content');
+                return response.text();
+            })
+            .then(jsCode => {
+                // Execute the JS code to define 'phases'
+                eval(jsCode);
+                
+                // Initialize the guide
+                if (typeof phases !== 'undefined' && phases && phases.length > 0) {
+                    initializeMigrationGuide();
+                } else {
+                    throw new Error('Invalid content format');
+                }
+            })
+            .catch(error => {
+                console.error('Load error:', error);
+                document.getElementById('contentContainer').innerHTML = `
+                    <div class="error">
+                        <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Loading Failed</h2>
+                        <p>Unable to load migration guide. Please try:</p>
+                        <p style="margin-top: 1.5rem;">
+                            <button onclick="location.reload()" 
+                                style="background: #60a5fa; color: #0f172a; padding: 0.75rem 1.5rem; 
+                                       border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">
+                                🔄 Refresh Page
+                            </button>
+                        </p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #94a3b8;">
+                            Or try: Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
+                        </p>
                     </div>
-                </div>
-            `;
-        }
+                `;
+            });
         
         function initializeMigrationGuide() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const provider = urlParams.get('provider') || 'aws';
-            
             // Render tabs
             const tabsHTML = phases.map(phase => 
                 `<div class="tab" onclick="showPhase('${phase.id}')">${phase.name}</div>`
             ).join('');
             document.getElementById('tabsContainer').innerHTML = tabsHTML;
             
-            // Show first phase by default
+            // Show first phase
             showPhase('preflight');
         }
         
@@ -302,10 +294,12 @@
             const phase = phases.find(p => p.id === phaseId);
             if (!phase) return;
             
+            // Update active tab
             document.querySelectorAll('.tab').forEach((tab, index) => {
                 tab.classList.toggle('active', phases[index].id === phaseId);
             });
             
+            // Render steps
             const stepsHTML = phase.steps.map((step, index) => `
                 <div class="step-card">
                     <div class="step-header">
@@ -331,18 +325,12 @@
                 </div>
             `).join('');
             
+            // Update content
             document.getElementById('contentContainer').innerHTML = `
                 <h1 class="phase-title">${phase.name}</h1>
                 <p class="phase-description">${phase.description}</p>
                 ${stepsHTML}
             `;
-        }
-        
-        // Start checking when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkAndInit);
-        } else {
-            checkAndInit();
         }
     </script>
 </body>
