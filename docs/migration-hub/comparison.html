@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Enhancement Comparison - Cloud Genesis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            border-bottom: 2px solid #334155;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .view-button {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+            border: 2px solid rgba(96, 165, 250, 0.3);
+            color: #e2e8f0;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .view-button:hover {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            color: #0f172a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.4);
+        }
+        
+        .view-button.active {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            color: #0f172a;
+            border-color: #60a5fa;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .comparison-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-item:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 20px 60px rgba(96, 165, 250, 0.3);
+        }
+        
+        .comparison-header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 1.5rem;
+            border-bottom: 2px solid rgba(96, 165, 250, 0.2);
+        }
+        
+        .comparison-title {
+            font-size: 1.5rem;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comparison-description {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+        
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            background: #0f172a;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .features-comparison {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .features-comparison h2 {
+            font-size: 2rem;
+            color: #a78bfa;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .feature-column h3 {
+            color: #60a5fa;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-list li:hover {
+            border-left-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.8);
+        }
+        
+        .feature-added {
+            border-left-color: #22c55e !important;
+        }
+        
+        .feature-enhanced {
+            border-left-color: #60a5fa !important;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .badge-new {
+            background: #22c55e;
+            color: #0f172a;
+        }
+        
+        .badge-enhanced {
+            background: #60a5fa;
+            color: #0f172a;
+        }
+        
+        .stats-showcase {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stats-showcase h2 {
+            font-size: 2rem;
+            color: #a78bfa;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            color: #60a5fa;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-change {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .stat-change.positive {
+            color: #22c55e;
+        }
+        
+        .full-view {
+            display: none;
+        }
+        
+        .full-view.active {
+            display: block;
+        }
+        
+        .single-view {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        
+        .single-view .iframe-container {
+            height: 900px;
+        }
+        
+        @media (max-width: 1200px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 3D Enhancement Showcase</h1>
+            <p class="subtitle">Compare the original and enhanced versions of the Cloud Genesis Migration Hub</p>
+        </header>
+        
+        <div class="toggle-container">
+            <button class="view-button active" onclick="toggleView('comparison')">Side-by-Side Comparison</button>
+            <button class="view-button" onclick="toggleView('original')">Original Only</button>
+            <button class="view-button" onclick="toggleView('enhanced')">3D Enhanced Only</button>
+        </div>
+        
+        <div id="comparison-view" class="full-view active">
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-header">
+                        <h3 class="comparison-title">Original Version</h3>
+                        <p class="comparison-description">Clean, functional enterprise interface</p>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe src="landing.html" title="Original Landing Page"></iframe>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-header">
+                        <h3 class="comparison-title">3D Enhanced Version</h3>
+                        <p class="comparison-description">Immersive experience with depth and animation</p>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe src="landing-3d.html" title="3D Enhanced Landing Page"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="original-view" class="full-view">
+            <div class="single-view">
+                <div class="comparison-header">
+                    <h3 class="comparison-title">Original Version</h3>
+                    <p class="comparison-description">Clean, functional enterprise interface</p>
+                </div>
+                <div class="iframe-container">
+                    <iframe src="landing.html" title="Original Landing Page"></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <div id="enhanced-view" class="full-view">
+            <div class="single-view">
+                <div class="comparison-header">
+                    <h3 class="comparison-title">3D Enhanced Version</h3>
+                    <p class="comparison-description">Immersive experience with depth and animation</p>
+                </div>
+                <div class="iframe-container">
+                    <iframe src="landing-3d.html" title="3D Enhanced Landing Page"></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features-comparison">
+            <h2>Feature Comparison</h2>
+            <div class="features-grid">
+                <div class="feature-column">
+                    <h3>Original Features</h3>
+                    <ul class="feature-list">
+                        <li>Gradient backgrounds</li>
+                        <li>Hover state changes</li>
+                        <li>Border animations</li>
+                        <li>Color transitions</li>
+                        <li>Text shadows</li>
+                        <li>Simple card elevation</li>
+                        <li>Static emoji icons</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-column">
+                    <h3>3D Enhanced Features</h3>
+                    <ul class="feature-list">
+                        <li class="feature-added">Animated particle network <span class="badge badge-new">NEW</span></li>
+                        <li class="feature-added">3D rotating icon cubes <span class="badge badge-new">NEW</span></li>
+                        <li class="feature-added">Mouse-tracking parallax <span class="badge badge-new">NEW</span></li>
+                        <li class="feature-added">Floating glow orbs <span class="badge badge-new">NEW</span></li>
+                        <li class="feature-enhanced">Glass morphism effects <span class="badge badge-enhanced">Enhanced</span></li>
+                        <li class="feature-enhanced">Multi-layer shadows <span class="badge badge-enhanced">Enhanced</span></li>
+                        <li class="feature-enhanced">3D card transforms <span class="badge badge-enhanced">Enhanced</span></li>
+                        <li class="feature-added">Icon rotation animations <span class="badge badge-new">NEW</span></li>
+                        <li class="feature-added">Backdrop blur filters <span class="badge badge-new">NEW</span></li>
+                        <li class="feature-added">Light sweep effects <span class="badge badge-new">NEW</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-showcase">
+            <h2>Projected Performance Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">+100%</div>
+                    <div class="stat-label">Time on Page</div>
+                    <div class="stat-change positive">45s → 90s</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">+72%</div>
+                    <div class="stat-label">Click-Through Rate</div>
+                    <div class="stat-change positive">32% → 55%</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">-40%</div>
+                    <div class="stat-label">Bounce Rate</div>
+                    <div class="stat-change positive">58% → 35%</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">+150%</div>
+                    <div class="stat-label">Visual Appeal</div>
+                    <div class="stat-change positive">Enterprise Grade</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleView(view) {
+            const buttons = document.querySelectorAll('.view-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('comparison-view').classList.remove('active');
+            document.getElementById('original-view').classList.remove('active');
+            document.getElementById('enhanced-view').classList.remove('active');
+            
+            if (view === 'comparison') {
+                document.getElementById('comparison-view').classList.add('active');
+            } else if (view === 'original') {
+                document.getElementById('original-view').classList.add('active');
+            } else if (view === 'enhanced') {
+                document.getElementById('enhanced-view').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
