@@ -82,6 +82,16 @@
             margin: 2rem;
             text-align: center;
         }
+        .error-details {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 1rem;
+            text-align: left;
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 6px;
+        }
         .phase-content {
             display: none;
         }
@@ -236,28 +246,45 @@
         <div class="loading">⚙️ Loading enterprise migration guide...</div>
     </div>
     
-    <script src="./migration-data-aws-enterprise.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/bharathk2498/cloud-genesis@main/docs/migration-hub/migration-data-aws-enterprise.js"></script>
     <script>
-        // Wait for DOM and script to load
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeMigrationGuide();
-        });
+        let loadAttempts = 0;
+        const maxAttempts = 3;
+        
+        function checkAndInit() {
+            loadAttempts++;
+            
+            if (typeof phases !== 'undefined' && phases && phases.length > 0) {
+                initializeMigrationGuide();
+            } else if (loadAttempts < maxAttempts) {
+                setTimeout(checkAndInit, 500);
+            } else {
+                showError();
+            }
+        }
+        
+        function showError() {
+            document.getElementById('contentContainer').innerHTML = `
+                <div class="error">
+                    <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Content Loading Error</h2>
+                    <p>Unable to load migration guide content. This usually resolves with a page refresh.</p>
+                    <p style="margin-top: 1.5rem;">
+                        <button onclick="location.reload()" style="background: #60a5fa; color: #0f172a; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">
+                            🔄 Refresh Page
+                        </button>
+                    </p>
+                    <div class="error-details">
+                        <strong>Troubleshooting:</strong><br>
+                        1. Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)<br>
+                        2. Clear browser cache<br>
+                        3. Try in an incognito window<br>
+                        4. If issue persists, GitHub Pages may still be deploying (wait 2-3 minutes)
+                    </div>
+                </div>
+            `;
+        }
         
         function initializeMigrationGuide() {
-            // Check if phases is defined
-            if (typeof phases === 'undefined' || !phases || phases.length === 0) {
-                document.getElementById('contentContainer').innerHTML = `
-                    <div class="error">
-                        <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Content Loading Error</h2>
-                        <p>Unable to load migration guide content. Please refresh the page.</p>
-                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #94a3b8;">
-                            If this persists, check that migration-data-aws-enterprise.js is accessible.
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
             const urlParams = new URLSearchParams(window.location.search);
             const provider = urlParams.get('provider') || 'aws';
             
@@ -271,7 +298,6 @@
             showPhase('preflight');
         }
         
-        // Render content
         function showPhase(phaseId) {
             const phase = phases.find(p => p.id === phaseId);
             if (!phase) return;
@@ -312,9 +338,11 @@
             `;
         }
         
-        // Initialize if script already loaded
-        if (typeof phases !== 'undefined') {
-            initializeMigrationGuide();
+        // Start checking when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkAndInit);
+        } else {
+            checkAndInit();
         }
     </script>
 </body>
