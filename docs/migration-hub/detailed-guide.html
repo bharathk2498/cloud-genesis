@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Enterprise Migration Guide - On-Premise to AWS</title>
+    <title>AWS Enterprise Migration Guide - Complete Lifecycle</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -20,9 +20,10 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         .header-content {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -38,7 +39,9 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
+            transition: background 0.2s;
         }
+        .back-btn:hover { background: #475569; }
         .provider-badge {
             padding: 0.5rem 1.25rem;
             border-radius: 20px;
@@ -46,31 +49,58 @@
             font-size: 0.9rem;
         }
         .provider-badge.aws { background: #ff9900; color: #0f172a; }
-        .tabs {
+        
+        .tabs-container {
             background: #1e293b;
             border-bottom: 2px solid #334155;
+            position: sticky;
+            top: 72px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .tabs {
+            max-width: 1600px;
+            margin: 0 auto;
             padding: 0 2rem;
             display: flex;
             overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
         }
+        .tabs::-webkit-scrollbar { height: 6px; }
+        .tabs::-webkit-scrollbar-track { background: #1e293b; }
+        .tabs::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        
         .tab {
-            padding: 1rem 2rem;
+            padding: 1rem 1.5rem;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
             white-space: nowrap;
             font-weight: 600;
+            font-size: 0.9rem;
         }
         .tab:hover { background: #334155; }
-        .tab.active { border-bottom-color: #60a5fa; color: #60a5fa; }
+        .tab.active { 
+            border-bottom-color: #60a5fa; 
+            color: #60a5fa;
+            background: rgba(96,165,250,0.05);
+        }
+        
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 3rem 2rem;
         }
+        
+        .phase-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #334155;
+        }
         .phase-title {
             font-size: 2.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             background: linear-gradient(135deg, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -78,17 +108,23 @@
         .phase-description {
             font-size: 1.2rem;
             color: #94a3b8;
-            margin-bottom: 3rem;
             padding-left: 1rem;
             border-left: 4px solid #60a5fa;
         }
+        
         .step-card {
             background: #1e293b;
             border: 2px solid #334155;
             border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(96,165,250,0.1);
+        }
+        
         .step-header {
             display: flex;
             align-items: center;
@@ -96,10 +132,10 @@
             margin-bottom: 1.5rem;
         }
         .step-number {
-            background: #60a5fa;
-            color: #0f172a;
-            width: 40px;
-            height: 40px;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: #fff;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -107,32 +143,40 @@
             font-weight: 700;
             font-size: 1.1rem;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(96,165,250,0.3);
         }
         .step-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: #e2e8f0;
+            font-weight: 600;
         }
+        
         .context-box {
-            border-radius: 8px;
-            padding: 1.25rem;
+            border-radius: 10px;
+            padding: 1.5rem;
             margin: 1.5rem 0;
-            border-left: 4px solid;
+            border-left: 5px solid;
         }
-        .context-box.why { background: rgba(30, 58, 138, 0.1); border-color: #3b82f6; }
-        .context-box.what { background: rgba(124, 45, 146, 0.1); border-color: #a78bfa; }
-        .context-box.how { background: rgba(8, 145, 178, 0.1); border-color: #06b6d4; }
-        .context-box.verify { background: rgba(4, 120, 87, 0.1); border-color: #10b981; }
+        .context-box.why { background: rgba(59, 130, 246, 0.08); border-color: #3b82f6; }
+        .context-box.what { background: rgba(167, 139, 250, 0.08); border-color: #a78bfa; }
+        .context-box.how { background: rgba(6, 182, 212, 0.08); border-color: #06b6d4; }
+        .context-box.verify { background: rgba(16, 185, 129, 0.08); border-color: #10b981; }
+        
         .context-label {
             font-weight: 700;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         .context-box.why .context-label { color: #3b82f6; }
         .context-box.what .context-label { color: #a78bfa; }
         .context-box.how .context-label { color: #06b6d4; }
         .context-box.verify .context-label { color: #10b981; }
+        
         .code-block {
             background: #0f172a;
             border: 1px solid #334155;
@@ -142,153 +186,1878 @@
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             overflow-x: auto;
+            line-height: 1.5;
         }
         .code-block code {
             color: #10b981;
             white-space: pre-wrap;
+            word-break: break-word;
         }
+        
         .checklist {
             list-style: none;
             padding-left: 0;
         }
         .checklist li {
-            padding: 0.5rem 0;
-            padding-left: 2rem;
+            padding: 0.75rem 0;
+            padding-left: 2.5rem;
             position: relative;
             color: #cbd5e1;
+            font-size: 1.05rem;
         }
         .checklist li::before {
             content: '☐';
             position: absolute;
             left: 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #60a5fa;
         }
+        
         .warning-box {
-            background: rgba(127, 29, 29, 0.1);
-            border-left: 4px solid #ef4444;
-            border-radius: 8px;
-            padding: 1.25rem;
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 5px solid #ef4444;
+            border-radius: 10px;
+            padding: 1.5rem;
             margin: 1.5rem 0;
         }
         .warning-box .warning-title {
             color: #ef4444;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
         }
+        
         .tip-box {
-            background: rgba(120, 53, 15, 0.1);
-            border-left: 4px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1.25rem;
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 5px solid #f59e0b;
+            border-radius: 10px;
+            padding: 1.5rem;
             margin: 1.5rem 0;
         }
         .tip-box .tip-title {
             color: #f59e0b;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
         }
+        
+        .info-box {
+            background: rgba(96, 165, 250, 0.08);
+            border-left: 5px solid #60a5fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .info-box .info-title {
+            color: #60a5fa;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f172a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        th {
+            background: #1e293b;
+            color: #60a5fa;
+            font-weight: 700;
+        }
+        td { color: #cbd5e1; }
+        
         @media (max-width: 768px) {
             .tabs { padding: 0 1rem; }
             .container { padding: 2rem 1rem; }
+            .phase-title { font-size: 2rem; }
+            .step-title { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-content">
-            <a href="provider-selection.html" class="back-btn">← Back</a>
-            <span class="provider-badge aws">🟠 AWS Enterprise Migration</span>
+            <a href="provider-selection.html" class="back-btn">← Back to Provider Selection</a>
+            <span class="provider-badge aws">AWS Enterprise Migration</span>
         </div>
     </div>
     
-    <div class="tabs">
-        <div class="tab active" onclick="showPhase('preflight')">🚀 Phase 1: Pre-Flight Check</div>
+    <div class="tabs-container">
+        <div class="tabs">
+            <div class="tab active" onclick="showPhase('preflight')">Pre-Flight</div>
+            <div class="tab" onclick="showPhase('assessment')">Assessment</div>
+            <div class="tab" onclick="showPhase('network')">Network</div>
+            <div class="tab" onclick="showPhase('security')">Security & IAM</div>
+            <div class="tab" onclick="showPhase('data')">Data Migration</div>
+            <div class="tab" onclick="showPhase('application')">Applications</div>
+            <div class="tab" onclick="showPhase('database')">Databases</div>
+            <div class="tab" onclick="showPhase('testing')">Testing</div>
+            <div class="tab" onclick="showPhase('cutover')">Cutover</div>
+            <div class="tab" onclick="showPhase('postmigration')">Post-Migration</div>
+            <div class="tab" onclick="showPhase('cost')">Cost Optimization</div>
+            <div class="tab" onclick="showPhase('operations')">Operations</div>
+        </div>
     </div>
     
     <div class="container" id="contentContainer"></div>
     
     <script>
-        // Embedded data - no external dependencies
-        const phase = {
-            id: 'preflight',
-            name: '🚀 Phase 1: Pre-Flight Check',
-            description: 'Establish enterprise-grade AWS foundation with multi-account architecture, network design, and comprehensive security baseline',
-            steps: [
-                {
-                    title: '1.1 Multi-Account Strategy (AWS Organizations)',
-                    why: 'Single AWS account = security nightmare. Organizations provide: centralized billing, consolidated audit trails, Service Control Policies for guardrails, and account isolation. Without this foundation, you face account sprawl, shadow IT, security drift, and audit failures costing $500K+.',
-                    what: 'Implement AWS Control Tower with hub-and-spoke architecture: Management account (billing only), Security account (GuardDuty, Security Hub), Log Archive, Shared Services, and OUs for Production/Staging/Development workloads.',
-                    how: `<p><strong>Step 1: Enable AWS Control Tower</strong></p>
-                    <div class="code-block"><code>1. AWS Console → Control Tower → "Set up landing zone"
-2. Takes ~60 minutes to provision
-3. Creates: Management, Security, Log Archive accounts</code></div>
-                    <p><strong>Step 2: Create Organizational Units</strong></p>
-                    <div class="code-block"><code>ROOT_ID=$(aws organizations list-roots --query 'Roots[0].Id' --output text)
+        const phases = {
+            preflight: {
+                name: 'Pre-Flight Foundation',
+                description: 'Establish enterprise-grade AWS foundation with multi-account architecture, landing zone automation, and security baseline before any workload migration begins',
+                steps: [
+                    {
+                        title: 'Multi-Account Strategy with AWS Control Tower',
+                        why: 'Single AWS account equals security nightmare and audit failure. Organizations provide centralized billing, consolidated audit trails, Service Control Policies for guardrails, and blast radius containment. Without this foundation you face account sprawl, shadow IT, security drift, and compliance failures costing 500K plus in remediation.',
+                        what: 'Implement AWS Control Tower with hub-and-spoke architecture creating Management account for billing only, Security account for GuardDuty and Security Hub, Log Archive for centralized logging, Shared Services for common infrastructure, and Organizational Units for Production, Staging, Development workloads with automated guardrails.',
+                        how: `<p><strong>Step 1: Enable AWS Control Tower Landing Zone</strong></p>
+                        <div class="code-block"><code>1. AWS Console → Control Tower → Set up landing zone
+2. Select home region for landing zone
+3. Takes 60 minutes to provision foundation
+4. Creates Management, Security, Log Archive accounts automatically</code></div>
+                        <p><strong>Step 2: Create Organizational Units Structure</strong></p>
+                        <div class="code-block"><code>ROOT_ID=$(aws organizations list-roots --query 'Roots[0].Id' --output text)
 
 aws organizations create-organizational-unit \\
-  --parent-id $ROOT_ID --name "Security"
+  --parent-id $ROOT_ID --name Security
+
+aws organizations create-organizational-unit \\
+  --parent-id $ROOT_ID --name Infrastructure
   
 aws organizations create-organizational-unit \\
-  --parent-id $ROOT_ID --name "Workloads"</code></div>
-                    <p><strong>Step 3: Apply Service Control Policies</strong></p>
-                    <div class="warning-box">
-                        <div class="warning-title">⚠️ Test SCPs in sandbox first!</div>
-                        <p>Misconfigured SCPs can lock out all users including admins.</p>
-                    </div>`,
-                    verify: `<ul class="checklist">
-                        <li>Control Tower landing zone status = "Available"</li>
-                        <li>Minimum 5 accounts created and in correct OUs</li>
-                        <li>SCPs attached to Production OU</li>
-                        <li>Consolidated billing active</li>
-                        <li>MFA enabled on all root users</li>
-                    </ul>`
-                },
-                {
-                    title: '1.2 Enterprise VPC Architecture (Multi-AZ, Multi-Tier)',
-                    why: 'VPC design is PERMANENT - wrong CIDR causes IP exhaustion ($M rework), overlapping ranges prevent peering, flat networks fail compliance, single NAT = single point of failure. Enterprise VPCs need: proper CIDR planning, 3-AZ redundancy, tiered subnets, and room for growth.',
-                    what: 'Design /16 VPC (65K IPs), 3 AZs for HA, 9 subnets (3 public, 3 private, 3 data), NAT Gateways per AZ, VPC Flow Logs, and VPC endpoints to save $450/month on NAT costs.',
-                    how: `<p><strong>CIDR Plan: 10.100.0.0/16</strong></p>
-                    <div class="tip-box">
-                        <div class="tip-title">📊 Subnet Allocation</div>
-                        <p><strong>AZ-1a:</strong> Public 10.100.0.0/24, Private 10.100.1.0/23, Data 10.100.3.0/24<br>
-                        <strong>AZ-1b:</strong> Public 10.100.64.0/24, Private 10.100.65.0/23, Data 10.100.67.0/24<br>
-                        <strong>AZ-1c:</strong> Public 10.100.128.0/24, Private 10.100.129.0/23, Data 10.100.131.0/24</p>
-                    </div>
-                    <p><strong>Create VPC</strong></p>
-                    <div class="code-block"><code>VPC_ID=$(aws ec2 create-vpc \\
+  --parent-id $ROOT_ID --name Workloads</code></div>
+                        <p><strong>Step 3: Deploy Service Control Policies</strong></p>
+                        <div class="code-block"><code>cat > deny-region-scp.json << 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Deny",
+    "Action": "*",
+    "Resource": "*",
+    "Condition": {
+      "StringNotEquals": {
+        "aws:RequestedRegion": ["us-east-1", "us-west-2"]
+      }
+    }
+  }]
+}
+EOF
+
+aws organizations create-policy \\
+  --content file://deny-region-scp.json \\
+  --name DenyNonApprovedRegions \\
+  --type SERVICE_CONTROL_POLICY</code></div>
+                        <div class="warning-box">
+                            <div class="warning-title">Critical Warning: Test SCPs in Sandbox First</div>
+                            <p>Misconfigured Service Control Policies can lock out all users including root account. Always test in non-production OU before applying to production workloads. Create break-glass IAM user with direct policy attachment as emergency access.</p>
+                        </div>`,
+                        verify: `<ul class="checklist">
+                            <li>Control Tower landing zone status shows Available in console</li>
+                            <li>Minimum 5 accounts created: Management, Security, Log Archive, and 2 workload accounts</li>
+                            <li>All accounts assigned to correct Organizational Units</li>
+                            <li>Service Control Policies attached to production OU</li>
+                            <li>Consolidated billing active with payer account designated</li>
+                            <li>MFA enabled on all root users with hardware tokens</li>
+                            <li>CloudTrail organization trail logging to central S3 bucket</li>
+                        </ul>`
+                    },
+                    {
+                        title: 'Enterprise VPC Architecture Multi-AZ Multi-Tier',
+                        why: 'VPC design decisions are PERMANENT once workloads deploy. Wrong CIDR causes IP exhaustion requiring complete rebuild costing millions. Overlapping IP ranges prevent VPC peering and Direct Connect. Flat network topology fails compliance audits. Single NAT Gateway creates single point of failure losing production traffic. Enterprise VPC architecture needs proper CIDR planning for future growth, three availability zone redundancy, tiered subnet isolation, redundant NAT gateways, and VPC endpoints for cost savings.',
+                        what: 'Design slash 16 VPC providing 65000 IP addresses with three availability zones for high availability, nine subnets split into public private data tiers, NAT Gateway per availability zone for redundancy, VPC Flow Logs for security monitoring, VPC endpoints for S3 and DynamoDB saving 450 dollars monthly on NAT costs, and Transit Gateway attachment for hybrid connectivity.',
+                        how: `<p><strong>CIDR Planning: 10.100.0.0/16</strong></p>
+                        <div class="info-box">
+                            <div class="info-title">Subnet Allocation Strategy</div>
+                            <div class="table-responsive">
+                                <table>
+                                    <tr>
+                                        <th>AZ</th>
+                                        <th>Public</th>
+                                        <th>Private</th>
+                                        <th>Data</th>
+                                    </tr>
+                                    <tr>
+                                        <td>us-east-1a</td>
+                                        <td>10.100.0.0/24</td>
+                                        <td>10.100.1.0/23</td>
+                                        <td>10.100.3.0/24</td>
+                                    </tr>
+                                    <tr>
+                                        <td>us-east-1b</td>
+                                        <td>10.100.64.0/24</td>
+                                        <td>10.100.65.0/23</td>
+                                        <td>10.100.67.0/24</td>
+                                    </tr>
+                                    <tr>
+                                        <td>us-east-1c</td>
+                                        <td>10.100.128.0/24</td>
+                                        <td>10.100.129.0/23</td>
+                                        <td>10.100.131.0/24</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <p><strong>Create Production VPC</strong></p>
+                        <div class="code-block"><code>VPC_ID=$(aws ec2 create-vpc \\
   --cidr-block 10.100.0.0/16 \\
-  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=Production-VPC}]' \\
+  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=Production-VPC},{Key=Environment,Value=Production}]' \\
   --query 'Vpc.VpcId' --output text)
 
-aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames</code></div>
-                    <p><strong>Create Subnets (9 total across 3 AZs)</strong></p>
-                    <div class="code-block"><code>aws ec2 create-subnet --vpc-id $VPC_ID \\
+aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames
+aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-support</code></div>
+                        <p><strong>Create All Subnets Across Three AZs</strong></p>
+                        <div class="code-block"><code>PUBLIC_1A=$(aws ec2 create-subnet --vpc-id $VPC_ID \\
   --cidr-block 10.100.0.0/24 \\
   --availability-zone us-east-1a \\
-  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-1a}]'
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-1a},{Key=Tier,Value=Public}]' \\
+  --query 'Subnet.SubnetId' --output text)
+
+PRIVATE_1A=$(aws ec2 create-subnet --vpc-id $VPC_ID \\
+  --cidr-block 10.100.1.0/23 \\
+  --availability-zone us-east-1a \\
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Private-1a},{Key=Tier,Value=Private}]' \\
+  --query 'Subnet.SubnetId' --output text)
+
+DATA_1A=$(aws ec2 create-subnet --vpc-id $VPC_ID \\
+  --cidr-block 10.100.3.0/24 \\
+  --availability-zone us-east-1a \\
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Data-1a},{Key=Tier,Value=Data}]' \\
+  --query 'Subnet.SubnetId' --output text)
   
-# Repeat for all 9 subnets...</code></div>
-                    <p><strong>NAT Gateways (one per AZ)</strong></p>
-                    <div class="warning-box">
-                        <div class="warning-title">💰 Cost: $135/month base + $0.045/GB</div>
-                        <p>3 NAT Gateways = $135/month. Use VPC endpoints for S3/DynamoDB to save $450/month.</p>
-                    </div>`,
-                    verify: `<ul class="checklist">
-                        <li>VPC created with 10.100.0.0/16 CIDR</li>
-                        <li>9 subnets across 3 AZs (3 public, 3 private, 3 data)</li>
-                        <li>3 NAT Gateways (one per AZ) with Elastic IPs</li>
-                        <li>Route tables: Public → IGW, Private → NAT</li>
-                        <li>VPC Flow Logs enabled to S3</li>
-                        <li>VPC endpoints for S3 and DynamoDB created</li>
-                        <li>No CIDR conflicts with on-premises network</li>
-                    </ul>`
-                }
-            ]
+# Repeat for 1b and 1c with respective CIDR blocks</code></div>
+                        <p><strong>Deploy NAT Gateways for High Availability</strong></p>
+                        <div class="code-block"><code>EIP_1A=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text)
+EIP_1B=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text)
+EIP_1C=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text)
+
+NAT_1A=$(aws ec2 create-nat-gateway \\
+  --subnet-id $PUBLIC_1A \\
+  --allocation-id $EIP_1A \\
+  --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=NAT-1a}]' \\
+  --query 'NatGateway.NatGatewayId' --output text)
+
+# Repeat for 1b and 1c</code></div>
+                        <div class="warning-box">
+                            <div class="warning-title">Cost Impact: NAT Gateway Pricing</div>
+                            <p>Three NAT Gateways cost 135 dollars monthly base plus 0.045 dollars per GB processed. For 10TB monthly traffic that is 585 dollars. Deploy VPC endpoints for S3 and DynamoDB to save 450 dollars monthly by routing traffic internally without NAT gateway charges.</p>
+                        </div>
+                        <p><strong>Create VPC Endpoints for Cost Savings</strong></p>
+                        <div class="code-block"><code>aws ec2 create-vpc-endpoint \\
+  --vpc-id $VPC_ID \\
+  --service-name com.amazonaws.us-east-1.s3 \\
+  --route-table-ids $PRIVATE_RT_1A $PRIVATE_RT_1B $PRIVATE_RT_1C
+
+aws ec2 create-vpc-endpoint \\
+  --vpc-id $VPC_ID \\
+  --service-name com.amazonaws.us-east-1.dynamodb \\
+  --route-table-ids $PRIVATE_RT_1A $PRIVATE_RT_1B $PRIVATE_RT_1C</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>VPC created with 10.100.0.0/16 CIDR and DNS support enabled</li>
+                            <li>Nine subnets across three AZs: 3 public, 3 private, 3 data tier</li>
+                            <li>Three NAT Gateways deployed, one per AZ with Elastic IPs attached</li>
+                            <li>Internet Gateway attached to VPC with route in public route tables</li>
+                            <li>Route tables configured: Public subnets route to IGW, Private route to NAT</li>
+                            <li>VPC Flow Logs enabled sending to S3 bucket with 90 day retention</li>
+                            <li>VPC endpoints created for S3 and DynamoDB</li>
+                            <li>No CIDR conflicts with on-premises network ranges</li>
+                            <li>Network ACLs configured for defense in depth</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            assessment: {
+                name: 'Discovery & Assessment',
+                description: 'Comprehensive inventory of on-premises infrastructure, application dependencies, data classification, and migration complexity scoring to build accurate migration roadmap and timeline',
+                steps: [
+                    {
+                        title: 'Deploy AWS Application Discovery Service',
+                        why: 'Manual spreadsheet inventory misses 40 percent of dependencies causing failed migrations and rollbacks costing weeks of downtime. Unknown dependencies break applications post-migration. Inaccurate server specs lead to wrong instance sizing wasting 60 percent of compute budget. Application Discovery Service automatically discovers servers, maps dependencies, tracks utilization for right-sizing, and exports data to Migration Hub for portfolio analysis.',
+                        what: 'Install Discovery Agents on all servers for deep inspection collecting CPU memory disk network utilization, process-level dependencies, network connections, and installed software packages. Deploy Discovery Connector for agentless VMware discovery as alternative for non-agent environments. Configure 24-hour discovery period minimum for accurate utilization baselines then export complete inventory to Migration Hub portfolio.',
+                        how: `<p><strong>Step 1: Enable Application Discovery Service</strong></p>
+                        <div class="code-block"><code>aws discovery start-data-collection-by-agent-ids \\
+  --region us-east-1
+
+aws discovery create-application \\
+  --name "Production-ERP-System" \\
+  --description "SAP ERP application stack"</code></div>
+                        <p><strong>Step 2: Install Discovery Agent on Linux Servers</strong></p>
+                        <div class="code-block"><code>wget https://s3.us-west-2.amazonaws.com/aws-discovery-agent.us-west-2/linux/latest/aws-discovery-agent.tar.gz
+
+tar -xzf aws-discovery-agent.tar.gz
+sudo bash install -r us-east-1 -k ACCESS_KEY -s SECRET_KEY
+
+sudo /opt/aws/discovery/bin/aws-discovery-agent start</code></div>
+                        <p><strong>Step 3: Install Discovery Agent on Windows Servers</strong></p>
+                        <div class="code-block"><code>Download agent from S3:
+https://s3.us-west-2.amazonaws.com/aws-discovery-agent.us-west-2/windows/latest/AWSDiscoveryAgentInstaller.exe
+
+Run installer with parameters:
+AWSDiscoveryAgentInstaller.exe REGION=us-east-1 KEY_ID=ACCESS_KEY KEY_SECRET=SECRET_KEY /quiet
+
+Verify service:
+Get-Service -Name "AWS Discovery Agent"</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">Best Practice: Discovery Duration</div>
+                            <p>Run discovery for minimum 7 days capturing full weekly patterns including weekend batch jobs and month-end processing. 24-hour discovery misses cyclical workloads leading to undersized instances. Extended discovery reveals true peak utilization for accurate right-sizing recommendations.</p>
+                        </div>
+                        <p><strong>Step 4: Configure Data Exploration in Athena</strong></p>
+                        <div class="code-block"><code>aws discovery start-continuous-export \\
+  --region us-east-1
+
+aws discovery describe-continuous-exports \\
+  --region us-east-1 \\
+  --query 'descriptions[0].dataSource'</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Discovery agents installed on all in-scope servers showing Online status</li>
+                            <li>Data collection running for minimum 7 days capturing weekly patterns</li>
+                            <li>Application groupings created for each business application</li>
+                            <li>Network dependencies mapped showing server-to-server connections</li>
+                            <li>Utilization data available showing CPU memory disk metrics</li>
+                            <li>Continuous export to S3 configured for Athena queries</li>
+                            <li>Discovery data synced to AWS Migration Hub</li>
+                        </ul>`
+                    },
+                    {
+                        title: 'Migration Readiness Assessment MRA Framework',
+                        why: 'Jumping into migration without readiness assessment causes project failure, budget overruns, and extended timelines. MRA identifies skill gaps requiring training, missing cloud capabilities needing build-out, architectural antipatterns requiring redesign, and organizational readiness for change. AWS Professional Services data shows MRA completion reduces migration timeline by 30 percent and prevents 70 percent of common migration failures.',
+                        what: 'Execute AWS Migration Readiness Assessment across six pillars: Business operations readiness, people skills and organization structure, process including change management, platforms including landing zone maturity, security including identity and compliance, and application portfolio complexity. Score each pillar green yellow red then build remediation plan addressing gaps before workload migration begins.',
+                        how: `<p><strong>MRA Assessment Framework Scoring</strong></p>
+                        <div class="table-responsive">
+                            <table>
+                                <tr>
+                                    <th>Pillar</th>
+                                    <th>Key Questions</th>
+                                    <th>Scoring</th>
+                                </tr>
+                                <tr>
+                                    <td>Business</td>
+                                    <td>Executive sponsorship, business case, success metrics defined</td>
+                                    <td>Green: All 3 | Yellow: 2 of 3 | Red: 0-1</td>
+                                </tr>
+                                <tr>
+                                    <td>People</td>
+                                    <td>Cloud skills inventory, training plan, roles defined</td>
+                                    <td>Green: AWS certified team | Yellow: Training scheduled | Red: No plan</td>
+                                </tr>
+                                <tr>
+                                    <td>Process</td>
+                                    <td>Change management, migration playbooks, rollback procedures</td>
+                                    <td>Green: Documented and tested | Yellow: Documented | Red: Ad-hoc</td>
+                                </tr>
+                                <tr>
+                                    <td>Platform</td>
+                                    <td>Landing zone, network, security baseline configured</td>
+                                    <td>Green: Control Tower deployed | Yellow: Multi-account | Red: Single account</td>
+                                </tr>
+                                <tr>
+                                    <td>Security</td>
+                                    <td>Identity integration, encryption strategy, compliance mapping</td>
+                                    <td>Green: Automated guardrails | Yellow: Manual controls | Red: Undefined</td>
+                                </tr>
+                                <tr>
+                                    <td>Applications</td>
+                                    <td>Portfolio complexity, dependencies mapped, 7 Rs decisions made</td>
+                                    <td>Green: Full discovery | Yellow: Partial | Red: Unknown</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p><strong>Execute MRA Workshop with Stakeholders</strong></p>
+                        <div class="info-box">
+                            <div class="info-title">MRA Workshop Agenda</div>
+                            <p><strong>Day 1 Morning:</strong> Business and people pillar assessment<br>
+                            <strong>Day 1 Afternoon:</strong> Process and platform pillar assessment<br>
+                            <strong>Day 2 Morning:</strong> Security and application pillar assessment<br>
+                            <strong>Day 2 Afternoon:</strong> Gap analysis and remediation planning<br>
+                            <strong>Day 3:</strong> Mobilize phase planning and timeline creation</p>
+                        </div>
+                        <p><strong>Remediation Plan Template</strong></p>
+                        <div class="code-block"><code>Gap Identified: No AWS certified personnel on team
+Remediation: Enroll 5 engineers in AWS Solutions Architect training
+Timeline: 90 days to certification
+Owner: Director of Infrastructure
+Priority: High - Blocker for migration
+
+Gap Identified: Single AWS account architecture
+Remediation: Deploy Control Tower multi-account structure
+Timeline: 30 days
+Owner: Cloud Platform Team
+Priority: Critical - Must complete before any migration</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>MRA workshop completed with all stakeholders participating</li>
+                            <li>All six pillars scored with evidence supporting ratings</li>
+                            <li>Critical gaps identified with red or yellow scores documented</li>
+                            <li>Remediation plan created with owners and timelines assigned</li>
+                            <li>Training plan created for skill gaps with budget approved</li>
+                            <li>Landing zone deployment scheduled if platform scored red</li>
+                            <li>Executive sponsor signed off on assessment results</li>
+                            <li>Mobilize phase gates defined based on remediation completion</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            network: {
+                name: 'Network Architecture',
+                description: 'Hybrid network connectivity with AWS Direct Connect, VPN failover, Transit Gateway for multi-VPC routing, and DNS integration for seamless on-premises to cloud communication',
+                steps: [
+                    {
+                        title: 'AWS Direct Connect Implementation',
+                        why: 'Internet VPN has unpredictable latency, limited bandwidth, and security risks for production workloads. Direct Connect provides dedicated 1Gbps or 10Gbps connection with consistent sub-10ms latency, private connectivity bypassing public internet, and support for thousands of VLANs. Migration over internet takes 10x longer and risks data exposure. Direct Connect enables burst replication, low-latency database sync, and production traffic without internet bottlenecks.',
+                        what: 'Order Direct Connect port at AWS Direct Connect location nearest your datacenter, establish cross-connect from your cage to AWS cage through facility provider, configure BGP peering with AWS for route exchange, create Virtual Interfaces for VPC connectivity, and implement VPN backup connection for redundancy during Direct Connect maintenance or failures.',
+                        how: `<p><strong>Step 1: Order Direct Connect Port</strong></p>
+                        <div class="code-block"><code>aws directconnect create-connection \\
+  --location EqDC2 \\
+  --bandwidth 1Gbps \\
+  --connection-name "Production-DX-Primary"
+
+# AWS provides LOA-CFA (Letter of Authorization)
+# Submit LOA-CFA to colocation provider for cross-connect</code></div>
+                        <div class="info-box">
+                            <div class="info-title">Direct Connect Locations and Pricing</div>
+                            <p><strong>Port Pricing:</strong> 1Gbps port costs 0.30 dollars per hour equaling 216 dollars monthly. 10Gbps port costs 2.25 dollars per hour equaling 1620 dollars monthly.<br>
+                            <strong>Data Transfer:</strong> First 1GB free, then 0.02 dollars per GB outbound to on-premises.<br>
+                            <strong>Cross-Connect:</strong> Facility provider charges 100 to 500 dollars monthly for fiber connection.</p>
+                        </div>
+                        <p><strong>Step 2: Create Transit Virtual Interface to Transit Gateway</strong></p>
+                        <div class="code-block"><code>aws directconnect create-transit-virtual-interface \\
+  --connection-id dxcon-abc123 \\
+  --new-transit-virtual-interface \\
+    virtualInterfaceName=Transit-VIF,\\
+    vlan=100,\\
+    asn=65000,\\
+    amazonAddress=169.254.1.1/30,\\
+    customerAddress=169.254.1.2/30,\\
+    directConnectGatewayId=dxgw-abc123</code></div>
+                        <p><strong>Step 3: Configure BGP on Customer Router</strong></p>
+                        <div class="code-block"><code>router bgp 65000
+ neighbor 169.254.1.1 remote-as 64512
+ neighbor 169.254.1.1 password AWS_BGP_KEY
+ network 10.0.0.0 mask 255.255.0.0
+ maximum-paths 2</code></div>
+                        <p><strong>Step 4: Deploy Redundant VPN for Failover</strong></p>
+                        <div class="code-block"><code>aws ec2 create-vpn-connection \\
+  --type ipsec.1 \\
+  --customer-gateway-id cgw-abc123 \\
+  --transit-gateway-id tgw-abc123 \\
+  --options TunnelInsideIpVersion=ipv4
+
+# Configure on-premises router with lower BGP weight than Direct Connect
+# VPN activates only when Direct Connect fails</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Direct Connect port showing Available status in console</li>
+                            <li>BGP session established with routes received from AWS</li>
+                            <li>On-premises routes advertised to AWS via BGP visible in route tables</li>
+                            <li>VPN backup connection configured with lower route preference</li>
+                            <li>End-to-end connectivity tested from on-premises to VPC resources</li>
+                            <li>Latency measured under 10ms for Direct Connect path</li>
+                            <li>Failover tested by disabling Direct Connect confirming VPN takeover</li>
+                            <li>Monitoring configured for BGP session state and bandwidth utilization</li>
+                        </ul>`
+                    },
+                    {
+                        title: 'Transit Gateway for Multi-VPC Routing',
+                        why: 'VPC peering creates mesh complexity requiring N times N minus 1 divided by 2 connections for full mesh. For 10 VPCs that is 45 peering connections impossible to manage. Peering does not support transitive routing preventing hub-spoke designs. Transit Gateway acts as cloud router connecting unlimited VPCs, Direct Connect, and VPN with single attachment per VPC. Centralized routing reduces complexity, enables network segmentation, and provides single point for traffic inspection.',
+                        what: 'Deploy Transit Gateway as central router, attach all VPCs and Direct Connect gateway, configure route tables for traffic steering between environments, implement route propagation for dynamic routing, enable VPC Flow Logs on TGW attachments, and configure Network Firewall for inspection of inter-VPC traffic following zero-trust architecture.',
+                        how: `<p><strong>Step 1: Create Transit Gateway</strong></p>
+                        <div class="code-block"><code>TGW_ID=$(aws ec2 create-transit-gateway \\
+  --description "Production Transit Gateway" \\
+  --options AmazonSideAsn=64512,\\
+    AutoAcceptSharedAttachments=enable,\\
+    DefaultRouteTableAssociation=enable,\\
+    DefaultRouteTablePropagation=enable,\\
+    DnsSupport=enable,\\
+    VpnEcmpSupport=enable \\
+  --tag-specifications 'ResourceType=transit-gateway,Tags=[{Key=Name,Value=Production-TGW}]' \\
+  --query 'TransitGateway.TransitGatewayId' --output text)</code></div>
+                        <p><strong>Step 2: Attach VPCs to Transit Gateway</strong></p>
+                        <div class="code-block"><code>aws ec2 create-transit-gateway-vpc-attachment \\
+  --transit-gateway-id $TGW_ID \\
+  --vpc-id $PRODUCTION_VPC_ID \\
+  --subnet-ids $PRIVATE_SUBNET_1A $PRIVATE_SUBNET_1B $PRIVATE_SUBNET_1C \\
+  --tag-specifications 'ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=Production-VPC-Attachment}]'
+
+aws ec2 create-transit-gateway-vpc-attachment \\
+  --transit-gateway-id $TGW_ID \\
+  --vpc-id $SHARED_SERVICES_VPC_ID \\
+  --subnet-ids $SHARED_SUBNET_1A $SHARED_SUBNET_1B $SHARED_SUBNET_1C \\
+  --tag-specifications 'ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=SharedServices-VPC-Attachment}]'</code></div>
+                        <p><strong>Step 3: Create Segregated Route Tables</strong></p>
+                        <div class="code-block"><code>PROD_RT=$(aws ec2 create-transit-gateway-route-table \\
+  --transit-gateway-id $TGW_ID \\
+  --tag-specifications 'ResourceType=transit-gateway-route-table,Tags=[{Key=Name,Value=Production-Routes}]' \\
+  --query 'TransitGatewayRouteTable.TransitGatewayRouteTableId' --output text)
+
+DEV_RT=$(aws ec2 create-transit-gateway-route-table \\
+  --transit-gateway-id $TGW_ID \\
+  --tag-specifications 'ResourceType=transit-gateway-route-table,Tags=[{Key=Name,Value=Development-Routes}]' \\
+  --query 'TransitGatewayRouteTable.TransitGatewayRouteTableId' --output text)</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">Network Segmentation Pattern</div>
+                            <p>Create separate TGW route tables for Production, Development, and Shared Services. Production routes only to Shared Services and on-premises but NOT to Development preventing lateral movement. Development routes to Shared Services for DNS and Active Directory but cannot reach Production. This implements zero-trust network segmentation at cloud router level.</p>
+                        </div>
+                        <p><strong>Step 4: Configure Routing and Propagation</strong></p>
+                        <div class="code-block"><code>aws ec2 associate-transit-gateway-route-table \\
+  --transit-gateway-route-table-id $PROD_RT \\
+  --transit-gateway-attachment-id $PROD_VPC_ATTACHMENT
+
+aws ec2 enable-transit-gateway-route-table-propagation \\
+  --transit-gateway-route-table-id $PROD_RT \\
+  --transit-gateway-attachment-id $DIRECT_CONNECT_ATTACHMENT</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Transit Gateway deployed with all VPCs attached</li>
+                            <li>Direct Connect gateway attached to Transit Gateway</li>
+                            <li>Route tables created for Production, Development, Shared Services</li>
+                            <li>Route propagation configured from Direct Connect to appropriate tables</li>
+                            <li>VPC route tables updated with routes to Transit Gateway</li>
+                            <li>Connectivity tested between VPCs through Transit Gateway</li>
+                            <li>Network segmentation verified: Dev cannot reach Prod</li>
+                            <li>VPC Flow Logs enabled on all TGW attachments</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            security: {
+                name: 'Security & IAM',
+                description: 'Identity federation with corporate Active Directory, role-based access control, encryption at rest and in transit, security monitoring with GuardDuty and Security Hub, and compliance automation',
+                steps: [
+                    {
+                        title: 'Active Directory Federation with AWS SSO',
+                        why: 'Managing separate AWS IAM users creates password sprawl, audit nightmares, and orphaned accounts when employees leave. No MFA enforcement leads to credential theft and unauthorized access. AWS SSO with Active Directory federation provides single sign-on, centralized identity management, automatic deprovisioning when AD account disabled, and enforced MFA for all AWS access. Federation enables consistent identity governance and reduces security incidents by 80 percent.',
+                        what: 'Deploy AWS SSO integrated with on-premises Active Directory through AWS Managed Microsoft AD or AD Connector, create permission sets mapping AD groups to AWS roles, configure MFA enforcement, enable session duration limits, and deploy break-glass emergency access accounts for disaster recovery scenarios where AD unavailable.',
+                        how: `<p><strong>Step 1: Deploy AWS Managed Microsoft AD</strong></p>
+                        <div class="code-block"><code>aws ds create-microsoft-ad \\
+  --name corp.example.com \\
+  --password SecurePassword123! \\
+  --edition Enterprise \\
+  --vpc-settings VpcId=$VPC_ID,SubnetIds=$SUBNET_1A,$SUBNET_1B
+
+# Wait 30 minutes for directory deployment
+# Note the Directory ID for SSO integration</code></div>
+                        <p><strong>Step 2: Configure AD Trust with On-Premises</strong></p>
+                        <div class="code-block"><code>aws ds create-trust \\
+  --directory-id d-abc1234567 \\
+  --remote-domain-name onprem.corp.com \\
+  --trust-password TrustPassword123! \\
+  --trust-direction Two-Way \\
+  --trust-type Forest
+
+# On-premises AD: Create matching trust relationship
+netdom trust corp.example.com /domain:onprem.corp.com /add /twoway</code></div>
+                        <p><strong>Step 3: Enable AWS SSO and Connect to AD</strong></p>
+                        <div class="code-block"><code>aws sso-admin create-instance-access-control-attribute-configuration \\
+  --instance-arn arn:aws:sso:::instance/ssoins-abc123 \\
+  --access-control-attributes Key=Department,Value=department
+
+# AWS Console: SSO → Settings → Identity Source → Change
+# Select: Active Directory
+# Choose directory: d-abc1234567</code></div>
+                        <p><strong>Step 4: Create Permission Sets for Role Mapping</strong></p>
+                        <div class="code-block"><code>cat > admin-policy.json << 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "*",
+    "Resource": "*",
+    "Condition": {
+      "BoolIfExists": {"aws:MultiFactorAuthPresent": "true"}
+    }
+  }]
+}
+EOF
+
+aws sso-admin create-permission-set \\
+  --instance-arn arn:aws:sso:::instance/ssoins-abc123 \\
+  --name AdministratorAccess \\
+  --session-duration PT8H
+
+aws sso-admin put-inline-policy-to-permission-set \\
+  --instance-arn arn:aws:sso:::instance/ssoins-abc123 \\
+  --permission-set-arn arn:aws:sso:::permissionSet/ps-abc123 \\
+  --inline-policy file://admin-policy.json</code></div>
+                        <div class="warning-box">
+                            <div class="warning-title">Critical: Configure Break-Glass Access</div>
+                            <p>Create dedicated IAM user with MFA in root account as emergency access when SSO or AD unavailable. Store credentials in sealed envelope in physical safe accessible to security team only. Test quarterly to verify credentials work. Without break-glass access, AD outage locks everyone out of AWS causing production impact.</p>
+                        </div>`,
+                        verify: `<ul class="checklist">
+                            <li>AWS Managed Microsoft AD deployed and Active status</li>
+                            <li>Two-way trust established with on-premises Active Directory</li>
+                            <li>AWS SSO enabled with AD as identity source</li>
+                            <li>Permission sets created for Admin, PowerUser, ReadOnly roles</li>
+                            <li>AD security groups assigned to permission sets</li>
+                            <li>MFA enforcement configured on all permission sets</li>
+                            <li>Session duration limited to 8 hours</li>
+                            <li>Break-glass IAM user created with MFA and tested</li>
+                            <li>User can access AWS through SSO portal with AD credentials</li>
+                        </ul>`
+                    },
+                    {
+                        title: 'Encryption Key Management with AWS KMS',
+                        why: 'Unencrypted data violates compliance requirements including PCI-DSS HIPAA GDPR causing audit failures and potential fines. Default AWS service keys provide basic encryption but you have no control over key rotation, access logging, or cross-account usage. Customer managed keys in KMS provide key rotation automation, granular access control through key policies, audit trails in CloudTrail, and ability to disable keys for crypto-shredding. Enterprise encryption requires centralized key management for thousands of resources.',
+                        what: 'Create customer managed KMS keys per data classification level, implement key rotation automation, define key policies with least privilege access, enable CloudTrail logging for all key usage, deploy multi-region keys for disaster recovery, and configure key aliases for application flexibility without hardcoding key IDs.',
+                        how: `<p><strong>Step 1: Create Customer Managed Keys by Data Classification</strong></p>
+                        <div class="code-block"><code>PROD_KEY=$(aws kms create-key \\
+  --description "Production data encryption - PCI compliant" \\
+  --key-policy file://production-key-policy.json \\
+  --tags TagKey=Classification,TagValue=Confidential \\
+  --query 'KeyMetadata.KeyId' --output text)
+
+aws kms enable-key-rotation --key-id $PROD_KEY
+
+aws kms create-alias \\
+  --alias-name alias/production-data \\
+  --target-key-id $PROD_KEY</code></div>
+                        <p><strong>Step 2: Define Key Policy with Least Privilege</strong></p>
+                        <div class="code-block"><code>cat > production-key-policy.json << 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Enable IAM User Permissions",
+      "Effect": "Allow",
+      "Principal": {"AWS": "arn:aws:iam::ACCOUNT_ID:root"},
+      "Action": "kms:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "Allow services to use key",
+      "Effect": "Allow",
+      "Principal": {"Service": ["rds.amazonaws.com", "s3.amazonaws.com"]},
+      "Action": [
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "Allow audit access",
+      "Effect": "Allow",
+      "Principal": {"AWS": "arn:aws:iam::ACCOUNT_ID:role/SecurityAudit"},
+      "Action": [
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:ListGrants"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF</code></div>
+                        <p><strong>Step 3: Enable S3 Bucket Encryption with KMS</strong></p>
+                        <div class="code-block"><code>aws s3api put-bucket-encryption \\
+  --bucket production-data-bucket \\
+  --server-side-encryption-configuration '{
+    "Rules": [{
+      "ApplyServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "aws:kms",
+        "KMSMasterKeyID": "alias/production-data"
+      },
+      "BucketKeyEnabled": true
+    }]
+  }'</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">Cost Optimization: S3 Bucket Keys</div>
+                            <p>Enable S3 Bucket Keys to reduce KMS API calls by 99 percent. Without bucket keys, each object PUT generates KMS request costing 0.03 dollars per 10000 requests. For 100 million objects that is 300 dollars monthly. Bucket keys reduce cost to 3 dollars by using bucket-level data keys.</p>
+                        </div>
+                        <p><strong>Step 4: Configure RDS Encryption</strong></p>
+                        <div class="code-block"><code>aws rds create-db-instance \\
+  --db-instance-identifier production-postgres \\
+  --db-instance-class db.r5.xlarge \\
+  --engine postgres \\
+  --storage-encrypted \\
+  --kms-key-id alias/production-data \\
+  --master-username dbadmin \\
+  --master-user-password SecurePassword123!</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Customer managed KMS keys created for each data classification</li>
+                            <li>Automatic key rotation enabled on all customer managed keys</li>
+                            <li>Key policies configured with least privilege access</li>
+                            <li>Key aliases created for application reference flexibility</li>
+                            <li>S3 buckets configured with KMS encryption and bucket keys enabled</li>
+                            <li>RDS databases deployed with KMS encryption</li>
+                            <li>EBS volumes encrypted with KMS by default in account settings</li>
+                            <li>CloudTrail logging enabled capturing all KMS key usage</li>
+                            <li>CloudWatch alarms configured for key deletion or disabling attempts</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            data: {
+                name: 'Data Migration',
+                description: 'Large-scale data transfer using AWS DataSync, Database Migration Service, Storage Gateway, and Snowball for petabyte migrations with validation and cutover orchestration',
+                steps: [
+                    {
+                        title: 'AWS DataSync for File Server Migration',
+                        why: 'Copying files over VPN or Direct Connect at 1Gbps takes 23 hours per TB. For 100TB migration that is 96 days of continuous transfer. Network congestion causes partial transfers, file corruption, and permission errors. Manual rsync misses file metadata and ACLs breaking applications. AWS DataSync provides automated transfer with bandwidth throttling, incremental sync, metadata preservation, and built-in validation ensuring data integrity.',
+                        what: 'Deploy DataSync agent in on-premises VMware or Hyper-V environment, configure source NFS or SMB share locations, create S3 bucket or EFS target in AWS, schedule transfer tasks with bandwidth limits, enable CloudWatch logging for transfer metrics, and execute validation comparing source and destination file counts and checksums.',
+                        how: `<p><strong>Step 1: Deploy DataSync Agent On-Premises</strong></p>
+                        <div class="code-block"><code>1. Download DataSync agent OVA from AWS Console
+2. Deploy to VMware with minimum 32GB RAM and 80GB disk
+3. Configure agent with IP address accessible from VPC
+4. Retrieve agent activation key from agent web interface http://AGENT_IP
+
+aws datasync create-agent \\
+  --activation-key ACTIVATION_KEY_FROM_AGENT \\
+  --agent-name OnPremises-FileServer-Agent \\
+  --vpc-endpoint-id vpce-abc123 \\
+  --subnet-arns arn:aws:ec2:us-east-1:ACCOUNT:subnet/subnet-abc123 \\
+  --security-group-arns arn:aws:ec2:us-east-1:ACCOUNT:security-group/sg-abc123</code></div>
+                        <div class="info-box">
+                            <div class="info-title">DataSync Performance and Pricing</div>
+                            <p><strong>Transfer Speed:</strong> Single DataSync task achieves 10Gbps throughput. For 100TB migration at 10Gbps that is 22 hours versus 96 days at 1Gbps.<br>
+                            <strong>Pricing:</strong> 0.0125 dollars per GB transferred. 100TB migration costs 1280 dollars data transfer plus standard S3 storage costs.<br>
+                            <strong>Bandwidth Control:</strong> Set throttle to prevent saturating Direct Connect impacting production traffic.</p>
+                        </div>
+                        <p><strong>Step 2: Create Source and Destination Locations</strong></p>
+                        <div class="code-block"><code>SOURCE_LOC=$(aws datasync create-location-nfs \\
+  --server-hostname fileserver.onprem.corp.com \\
+  --subdirectory /data/production \\
+  --on-prem-config AgentArns=arn:aws:datasync:us-east-1:ACCOUNT:agent/agent-abc123 \\
+  --query 'LocationArn' --output text)
+
+DEST_LOC=$(aws datasync create-location-s3 \\
+  --s3-bucket-arn arn:aws:s3:::production-migration-data \\
+  --s3-config BucketAccessRoleArn=arn:aws:iam::ACCOUNT:role/DataSyncS3Access \\
+  --query 'LocationArn' --output text)</code></div>
+                        <p><strong>Step 3: Create Transfer Task with Validation</strong></p>
+                        <div class="code-block"><code>TASK_ARN=$(aws datasync create-task \\
+  --source-location-arn $SOURCE_LOC \\
+  --destination-location-arn $DEST_LOC \\
+  --name Production-FileServer-Migration \\
+  --options VerifyMode=POINT_IN_TIME_CONSISTENT,\\
+    OverwriteMode=NEVER,\\
+    Atime=BEST_EFFORT,\\
+    Mtime=PRESERVE,\\
+    Uid=INT_VALUE,\\
+    Gid=INT_VALUE,\\
+    PreserveDeletedFiles=PRESERVE,\\
+    PreserveDevices=NONE,\\
+    PosixPermissions=PRESERVE \\
+  --schedule 'ScheduleExpression=cron(0 2 * * ? *)' \\
+  --query 'TaskArn' --output text)</code></div>
+                        <p><strong>Step 4: Execute and Monitor Transfer</strong></p>
+                        <div class="code-block"><code>EXEC_ARN=$(aws datasync start-task-execution \\
+  --task-arn $TASK_ARN \\
+  --query 'TaskExecutionArn' --output text)
+
+# Monitor progress
+aws datasync describe-task-execution \\
+  --task-execution-arn $EXEC_ARN \\
+  --query 'Status'
+
+# View detailed metrics in CloudWatch
+aws cloudwatch get-metric-statistics \\
+  --namespace AWS/DataSync \\
+  --metric-name BytesTransferred \\
+  --dimensions Name=TaskId,Value=task-abc123 \\
+  --start-time 2024-01-01T00:00:00Z \\
+  --end-time 2024-01-02T00:00:00Z \\
+  --period 3600 \\
+  --statistics Sum</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>DataSync agent deployed and showing Online status</li>
+                            <li>Source NFS or SMB location created and accessible from agent</li>
+                            <li>Destination S3 bucket or EFS created with proper IAM role</li>
+                            <li>Transfer task configured with metadata preservation options</li>
+                            <li>Bandwidth throttling configured to prevent network saturation</li>
+                            <li>Task execution completed with Status Success</li>
+                            <li>File count matches between source and destination</li>
+                            <li>Sample files verified with correct permissions and timestamps</li>
+                            <li>CloudWatch logs show no errors or warnings</li>
+                        </ul>`
+                    },
+                    {
+                        title: 'AWS Database Migration Service DMS',
+                        why: 'Database cutover causes hours of downtime for export dump transfer import process. Application teams need weeks for testing against migrated database. Homogeneous migrations like Oracle to RDS Oracle waste time on conversion. DMS provides continuous replication with near-zero downtime, schema conversion for heterogeneous migrations, and ongoing change data capture enabling cutover in minutes not hours.',
+                        what: 'Deploy DMS replication instance in private subnet, create source endpoint for on-premises database, configure target RDS endpoint, define table mappings and transformations, start full load plus CDC replication capturing ongoing changes, monitor replication lag staying under 10 seconds, and execute switchover after validation window.',
+                        how: `<p><strong>Step 1: Create DMS Replication Instance</strong></p>
+                        <div class="code-block"><code>aws dms create-replication-instance \\
+  --replication-instance-identifier production-dms-instance \\
+  --replication-instance-class dms.c5.4xlarge \\
+  --allocated-storage 500 \\
+  --vpc-security-group-ids sg-abc123 \\
+  --replication-subnet-group-identifier default-dms-subnet-group \\
+  --engine-version 3.4.7 \\
+  --multi-az \\
+  --publicly-accessible false</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">DMS Instance Sizing Guide</div>
+                            <p><strong>dms.c5.xlarge:</strong> Up to 1TB database with 100MB/sec throughput<br>
+                            <strong>dms.c5.4xlarge:</strong> Up to 5TB database with 500MB/sec throughput<br>
+                            <strong>dms.c5.9xlarge:</strong> 10TB+ database with 1GB/sec throughput<br>
+                            Multi-AZ increases cost 2x but provides automatic failover for production migrations.</p>
+                        </div>
+                        <p><strong>Step 2: Create Source Endpoint for On-Premises Database</strong></p>
+                        <div class="code-block"><code>aws dms create-endpoint \\
+  --endpoint-identifier onprem-postgres-source \\
+  --endpoint-type source \\
+  --engine-name postgres \\
+  --server-name postgres.onprem.corp.com \\
+  --port 5432 \\
+  --database-name production \\
+  --username dms_replication_user \\
+  --password SecurePassword123! \\
+  --extra-connection-attributes 'captureDDLs=Y'</code></div>
+                        <p><strong>Step 3: Create Target RDS Endpoint</strong></p>
+                        <div class="code-block"><code>aws dms create-endpoint \\
+  --endpoint-identifier rds-postgres-target \\
+  --endpoint-type target \\
+  --engine-name postgres \\
+  --server-name production-postgres.abc123.us-east-1.rds.amazonaws.com \\
+  --port 5432 \\
+  --database-name production \\
+  --username admin \\
+  --password TargetPassword123!</code></div>
+                        <p><strong>Step 4: Define Migration Task with CDC</strong></p>
+                        <div class="code-block"><code>cat > table-mappings.json << 'EOF'
+{
+  "rules": [
+    {
+      "rule-type": "selection",
+      "rule-id": "1",
+      "rule-name": "include-all-tables",
+      "object-locator": {
+        "schema-name": "public",
+        "table-name": "%"
+      },
+      "rule-action": "include"
+    },
+    {
+      "rule-type": "transformation",
+      "rule-id": "2",
+      "rule-name": "add-prefix",
+      "rule-target": "table",
+      "object-locator": {
+        "schema-name": "public",
+        "table-name": "%"
+      },
+      "rule-action": "add-prefix",
+      "value": "migrated_"
+    }
+  ]
+}
+EOF
+
+aws dms create-replication-task \\
+  --replication-task-identifier production-postgres-migration \\
+  --source-endpoint-arn arn:aws:dms:us-east-1:ACCOUNT:endpoint:ABCD123 \\
+  --target-endpoint-arn arn:aws:dms:us-east-1:ACCOUNT:endpoint:EFGH456 \\
+  --replication-instance-arn arn:aws:dms:us-east-1:ACCOUNT:rep:production-dms-instance \\
+  --migration-type full-load-and-cdc \\
+  --table-mappings file://table-mappings.json</code></div>
+                        <p><strong>Step 5: Start Replication and Monitor</strong></p>
+                        <div class="code-block"><code>aws dms start-replication-task \\
+  --replication-task-arn arn:aws:dms:us-east-1:ACCOUNT:task:ABC123 \\
+  --start-replication-task-type start-replication
+
+# Monitor replication lag
+aws dms describe-replication-tasks \\
+  --filters Name=replication-task-arn,Values=arn:aws:dms:us-east-1:ACCOUNT:task:ABC123 \\
+  --query 'ReplicationTasks[0].ReplicationTaskStats.CDCLatency'</code></div>
+                        <div class="warning-box">
+                            <div class="warning-title">Replication Lag Threshold</div>
+                            <p>Keep CDC latency under 10 seconds for production cutover. Latency over 60 seconds indicates undersized replication instance, network bottleneck, or target database write throttling. Investigate CloudWatch metrics for CPU, network, and IOPS before cutover.</p>
+                        </div>`,
+                        verify: `<ul class="checklist">
+                            <li>DMS replication instance deployed in Multi-AZ configuration</li>
+                            <li>Source endpoint test connection successful</li>
+                            <li>Target endpoint test connection successful</li>
+                            <li>Replication task created with full-load-and-cdc mode</li>
+                            <li>Full load completed with 100 percent of tables migrated</li>
+                            <li>CDC replication active with latency under 10 seconds</li>
+                            <li>Row counts match between source and target databases</li>
+                            <li>Sample queries validated against target returning correct results</li>
+                            <li>Application successfully tested against target database</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            application: {
+                name: 'Application Migration',
+                description: 'Application modernization strategies with AWS Application Migration Service, containerization with ECS and EKS, and serverless refactoring patterns',
+                steps: [
+                    {
+                        title: 'AWS Application Migration Service MGN',
+                        why: 'Manual VM exports require days of downtime for image conversion and transfer. Application dependencies break during manual migration causing failed cutovers. Different hypervisors require format conversions. MGN provides automated block-level replication with continuous sync, boots servers directly in AWS with no conversion, and enables testing without impacting source. Cutover takes minutes with automatic rollback capability reducing migration risk by 90 percent.',
+                        what: 'Install MGN replication agent on source servers for continuous block-level replication to AWS, configure launch templates for target instance types and networking, execute non-disruptive test launches validating application functionality, perform final sync with minimal replication lag under 5 minutes, and execute cutover launching production instances while decommissioning source servers.',
+                        how: `<p><strong>Step 1: Initialize MGN in Target AWS Account</strong></p>
+                        <div class="code-block"><code>aws mgn initialize-service --region us-east-1
+
+# Create replication configuration template
+aws mgn create-replication-configuration-template \\
+  --staging-area-subnet-id subnet-abc123 \\
+  --staging-area-tags Environment=Migration \\
+  --associate-default-security-group true \\
+  --bandwidth-throttling 50 \\
+  --data-plane-routing PRIVATE_IP \\
+  --default-large-staging-disk-type GP3 \\
+  --ebs-encryption ENCRYPTED \\
+  --replication-server-instance-type t3.small \\
+  --replication-servers-security-groups-ids sg-abc123 \\
+  --use-dedicated-replication-server false</code></div>
+                        <p><strong>Step 2: Install Replication Agent on Source Servers</strong></p>
+                        <div class="code-block"><code># Linux installation
+wget -O ./aws-replication-installer-init.py https://aws-application-migration-service-us-east-1.s3.us-east-1.amazonaws.com/latest/linux/aws-replication-installer-init.py
+
+sudo python3 aws-replication-installer-init.py \\
+  --region us-east-1 \\
+  --aws-access-key-id AKIAIOSFODNN7EXAMPLE \\
+  --aws-secret-access-key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY \\
+  --no-prompt
+
+# Windows installation
+Download agent from S3:
+https://aws-application-migration-service-us-east-1.s3.us-east-1.amazonaws.com/latest/windows/AwsReplicationWindowsInstaller.exe
+
+Run installer with credentials:
+AwsReplicationWindowsInstaller.exe /quiet AWS_REGION=us-east-1 AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</code></div>
+                        <div class="info-box">
+                            <div class="info-title">MGN Replication Performance</div>
+                            <p><strong>Initial Sync:</strong> 1TB server takes 8-24 hours at 10Gbps Direct Connect<br>
+                            <strong>Ongoing CDC:</strong> Continuous replication with 5-15 minute lag<br>
+                            <strong>Bandwidth Throttling:</strong> Configure to prevent saturating network link<br>
+                            <strong>Storage Optimization:</strong> Uses GP3 for cost-effective staging storage</p>
+                        </div>
+                        <p><strong>Step 3: Configure Launch Template</strong></p>
+                        <div class="code-block"><code>aws mgn update-launch-configuration \\
+  --source-server-id s-abc123def456 \\
+  --target-instance-type-right-sizing-method BASIC \\
+  --copy-private-ip false \\
+  --copy-tags true \\
+  --launch-disposition STARTED \\
+  --licensing License-included
+
+aws mgn create-launch-configuration-template \\
+  --post-launch-actions-cloud-watch-logs-group-name /aws/mgn/PostLaunchActions \\
+  --associate-public-ip-address false \\
+  --boot-mode LEGACY_BIOS \\
+  --enable-map-auto-tagging true \\
+  --map-auto-tagging-mpe-id mpe-abc123 \\
+  --launch-into-instance-properties Licensing=License-included,\\
+    TargetInstanceTypeRightSizingMethod=BASIC</code></div>
+                        <p><strong>Step 4: Execute Test Launch</strong></p>
+                        <div class="code-block"><code># Start test launch (non-disruptive)
+aws mgn start-test \\
+  --source-server-ids s-abc123def456
+
+# Wait for test instance to reach Ready status
+aws mgn describe-source-servers \\
+  --filters sourceServerIDs=s-abc123def456 \\
+  --query 'items[0].lifeCycle.state'
+
+# Validate application functionality on test instance
+# SSH or RDP to test instance and verify services
+
+# Terminate test when validation complete
+aws mgn finalize-cutover --source-server-ids s-abc123def456</code></div>
+                        <p><strong>Step 5: Execute Production Cutover</strong></p>
+                        <div class="code-block"><code># Ensure replication lag under 5 minutes
+aws mgn describe-source-servers \\
+  --filters sourceServerIDs=s-abc123def456 \\
+  --query 'items[0].dataReplicationInfo.lagDuration'
+
+# Mark source as Ready for Cutover
+aws mgn mark-as-archived --source-server-ids s-abc123def456
+
+# Start cutover launch
+aws mgn start-cutover --source-server-ids s-abc123def456
+
+# Monitor cutover status
+aws mgn describe-source-servers \\
+  --filters sourceServerIDs=s-abc123def456 \\
+  --query 'items[0].lifeCycle'</code></div>
+                        <div class="warning-box">
+                            <div class="warning-title">Cutover Checklist Before Production Launch</div>
+                            <p>Before production cutover verify: Replication lag under 5 minutes, test launch validated successfully, launch template configured correctly, target security groups allow application traffic, DNS cutover plan documented, rollback procedure tested, and change management approval obtained. Failed cutover requires reverting DNS to source servers.</p>
+                        </div>`,
+                        verify: `<ul class="checklist">
+                            <li>MGN service initialized in target AWS region</li>
+                            <li>Replication agents installed on all source servers showing Connected</li>
+                            <li>Initial replication completed with Ready for Testing status</li>
+                            <li>Launch templates configured with correct instance types and networking</li>
+                            <li>Test launch executed successfully with application validated</li>
+                            <li>Replication lag under 5 minutes before cutover</li>
+                            <li>Production cutover completed with instances running in AWS</li>
+                            <li>Application accessible via DNS after cutover</li>
+                            <li>Source servers powered down after successful cutover validation</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            database: {
+                name: 'Database Migration',
+                description: 'Database engine migration strategies with schema conversion, performance optimization, and high availability architecture for production workloads',
+                steps: [
+                    {
+                        title: 'RDS Deployment with Multi-AZ and Read Replicas',
+                        why: 'Self-managed databases require patching, backup management, and high availability configuration consuming weeks of DBA time monthly. Hardware failures cause hours of downtime for recovery. RDS provides automated backups with point-in-time recovery, automatic failover in under 2 minutes, read replica scaling, and managed patching reducing operational burden by 70 percent while improving availability from 99.5 to 99.95 percent.',
+                        what: 'Deploy RDS with Multi-AZ for automatic failover providing synchronous replication to standby instance in different availability zone, configure automated backups with 7 to 35 day retention, deploy read replicas for read scaling and analytics workloads, enable Performance Insights for query optimization, and configure parameter groups for application-specific tuning.',
+                        how: `<p><strong>Step 1: Create DB Subnet Group Across AZs</strong></p>
+                        <div class="code-block"><code>aws rds create-db-subnet-group \\
+  --db-subnet-group-name production-db-subnet-group \\
+  --db-subnet-group-description "Production database subnet group" \\
+  --subnet-ids subnet-abc123 subnet-def456 subnet-ghi789 \\
+  --tags Key=Environment,Value=Production</code></div>
+                        <p><strong>Step 2: Create Parameter Group for Optimization</strong></p>
+                        <div class="code-block"><code>aws rds create-db-parameter-group \\
+  --db-parameter-group-name production-postgres-params \\
+  --db-parameter-group-family postgres14 \\
+  --description "Production PostgreSQL parameters"
+
+# Tune key parameters
+aws rds modify-db-parameter-group \\
+  --db-parameter-group-name production-postgres-params \\
+  --parameters \\
+    "ParameterName=max_connections,ParameterValue=500,ApplyMethod=pending-reboot" \\
+    "ParameterName=shared_buffers,ParameterValue={DBInstanceClassMemory/4},ApplyMethod=pending-reboot" \\
+    "ParameterName=effective_cache_size,ParameterValue={DBInstanceClassMemory*3/4},ApplyMethod=immediate" \\
+    "ParameterName=work_mem,ParameterValue=16384,ApplyMethod=immediate"</code></div>
+                        <p><strong>Step 3: Deploy Multi-AZ RDS Instance</strong></p>
+                        <div class="code-block"><code>aws rds create-db-instance \\
+  --db-instance-identifier production-postgres \\
+  --db-instance-class db.r5.2xlarge \\
+  --engine postgres \\
+  --engine-version 14.7 \\
+  --master-username dbadmin \\
+  --master-user-password SecurePassword123! \\
+  --allocated-storage 1000 \\
+  --storage-type gp3 \\
+  --iops 12000 \\
+  --storage-encrypted \\
+  --kms-key-id alias/production-data \\
+  --multi-az \\
+  --db-subnet-group-name production-db-subnet-group \\
+  --vpc-security-group-ids sg-abc123 \\
+  --db-parameter-group-name production-postgres-params \\
+  --backup-retention-period 14 \\
+  --preferred-backup-window "03:00-04:00" \\
+  --preferred-maintenance-window "sun:04:00-sun:05:00" \\
+  --enable-performance-insights \\
+  --performance-insights-retention-period 7 \\
+  --enable-cloudwatch-logs-exports '["postgresql","upgrade"]' \\
+  --deletion-protection \\
+  --copy-tags-to-snapshot \\
+  --tags Key=Environment,Value=Production Key=Application,Value=ERP</code></div>
+                        <div class="info-box">
+                            <div class="info-title">RDS Instance Sizing and Costs</div>
+                            <div class="table-responsive">
+                                <table>
+                                    <tr>
+                                        <th>Instance Type</th>
+                                        <th>vCPU</th>
+                                        <th>RAM</th>
+                                        <th>Cost/Month</th>
+                                        <th>Use Case</th>
+                                    </tr>
+                                    <tr>
+                                        <td>db.t3.large</td>
+                                        <td>2</td>
+                                        <td>8 GB</td>
+                                        <td>122 dollars</td>
+                                        <td>Dev/Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>db.r5.xlarge</td>
+                                        <td>4</td>
+                                        <td>32 GB</td>
+                                        <td>658 dollars</td>
+                                        <td>Small Production</td>
+                                    </tr>
+                                    <tr>
+                                        <td>db.r5.2xlarge</td>
+                                        <td>8</td>
+                                        <td>64 GB</td>
+                                        <td>1316 dollars</td>
+                                        <td>Medium Production</td>
+                                    </tr>
+                                    <tr>
+                                        <td>db.r5.4xlarge</td>
+                                        <td>16</td>
+                                        <td>128 GB</td>
+                                        <td>2632 dollars</td>
+                                        <td>Large Production</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <p>Multi-AZ doubles cost but provides automatic failover. Reserved Instances save 40-60 percent for 1-year or 3-year commit.</p>
+                        </div>
+                        <p><strong>Step 4: Create Read Replicas for Scaling</strong></p>
+                        <div class="code-block"><code>aws rds create-db-instance-read-replica \\
+  --db-instance-identifier production-postgres-replica-1 \\
+  --source-db-instance-identifier production-postgres \\
+  --db-instance-class db.r5.xlarge \\
+  --availability-zone us-east-1b \\
+  --publicly-accessible false
+
+aws rds create-db-instance-read-replica \\
+  --db-instance-identifier production-postgres-replica-2 \\
+  --source-db-instance-identifier production-postgres \\
+  --db-instance-class db.r5.xlarge \\
+  --availability-zone us-east-1c \\
+  --publicly-accessible false</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">Read Replica Use Cases</div>
+                            <p><strong>Analytics Queries:</strong> Point BI tools to read replica preventing slow queries from impacting production<br>
+                            <strong>Read Scaling:</strong> Distribute read traffic across replicas using DNS or connection pooler<br>
+                            <strong>Disaster Recovery:</strong> Promote replica to master in under 5 minutes during outage<br>
+                            <strong>Replication Lag:</strong> Monitor lag staying under 1 second for near real-time reads</p>
+                        </div>`,
+                        verify: `<ul class="checklist">
+                            <li>RDS instance deployed with Multi-AZ enabled</li>
+                            <li>Instance status Available with automatic backups enabled</li>
+                            <li>Parameter group applied with optimized settings</li>
+                            <li>Encryption enabled with customer managed KMS key</li>
+                            <li>VPC security group allows application subnet access only</li>
+                            <li>Performance Insights enabled for query monitoring</li>
+                            <li>CloudWatch Logs enabled for PostgreSQL logs</li>
+                            <li>Read replicas deployed in separate availability zones</li>
+                            <li>Replication lag under 1 second on read replicas</li>
+                            <li>Application successfully connected to RDS endpoint</li>
+                            <li>Backup tested with point-in-time restore validation</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            testing: {
+                name: 'Testing & Validation',
+                description: 'Comprehensive testing framework including functional testing, performance benchmarking, disaster recovery drills, and security validation before production cutover',
+                steps: [
+                    {
+                        title: 'Functional Testing and UAT',
+                        why: 'Skipping structured testing causes production issues discovered by customers leading to emergency rollbacks and revenue loss. Undocumented test cases result in incomplete validation missing edge cases. Manual testing without automation requires weeks per migration wave. Comprehensive testing framework with documented test cases, automated regression tests, and user acceptance criteria reduces production defects by 85 percent and enables rapid validation of multiple waves.',
+                        what: 'Create test case matrix covering critical business processes, deploy test environment matching production architecture, execute smoke tests validating basic connectivity and functionality, run regression test suite covering 80 percent of use cases, conduct user acceptance testing with business stakeholders, document test results with pass/fail criteria, and obtain sign-off before production cutover.',
+                        how: `<p><strong>Test Case Matrix Template</strong></p>
+                        <div class="table-responsive">
+                            <table>
+                                <tr>
+                                    <th>Test ID</th>
+                                    <th>Test Scenario</th>
+                                    <th>Expected Result</th>
+                                    <th>Actual Result</th>
+                                    <th>Status</th>
+                                </tr>
+                                <tr>
+                                    <td>TC001</td>
+                                    <td>User login with Active Directory credentials</td>
+                                    <td>Successfully authenticated and redirected to dashboard</td>
+                                    <td>Pass</td>
+                                    <td>Pass</td>
+                                </tr>
+                                <tr>
+                                    <td>TC002</td>
+                                    <td>Create new order with inventory validation</td>
+                                    <td>Order saved to database, inventory decremented, email sent</td>
+                                    <td>Pass</td>
+                                    <td>Pass</td>
+                                </tr>
+                                <tr>
+                                    <td>TC003</td>
+                                    <td>Generate monthly financial report</td>
+                                    <td>PDF report generated within 30 seconds matching historical data</td>
+                                    <td>Pass</td>
+                                    <td>Pass</td>
+                                </tr>
+                                <tr>
+                                    <td>TC004</td>
+                                    <td>Payment processing with credit card</td>
+                                    <td>Transaction approved, receipt generated, data encrypted</td>
+                                    <td>Pass</td>
+                                    <td>Pass</td>
+                                </tr>
+                                <tr>
+                                    <td>TC005</td>
+                                    <td>API integration with third-party CRM</td>
+                                    <td>Customer data synced bidirectionally within 5 minutes</td>
+                                    <td>Pass</td>
+                                    <td>Pass</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p><strong>Automated Smoke Test Script</strong></p>
+                        <div class="code-block"><code>#!/bin/bash
+echo "Starting automated smoke tests..."
+
+# Test 1: Web server responds
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://app.example.com)
+if [ $HTTP_STATUS -eq 200 ]; then
+  echo "PASS: Web server responding"
+else
+  echo "FAIL: Web server returned $HTTP_STATUS"
+  exit 1
+fi
+
+# Test 2: Database connectivity
+psql -h production-postgres.abc123.us-east-1.rds.amazonaws.com -U dbadmin -d production -c "SELECT 1" > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "PASS: Database connection successful"
+else
+  echo "FAIL: Database connection failed"
+  exit 1
+fi
+
+# Test 3: API health check
+API_HEALTH=$(curl -s https://api.example.com/health | jq -r '.status')
+if [ "$API_HEALTH" == "healthy" ]; then
+  echo "PASS: API health check passed"
+else
+  echo "FAIL: API health check failed with status: $API_HEALTH"
+  exit 1
+fi
+
+# Test 4: Verify S3 access
+aws s3 ls s3://production-data-bucket/ > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "PASS: S3 bucket accessible"
+else
+  echo "FAIL: S3 bucket access denied"
+  exit 1
+fi
+
+echo "All smoke tests passed successfully!"</code></div>
+                        <p><strong>Performance Baseline Comparison</strong></p>
+                        <div class="code-block"><code># Run load test matching production traffic patterns
+ab -n 10000 -c 100 https://app.example.com/ > aws-loadtest.txt
+
+# Compare key metrics
+cat aws-loadtest.txt | grep "Requests per second"
+# Expected: Within 10% of on-premises baseline
+
+cat aws-loadtest.txt | grep "Time per request.*mean"
+# Expected: Response time under 200ms
+
+# Database query performance
+psql -h production-postgres.abc123.us-east-1.rds.amazonaws.com -U dbadmin -d production -c "
+  SELECT query, mean_exec_time 
+  FROM pg_stat_statements 
+  ORDER BY mean_exec_time DESC 
+  LIMIT 10"
+# Expected: Top queries within 20% of on-premises performance</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Test case matrix created covering all critical business processes</li>
+                            <li>Test environment deployed matching production configuration</li>
+                            <li>Smoke tests automated and passing 100 percent</li>
+                            <li>Regression test suite executed with 95 percent pass rate</li>
+                            <li>Performance tests show response times within 10 percent of baseline</li>
+                            <li>Load testing validated at 150 percent of peak production traffic</li>
+                            <li>User acceptance testing completed with business stakeholder sign-off</li>
+                            <li>Integration tests validated external API connectivity</li>
+                            <li>Security testing completed with vulnerability scan passed</li>
+                            <li>Test results documented with screenshots and metrics</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            cutover: {
+                name: 'Cutover Planning',
+                description: 'Orchestrated cutover with DNS switching, validation checkpoints, rollback procedures, and communication plan to minimize business disruption during production migration',
+                steps: [
+                    {
+                        title: 'Cutover Runbook and Execution',
+                        why: 'Unplanned cutover causes hours of untracked downtime confusing teams about next steps. Missing rollback procedures trap teams in failed state unable to restore service. Poor communication leaves stakeholders unaware of status causing escalations. Detailed runbook with minute-by-minute timeline, validation checkpoints, rollback decision points, and communication templates reduces cutover time by 50 percent and provides confidence for teams executing migration.',
+                        what: 'Create detailed cutover runbook documenting pre-cutover validation, step-by-step execution with time estimates, go/no-go decision checkpoints, rollback procedures with trigger criteria, communication templates for stakeholders, and post-cutover validation checklist. Conduct tabletop exercise walking through runbook identifying gaps. Execute cutover during maintenance window with all teams on bridge call.',
+                        how: `<p><strong>Cutover Runbook Template</strong></p>
+                        <div class="info-box">
+                            <div class="info-title">Timeline Example: 4-Hour Cutover Window</div>
+                            <p><strong>T-60min:</strong> Final replication sync checkpoint - lag under 5 minutes<br>
+                            <strong>T-30min:</strong> Communicate maintenance start to users via email<br>
+                            <strong>T-15min:</strong> Disable application writes and drain connection pool<br>
+                            <strong>T-10min:</strong> Final database backup on source system<br>
+                            <strong>T-5min:</strong> Verify all transactions committed, no pending writes<br>
+                            <strong>T-0min:</strong> Execute DNS cutover to AWS endpoints<br>
+                            <strong>T+5min:</strong> Validate first successful transaction in AWS<br>
+                            <strong>T+15min:</strong> Run smoke test suite - must pass 100 percent<br>
+                            <strong>T+30min:</strong> Monitor application metrics, error rates under 0.1 percent<br>
+                            <strong>T+60min:</strong> User acceptance validation with business stakeholders<br>
+                            <strong>T+90min:</strong> All systems go - communicate successful cutover</p>
+                        </div>
+                        <p><strong>Pre-Cutover Validation Checklist</strong></p>
+                        <div class="code-block"><code># Verify DMS replication lag under 5 minutes
+LAG=$(aws dms describe-replication-tasks --filters Name=replication-task-arn,Values=TASK_ARN --query 'ReplicationTasks[0].ReplicationTaskStats.CDCLatency' --output text)
+if [ $LAG -gt 300 ]; then
+  echo "FAIL: Replication lag $LAG seconds exceeds 5 minute threshold"
+  exit 1
+fi
+
+# Verify MGN replication lag under 5 minutes
+MGN_LAG=$(aws mgn describe-source-servers --filters sourceServerIDs=SERVER_ID --query 'items[0].dataReplicationInfo.lagDuration' --output text)
+if [ "$MGN_LAG" != "PT5M" ]; then
+  echo "FAIL: MGN lag exceeds threshold"
+  exit 1
+fi
+
+# Verify all AWS resources in Running state
+aws ec2 describe-instances --filters "Name=tag:Migration,Values=Wave1" "Name=instance-state-name,Values=running" --query 'Reservations[*].Instances[*].[InstanceId,State.Name]'
+
+# Verify RDS databases Available
+aws rds describe-db-instances --query 'DBInstances[?DBInstanceStatus!=`available`].[DBInstanceIdentifier,DBInstanceStatus]'
+
+echo "All pre-cutover validation passed - ready to proceed"</code></div>
+                        <p><strong>DNS Cutover Procedure with Route 53</strong></p>
+                        <div class="code-block"><code># Step 1: Lower DNS TTL to 60 seconds 24 hours before cutover
+aws route53 change-resource-record-sets --hosted-zone-id Z123456 --change-batch '{
+  "Changes": [{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "app.example.com",
+      "Type": "A",
+      "TTL": 60,
+      "ResourceRecords": [{"Value": "203.0.113.5"}]
+    }
+  }]
+}'
+
+# Step 2: During cutover, update DNS to ALB endpoint
+aws route53 change-resource-record-sets --hosted-zone-id Z123456 --change-batch '{
+  "Changes": [{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "app.example.com",
+      "Type": "A",
+      "AliasTarget": {
+        "HostedZoneId": "Z35SXDOTRQ7X7K",
+        "DNSName": "production-alb-123456.us-east-1.elb.amazonaws.com",
+        "EvaluateTargetHealth": true
+      }
+    }
+  }]
+}'
+
+# Step 3: Verify DNS propagation
+for i in {1..10}; do
+  dig +short app.example.com @8.8.8.8
+  sleep 5
+done</code></div>
+                        <p><strong>Rollback Decision Criteria and Procedure</strong></p>
+                        <div class="warning-box">
+                            <div class="warning-title">Rollback Trigger Conditions</div>
+                            <p><strong>Execute immediate rollback if:</strong><br>
+                            - Application error rate exceeds 5 percent for 5 minutes<br>
+                            - Database connection failures exceed 10 percent<br>
+                            - Response time degradation over 100 percent of baseline<br>
+                            - Critical business process fails validation<br>
+                            - Data corruption or loss detected<br>
+                            <br>
+                            <strong>Rollback Procedure:</strong><br>
+                            1. Announce rollback decision to all teams on bridge<br>
+                            2. Revert DNS to on-premises endpoints (5 minutes)<br>
+                            3. Re-enable on-premises application writes<br>
+                            4. Validate on-premises functionality restored<br>
+                            5. Schedule post-mortem within 24 hours to address issues</p>
+                        </div>
+                        <p><strong>Communication Templates</strong></p>
+                        <div class="code-block"><code>Subject: [SCHEDULED MAINTENANCE] Application Migration - Saturday 2AM-6AM
+
+Dear Users,
+
+We are performing a scheduled migration of [Application Name] to AWS cloud infrastructure on [Date] from 2:00 AM to 6:00 AM EST.
+
+During this window:
+- Application will be unavailable for approximately 4 hours
+- No user action required
+- All data will be preserved
+- Performance improvements expected post-migration
+
+We will send updates at:
+- Maintenance start: 2:00 AM
+- Cutover complete: Approximately 3:00 AM  
+- Validation complete: Approximately 4:00 AM
+- Service restored: Target 4:00 AM
+
+For questions contact: migration-team@example.com
+
+Thank you for your patience.
+IT Operations Team</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Cutover runbook documented with minute-by-minute timeline</li>
+                            <li>All stakeholders reviewed runbook and assigned responsibilities</li>
+                            <li>Tabletop exercise completed identifying and resolving gaps</li>
+                            <li>Communication templates prepared for start, progress, completion</li>
+                            <li>Rollback procedures documented with clear trigger criteria</li>
+                            <li>DNS TTL lowered to 60 seconds 24 hours before cutover</li>
+                            <li>Pre-cutover validation checklist completed successfully</li>
+                            <li>All teams available on bridge call during cutover window</li>
+                            <li>Monitoring dashboards prepared for real-time status visibility</li>
+                            <li>Change management approval obtained with rollback plan</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            postmigration: {
+                name: 'Post-Migration Optimization',
+                description: 'Performance tuning, right-sizing based on actual utilization, cleanup of temporary resources, and documentation of as-built architecture',
+                steps: [
+                    {
+                        title: 'Right-Sizing and Cost Optimization',
+                        why: 'Initial instance sizing based on on-premises specs often oversizes by 60 percent because cloud instances more efficient. Running oversized instances wastes 40K dollars monthly per 100 instances. Underutilized resources reduce cloud ROI. AWS Compute Optimizer analyzes actual utilization recommending right-sizing saving 20-40 percent on compute costs with no performance impact.',
+                        what: 'Enable AWS Compute Optimizer collecting utilization data for minimum 14 days, analyze recommendations for EC2, RDS, Lambda based on actual usage patterns, implement right-sizing changes during maintenance windows, validate performance after each change, enable auto-scaling for variable workloads, and purchase Reserved Instances or Savings Plans for steady-state workloads achieving 40-60 percent discount.',
+                        how: `<p><strong>Step 1: Enable AWS Compute Optimizer</strong></p>
+                        <div class="code-block"><code>aws compute-optimizer update-enrollment-status \\
+  --status Active \\
+  --include-member-accounts
+
+# Wait 14 days for data collection before reviewing recommendations
+# Optimizer requires minimum 14 days of CloudWatch metrics</code></div>
+                        <p><strong>Step 2: Review Right-Sizing Recommendations</strong></p>
+                        <div class="code-block"><code># Get EC2 recommendations
+aws compute-optimizer get-ec2-instance-recommendations \\
+  --query 'instanceRecommendations[?finding==`Overprovisioned`].[instanceArn,currentInstanceType,recommendationOptions[0].instanceType,utilizationMetrics[?name==`CPU`].value]' \\
+  --output table
+
+# Get RDS recommendations  
+aws compute-optimizer get-rds-database-recommendations \\
+  --query 'rdsDBRecommendations[?finding==`Overprovisioned`].[resourceArn,currentDBInstanceClass,recommendationOptions[0].dbInstanceClass]' \\
+  --output table
+
+# Calculate potential savings
+aws compute-optimizer get-ec2-instance-recommendations \\
+  --query 'sum(instanceRecommendations[?finding==`Overprovisioned`].recommendationOptions[0].estimatedMonthlySavings.value)'</code></div>
+                        <div class="info-box">
+                            <div class="info-title">Right-Sizing Example Scenarios</div>
+                            <div class="table-responsive">
+                                <table>
+                                    <tr>
+                                        <th>Current Instance</th>
+                                        <th>CPU Utilization</th>
+                                        <th>Recommendation</th>
+                                        <th>Monthly Savings</th>
+                                    </tr>
+                                    <tr>
+                                        <td>m5.2xlarge</td>
+                                        <td>15 percent</td>
+                                        <td>m5.large</td>
+                                        <td>230 dollars</td>
+                                    </tr>
+                                    <tr>
+                                        <td>r5.4xlarge</td>
+                                        <td>25 percent</td>
+                                        <td>r5.xlarge</td>
+                                        <td>550 dollars</td>
+                                    </tr>
+                                    <tr>
+                                        <td>c5.9xlarge</td>
+                                        <td>40 percent</td>
+                                        <td>c5.4xlarge</td>
+                                        <td>680 dollars</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <p><strong>Step 3: Implement Right-Sizing Changes</strong></p>
+                        <div class="code-block"><code># Stop instance during maintenance window
+aws ec2 stop-instances --instance-ids i-abc123
+
+# Wait for stopped state
+aws ec2 wait instance-stopped --instance-ids i-abc123
+
+# Modify instance type
+aws ec2 modify-instance-attribute \\
+  --instance-id i-abc123 \\
+  --instance-type "{\"Value\": \"m5.large\"}"
+
+# Start instance
+aws ec2 start-instances --instance-ids i-abc123
+
+# Validate performance metrics after change
+aws cloudwatch get-metric-statistics \\
+  --namespace AWS/EC2 \\
+  --metric-name CPUUtilization \\
+  --dimensions Name=InstanceId,Value=i-abc123 \\
+  --start-time 2024-01-01T00:00:00Z \\
+  --end-time 2024-01-02T00:00:00Z \\
+  --period 3600 \\
+  --statistics Average</code></div>
+                        <p><strong>Step 4: Purchase Reserved Instances for Savings</strong></p>
+                        <div class="code-block"><code># Analyze Reserved Instance recommendations
+aws ce get-reservation-purchase-recommendation \\
+  --service EC2 \\
+  --account-scope PAYER \\
+  --lookback-period-in-days SIXTY_DAYS \\
+  --term-in-years ONE_YEAR \\
+  --payment-option PARTIAL_UPFRONT
+
+# Purchase Reserved Instances for steady-state workloads
+aws ec2 purchase-reserved-instances-offering \\
+  --reserved-instances-offering-id ri-abc123 \\
+  --instance-count 10</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">Reserved Instance vs Savings Plan Decision</div>
+                            <p><strong>Reserved Instances:</strong> Best for predictable workloads that never change instance type. 1-year saves 40 percent, 3-year saves 60 percent. Locked to instance family and region.<br>
+                            <strong>Savings Plans:</strong> More flexible, applies across instance families and regions. Same discount levels as RIs but with flexibility. Choose Compute Savings Plan for maximum flexibility or EC2 Savings Plan for higher discount with less flexibility.</p>
+                        </div>`,
+                        verify: `<ul class="checklist">
+                            <li>AWS Compute Optimizer enabled and collecting data</li>
+                            <li>Right-sizing recommendations reviewed for all resources</li>
+                            <li>Overprovisioned instances identified and prioritized</li>
+                            <li>Right-sizing changes implemented during maintenance windows</li>
+                            <li>Performance validated after each instance type change</li>
+                            <li>Auto-scaling configured for variable workload instances</li>
+                            <li>Reserved Instance or Savings Plan recommendations analyzed</li>
+                            <li>RIs or Savings Plans purchased for steady-state workloads</li>
+                            <li>Monthly savings tracked showing 20-40 percent cost reduction</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            cost: {
+                name: 'Cost Optimization',
+                description: 'Comprehensive cost management with budgets, anomaly detection, tagging strategy, and continuous optimization through AWS Cost Explorer and Trusted Advisor',
+                steps: [
+                    {
+                        title: 'Cost Allocation Tagging and Budgets',
+                        why: 'Without cost allocation tags you cannot attribute spending to teams, projects, or cost centers making chargeback impossible. Unmonitored spending leads to surprise bills and budget overruns. Lack of budgets prevents proactive cost management. Comprehensive tagging strategy with mandatory tags and budget alerts enables showback, identifies optimization opportunities, and prevents runaway costs through automated alerts.',
+                        what: 'Define mandatory tagging schema for all resources including Environment, Project, CostCenter, Owner, Application, and implement tag policies through AWS Organizations enforcing compliance. Configure AWS Budgets with monthly thresholds and anomaly detection alerting teams before overspend occurs. Enable Cost Allocation Tags in billing console for granular cost reports breaking down spending by tag dimensions.',
+                        how: `<p><strong>Step 1: Define Tag Policy for Organization</strong></p>
+                        <div class="code-block"><code>cat > tag-policy.json << 'EOF'
+{
+  "tags": {
+    "Environment": {
+      "tag_key": {
+        "@@assign": "Environment"
+      },
+      "tag_value": {
+        "@@assign": ["Production", "Staging", "Development", "Test"]
+      },
+      "enforced_for": {
+        "@@assign": ["ec2:instance", "rds:db", "s3:bucket"]
+      }
+    },
+    "CostCenter": {
+      "tag_key": {
+        "@@assign": "CostCenter"
+      },
+      "enforced_for": {
+        "@@assign": ["*"]
+      }
+    },
+    "Project": {
+      "tag_key": {
+        "@@assign": "Project"
+      },
+      "enforced_for": {
+        "@@assign": ["*"]
+      }
+    }
+  }
+}
+EOF
+
+aws organizations create-policy \\
+  --content file://tag-policy.json \\
+  --name MandatoryTags \\
+  --type TAG_POLICY
+
+aws organizations attach-policy \\
+  --policy-id p-abc123 \\
+  --target-id ou-abc123</code></div>
+                        <p><strong>Step 2: Enable Cost Allocation Tags</strong></p>
+                        <div class="code-block"><code>aws ce update-cost-allocation-tags-status \\
+  --cost-allocation-tags-status \\
+    TagKey=Environment,Status=Active \\
+    TagKey=Project,Status=Active \\
+    TagKey=CostCenter,Status=Active \\
+    TagKey=Owner,Status=Active \\
+    TagKey=Application,Status=Active
+
+# Wait 24 hours for tags to appear in Cost Explorer</code></div>
+                        <p><strong>Step 3: Create Monthly Budget with Alerts</strong></p>
+                        <div class="code-block"><code>cat > budget-notifications.json << 'EOF'
+[
+  {
+    "Notification": {
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 80,
+      "ThresholdType": "PERCENTAGE",
+      "NotificationType": "ACTUAL"
+    },
+    "Subscribers": [
+      {
+        "SubscriptionType": "EMAIL",
+        "Address": "finance-team@example.com"
+      }
+    ]
+  },
+  {
+    "Notification": {
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 100,
+      "ThresholdType": "PERCENTAGE",
+      "NotificationType": "FORECASTED"
+    },
+    "Subscribers": [
+      {
+        "SubscriptionType": "EMAIL",
+        "Address": "cto@example.com"
+      }
+    ]
+  }
+]
+EOF
+
+aws budgets create-budget \\
+  --account-id ACCOUNT_ID \\
+  --budget '{
+    "BudgetName": "Monthly-Production-Budget",
+    "BudgetLimit": {
+      "Amount": "50000",
+      "Unit": "USD"
+    },
+    "TimeUnit": "MONTHLY",
+    "BudgetType": "COST",
+    "CostFilters": {
+      "TagKeyValue": ["Environment$Production"]
+    }
+  }' \\
+  --notifications-with-subscribers file://budget-notifications.json</code></div>
+                        <div class="info-box">
+                            <div class="info-title">Budget Alert Best Practices</div>
+                            <p><strong>Alert at 80 percent actual:</strong> Gives time to investigate before hitting limit<br>
+                            <strong>Alert at 100 percent forecasted:</strong> Predicts overage based on spending trend<br>
+                            <strong>Create budgets by cost center:</strong> Enables accountability per team<br>
+                            <strong>Set up anomaly detection:</strong> Catches unusual spikes within hours</p>
+                        </div>
+                        <p><strong>Step 4: Configure Cost Anomaly Detection</strong></p>
+                        <div class="code-block"><code>aws ce create-anomaly-monitor \\
+  --anomaly-monitor '{
+    "MonitorName": "Production-Spending-Monitor",
+    "MonitorType": "DIMENSIONAL",
+    "MonitorDimension": "SERVICE"
+  }'
+
+aws ce create-anomaly-subscription \\
+  --anomaly-subscription '{
+    "SubscriptionName": "Anomaly-Alerts",
+    "Threshold": 100,
+    "Frequency": "IMMEDIATE",
+    "MonitorArnList": ["arn:aws:ce::ACCOUNT:anomalymonitor/abc-123"],
+    "Subscribers": [
+      {
+        "Type": "EMAIL",
+        "Address": "cloud-ops@example.com"
+      }
+    ]
+  }'</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>Tag policy created and attached to production OU</li>
+                            <li>Mandatory tags enforced on EC2, RDS, S3 resources</li>
+                            <li>Cost allocation tags enabled in billing console</li>
+                            <li>Monthly budgets created for each environment</li>
+                            <li>Budget alerts configured at 80 percent actual, 100 percent forecast</li>
+                            <li>Anomaly detection monitor configured for all services</li>
+                            <li>Cost Explorer reports show spending breakdown by tags</li>
+                            <li>Untagged resource report shows zero resources missing tags</li>
+                            <li>Budget notifications tested and received by finance team</li>
+                        </ul>`
+                    }
+                ]
+            },
+            
+            operations: {
+                name: 'Operations & Monitoring',
+                description: 'Production operations setup with CloudWatch monitoring, centralized logging, automated remediation, and incident response procedures',
+                steps: [
+                    {
+                        title: 'CloudWatch Dashboards and Alarms',
+                        why: 'Without monitoring you discover production issues from customer complaints not proactive alerts. Manual log analysis takes hours to identify root cause during incidents. Missing alarms for critical metrics allows small issues to escalate into major outages. Comprehensive CloudWatch monitoring with dashboards for real-time visibility, alarms for proactive alerting, and log aggregation for rapid troubleshooting reduces mean time to resolution from hours to minutes.',
+                        what: 'Create CloudWatch dashboards displaying key metrics including CPU, memory, disk, database connections, and application-specific KPIs. Configure CloudWatch alarms with SNS notifications for threshold breaches on critical metrics. Enable CloudWatch Logs aggregation from EC2, RDS, Lambda with log groups organized by application. Set up CloudWatch Insights queries for log analysis. Configure automated remediation with Systems Manager Automation documents triggered by alarms.',
+                        how: `<p><strong>Step 1: Create CloudWatch Dashboard</strong></p>
+                        <div class="code-block"><code>cat > dashboard.json << 'EOF'
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          ["AWS/EC2", "CPUUtilization", {"stat": "Average"}],
+          ["AWS/RDS", "CPUUtilization", {"stat": "Average"}]
+        ],
+        "period": 300,
+        "stat": "Average",
+        "region": "us-east-1",
+        "title": "CPU Utilization",
+        "yAxis": {"left": {"min": 0, "max": 100}}
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          ["AWS/RDS", "DatabaseConnections", {"stat": "Average"}],
+          [".", "FreeableMemory", {"stat": "Average", "yAxis": "right"}]
+        ],
+        "period": 300,
+        "stat": "Average",
+        "region": "us-east-1",
+        "title": "Database Health"
+      }
+    },
+    {
+      "type": "log",
+      "properties": {
+        "query": "SOURCE '/aws/lambda/production-api' | fields @timestamp, @message | filter @message like /ERROR/ | sort @timestamp desc | limit 20",
+        "region": "us-east-1",
+        "title": "Recent Errors"
+      }
+    }
+  ]
+}
+EOF
+
+aws cloudwatch put-dashboard \\
+  --dashboard-name Production-Overview \\
+  --dashboard-body file://dashboard.json</code></div>
+                        <p><strong>Step 2: Configure Critical Alarms with SNS</strong></p>
+                        <div class="code-block"><code># Create SNS topic for alerts
+SNS_ARN=$(aws sns create-topic \\
+  --name Production-Alerts \\
+  --query 'TopicArn' --output text)
+
+aws sns subscribe \\
+  --topic-arn $SNS_ARN \\
+  --protocol email \\
+  --notification-endpoint oncall@example.com
+
+# High CPU alarm
+aws cloudwatch put-metric-alarm \\
+  --alarm-name Production-HighCPU \\
+  --alarm-description "Alert when CPU exceeds 80 percent for 10 minutes" \\
+  --metric-name CPUUtilization \\
+  --namespace AWS/EC2 \\
+  --statistic Average \\
+  --period 300 \\
+  --evaluation-periods 2 \\
+  --threshold 80 \\
+  --comparison-operator GreaterThanThreshold \\
+  --dimensions Name=InstanceId,Value=i-abc123 \\
+  --alarm-actions $SNS_ARN
+
+# Database connection alarm
+aws cloudwatch put-metric-alarm \\
+  --alarm-name Production-DatabaseConnections \\
+  --metric-name DatabaseConnections \\
+  --namespace AWS/RDS \\
+  --statistic Average \\
+  --period 300 \\
+  --evaluation-periods 2 \\
+  --threshold 450 \\
+  --comparison-operator GreaterThanThreshold \\
+  --dimensions Name=DBInstanceIdentifier,Value=production-postgres \\
+  --alarm-actions $SNS_ARN
+
+# Disk space alarm
+aws cloudwatch put-metric-alarm \\
+  --alarm-name Production-LowDiskSpace \\
+  --metric-name FreeStorageSpace \\
+  --namespace AWS/RDS \\
+  --statistic Average \\
+  --period 300 \\
+  --evaluation-periods 1 \\
+  --threshold 10737418240 \\
+  --comparison-operator LessThanThreshold \\
+  --dimensions Name=DBInstanceIdentifier,Value=production-postgres \\
+  --alarm-actions $SNS_ARN</code></div>
+                        <div class="tip-box">
+                            <div class="tip-title">Alarm Threshold Guidelines</div>
+                            <p><strong>CPU:</strong> Alert at 80 percent sustained for 10 minutes<br>
+                            <strong>Memory:</strong> Alert at 85 percent to prevent OOM killer<br>
+                            <strong>Disk:</strong> Alert at 90 percent full with 24 hour runway<br>
+                            <strong>Database Connections:</strong> Alert at 90 percent of max_connections<br>
+                            <strong>Response Time:</strong> Alert at 2x baseline latency<br>
+                            <strong>Error Rate:</strong> Alert at 1 percent error rate for 5 minutes</p>
+                        </div>
+                        <p><strong>Step 3: Configure Log Aggregation</strong></p>
+                        <div class="code-block"><code># Install CloudWatch Logs agent on EC2
+sudo yum install amazon-cloudwatch-agent -y
+
+cat > /opt/aws/amazon-cloudwatch-agent/etc/config.json << 'EOF'
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/application.log",
+            "log_group_name": "/aws/ec2/production-app",
+            "log_stream_name": "{instance_id}",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/nginx/access.log",
+            "log_group_name": "/aws/ec2/nginx-access",
+            "log_stream_name": "{instance_id}"
+          }
+        ]
+      }
+    }
+  }
+}
+EOF
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \\
+  -a fetch-config \\
+  -m ec2 \\
+  -s \\
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/config.json</code></div>
+                        <p><strong>Step 4: Create CloudWatch Insights Queries</strong></p>
+                        <div class="code-block"><code># Query to find errors in last hour
+aws logs start-query \\
+  --log-group-name /aws/ec2/production-app \\
+  --start-time $(($(date +%s) - 3600)) \\
+  --end-time $(date +%s) \\
+  --query-string 'fields @timestamp, @message | filter @message like /ERROR/ | stats count() by bin(5m)'
+
+# Query to analyze slow queries
+aws logs start-query \\
+  --log-group-name /aws/rds/instance/production-postgres/postgresql \\
+  --start-time $(($(date +%s) - 3600)) \\
+  --end-time $(date +%s) \\
+  --query-string 'fields @timestamp, @message | filter @message like /duration/ | parse @message "duration: * ms" as duration | filter duration > 1000 | sort duration desc'</code></div>`,
+                        verify: `<ul class="checklist">
+                            <li>CloudWatch dashboard created showing all critical metrics</li>
+                            <li>SNS topic configured with oncall email subscribed</li>
+                            <li>CloudWatch alarms created for CPU, memory, disk, connections</li>
+                            <li>Alarm notifications tested and received by oncall team</li>
+                            <li>CloudWatch Logs agent installed on all EC2 instances</li>
+                            <li>Log groups created and receiving logs from applications</li>
+                            <li>CloudWatch Insights queries saved for common troubleshooting</li>
+                            <li>Automated remediation configured for known failure scenarios</li>
+                            <li>Runbook documented for incident response using monitoring data</li>
+                        </ul>`
+                    }
+                ]
+            }
         };
         
-        // Render immediately
-        function showPhase() {
+        function showPhase(phaseId) {
+            const phase = phases[phaseId];
+            if (!phase) return;
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Render phase content
             const stepsHTML = phase.steps.map((step, index) => `
                 <div class="step-card">
                     <div class="step-header">
@@ -315,14 +2084,19 @@ aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames</code></div
             `).join('');
             
             document.getElementById('contentContainer').innerHTML = `
-                <h1 class="phase-title">${phase.name}</h1>
-                <p class="phase-description">${phase.description}</p>
+                <div class="phase-header">
+                    <h1 class="phase-title">${phase.name}</h1>
+                    <p class="phase-description">${phase.description}</p>
+                </div>
                 ${stepsHTML}
             `;
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
-        // Load on page load
-        showPhase();
+        // Load default phase
+        showPhase('preflight');
     </script>
 </body>
 </html>
