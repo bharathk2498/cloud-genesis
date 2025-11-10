@@ -296,18 +296,18 @@
     
     <div class="tabs-container">
         <div class="tabs">
-            <div class="tab active" onclick="showPhase('preflight')">Pre-Flight</div>
-            <div class="tab" onclick="showPhase('assessment')">Assessment</div>
-            <div class="tab" onclick="showPhase('network')">Network</div>
-            <div class="tab" onclick="showPhase('security')">Security & IAM</div>
-            <div class="tab" onclick="showPhase('data')">Data Migration</div>
-            <div class="tab" onclick="showPhase('application')">Applications</div>
-            <div class="tab" onclick="showPhase('database')">Databases</div>
-            <div class="tab" onclick="showPhase('testing')">Testing</div>
-            <div class="tab" onclick="showPhase('cutover')">Cutover</div>
-            <div class="tab" onclick="showPhase('postmigration')">Post-Migration</div>
-            <div class="tab" onclick="showPhase('cost')">Cost Optimization</div>
-            <div class="tab" onclick="showPhase('operations')">Operations</div>
+            <div class="tab active" onclick="showPhase('preflight', event)">Pre-Flight</div>
+            <div class="tab" onclick="showPhase('assessment', event)">Assessment</div>
+            <div class="tab" onclick="showPhase('network', event)">Network</div>
+            <div class="tab" onclick="showPhase('security', event)">Security & IAM</div>
+            <div class="tab" onclick="showPhase('data', event)">Data Migration</div>
+            <div class="tab" onclick="showPhase('application', event)">Applications</div>
+            <div class="tab" onclick="showPhase('database', event)">Databases</div>
+            <div class="tab" onclick="showPhase('testing', event)">Testing</div>
+            <div class="tab" onclick="showPhase('cutover', event)">Cutover</div>
+            <div class="tab" onclick="showPhase('postmigration', event)">Post-Migration</div>
+            <div class="tab" onclick="showPhase('cost', event)">Cost Optimization</div>
+            <div class="tab" onclick="showPhase('operations', event)">Operations</div>
         </div>
     </div>
     
@@ -2049,13 +2049,25 @@ aws logs start-query \\
             }
         };
         
-        function showPhase(phaseId) {
+        function showPhase(phaseId, event) {
             const phase = phases[phaseId];
             if (!phase) return;
-            
+
             // Update active tab
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+
+            // Add active class to the clicked tab or find it by phaseId
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // For programmatic calls, find and activate the correct tab
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => {
+                    if (tab.getAttribute('onclick').includes(`'${phaseId}'`)) {
+                        tab.classList.add('active');
+                    }
+                });
+            }
             
             // Render phase content
             const stepsHTML = phase.steps.map((step, index) => `
