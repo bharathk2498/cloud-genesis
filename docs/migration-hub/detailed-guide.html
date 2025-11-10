@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Enterprise Migration Guide - Complete Lifecycle</title>
+    <meta name="description" content="Enterprise-grade cloud migration guide with detailed steps for AWS, Azure, and GCP. Production-ready migration strategies with WHY-WHAT-HOW-VERIFY framework.">
+    <meta name="keywords" content="cloud migration, AWS, Azure, GCP, enterprise migration, migration guide, cloud strategy">
+    <title>Enterprise Cloud Migration Guide - Complete Lifecycle</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -277,7 +279,54 @@
             font-weight: 700;
         }
         td { color: #cbd5e1; }
-        
+
+        /* Loading indicator */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .loading-overlay.active { display: flex; }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #334155;
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Smooth transitions */
+        .step-card, .context-box {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Accessibility improvements */
+        .tab:focus, .back-btn:focus {
+            outline: 2px solid #60a5fa;
+            outline-offset: 2px;
+        }
+
+        /* Print styles for documentation */
+        @media print {
+            .header, .tabs-container { display: none; }
+            .step-card { break-inside: avoid; page-break-inside: avoid; }
+        }
+
         @media (max-width: 768px) {
             .tabs { padding: 0 1rem; }
             .container { padding: 2rem 1rem; }
@@ -287,31 +336,36 @@
     </style>
 </head>
 <body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner" role="status" aria-label="Loading migration guide"></div>
+    </div>
+
     <div class="header">
         <div class="header-content">
-            <a href="provider-selection.html" class="back-btn">← Back to Provider Selection</a>
+            <a href="provider-selection.html" class="back-btn" aria-label="Return to provider selection">← Back to Provider Selection</a>
             <span class="provider-badge aws">AWS Enterprise Migration</span>
         </div>
     </div>
-    
+
     <div class="tabs-container">
-        <div class="tabs">
-            <div class="tab active" onclick="showPhase('preflight', event)">Pre-Flight</div>
-            <div class="tab" onclick="showPhase('assessment', event)">Assessment</div>
-            <div class="tab" onclick="showPhase('network', event)">Network</div>
-            <div class="tab" onclick="showPhase('security', event)">Security & IAM</div>
-            <div class="tab" onclick="showPhase('data', event)">Data Migration</div>
-            <div class="tab" onclick="showPhase('application', event)">Applications</div>
-            <div class="tab" onclick="showPhase('database', event)">Databases</div>
-            <div class="tab" onclick="showPhase('testing', event)">Testing</div>
-            <div class="tab" onclick="showPhase('cutover', event)">Cutover</div>
-            <div class="tab" onclick="showPhase('postmigration', event)">Post-Migration</div>
-            <div class="tab" onclick="showPhase('cost', event)">Cost Optimization</div>
-            <div class="tab" onclick="showPhase('operations', event)">Operations</div>
+        <div class="tabs" role="tablist" aria-label="Migration phases">
+            <div class="tab active" role="tab" tabindex="0" onclick="showPhase('preflight', event)" onkeypress="if(event.key==='Enter') showPhase('preflight', event)" aria-label="Pre-Flight phase">Pre-Flight</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('assessment', event)" onkeypress="if(event.key==='Enter') showPhase('assessment', event)" aria-label="Assessment phase">Assessment</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('network', event)" onkeypress="if(event.key==='Enter') showPhase('network', event)" aria-label="Network phase">Network</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('security', event)" onkeypress="if(event.key==='Enter') showPhase('security', event)" aria-label="Security & IAM phase">Security & IAM</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('data', event)" onkeypress="if(event.key==='Enter') showPhase('data', event)" aria-label="Data Migration phase">Data Migration</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('application', event)" onkeypress="if(event.key==='Enter') showPhase('application', event)" aria-label="Applications phase">Applications</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('database', event)" onkeypress="if(event.key==='Enter') showPhase('database', event)" aria-label="Databases phase">Databases</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('testing', event)" onkeypress="if(event.key==='Enter') showPhase('testing', event)" aria-label="Testing phase">Testing</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('cutover', event)" onkeypress="if(event.key==='Enter') showPhase('cutover', event)" aria-label="Cutover phase">Cutover</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('postmigration', event)" onkeypress="if(event.key==='Enter') showPhase('postmigration', event)" aria-label="Post-Migration phase">Post-Migration</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('cost', event)" onkeypress="if(event.key==='Enter') showPhase('cost', event)" aria-label="Cost Optimization phase">Cost Optimization</div>
+            <div class="tab" role="tab" tabindex="0" onclick="showPhase('operations', event)" onkeypress="if(event.key==='Enter') showPhase('operations', event)" aria-label="Operations phase">Operations</div>
         </div>
     </div>
-    
-    <div class="container" id="contentContainer"></div>
+
+    <div class="container" id="contentContainer" role="main" aria-live="polite"></div>
     
     <script>
         const phases = {
@@ -2050,65 +2104,146 @@ aws logs start-query \\
         };
         
         function showPhase(phaseId, event) {
-            const phase = phases[phaseId];
-            if (!phase) return;
-
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-
-            // If called from click event, use event.target, otherwise find tab by phaseId
-            if (event && event.target) {
-                event.target.classList.add('active');
-            } else {
-                // Find and activate the correct tab when called directly (on page load)
-                const tabs = document.querySelectorAll('.tab');
-                const phaseNames = ['preflight', 'assessment', 'network', 'security', 'data', 'application', 'database', 'testing', 'cutover', 'postmigration', 'cost', 'operations'];
-                const tabIndex = phaseNames.indexOf(phaseId);
-                if (tabIndex >= 0 && tabs[tabIndex]) {
-                    tabs[tabIndex].classList.add('active');
+            try {
+                const phase = phases[phaseId];
+                if (!phase) {
+                    console.error('Invalid phase ID:', phaseId);
+                    showErrorMessage('Invalid migration phase', 'The requested phase does not exist.');
+                    return;
                 }
+
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+                // If called from click event, use event.target, otherwise find tab by phaseId
+                if (event && event.target) {
+                    event.target.classList.add('active');
+                } else {
+                    // Find and activate the correct tab when called directly (on page load)
+                    const tabs = document.querySelectorAll('.tab');
+                    const phaseNames = ['preflight', 'assessment', 'network', 'security', 'data', 'application', 'database', 'testing', 'cutover', 'postmigration', 'cost', 'operations'];
+                    const tabIndex = phaseNames.indexOf(phaseId);
+                    if (tabIndex >= 0 && tabs[tabIndex]) {
+                        tabs[tabIndex].classList.add('active');
+                    }
+                }
+
+                // Render phase content with proper error handling for missing fields
+                const stepsHTML = phase.steps.map((step, index) => {
+                    // Validate step data
+                    if (!step || !step.title) {
+                        console.warn(`Step ${index + 1} in phase ${phaseId} is missing required data`);
+                        return '';
+                    }
+
+                    return `
+                        <div class="step-card">
+                            <div class="step-header">
+                                <div class="step-number">${index + 1}</div>
+                                <h3 class="step-title">${step.title || 'Untitled Step'}</h3>
+                            </div>
+                            <div class="context-box why">
+                                <div class="context-label">💡 Why This Matters</div>
+                                <p>${step.why || 'Information not available'}</p>
+                            </div>
+                            <div class="context-box what">
+                                <div class="context-label">📋 What You'll Do</div>
+                                <p>${step.what || 'Information not available'}</p>
+                            </div>
+                            <div class="context-box how">
+                                <div class="context-label">🛠️ How To Do It</div>
+                                <div>${step.how || '<p>Information not available</p>'}</div>
+                            </div>
+                            <div class="context-box verify">
+                                <div class="context-label">✅ Verification Checklist</div>
+                                ${step.verify || '<p>No verification steps available</p>'}
+                            </div>
+                        </div>
+                    `;
+                }).filter(html => html !== '').join('');
+
+                if (!stepsHTML) {
+                    showErrorMessage('No Steps Available', 'This migration phase has no steps configured.');
+                    return;
+                }
+
+                document.getElementById('contentContainer').innerHTML = `
+                    <div class="phase-header">
+                        <h1 class="phase-title">${phase.name || 'Migration Phase'}</h1>
+                        <p class="phase-description">${phase.description || 'No description available'}</p>
+                    </div>
+                    ${stepsHTML}
+                `;
+
+                // Scroll to top smoothly
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error rendering phase:', error);
+                showErrorMessage('Rendering Error', 'An error occurred while loading the migration phase. Please refresh the page.');
             }
-            
-            // Render phase content
-            const stepsHTML = phase.steps.map((step, index) => `
-                <div class="step-card">
-                    <div class="step-header">
-                        <div class="step-number">${index + 1}</div>
-                        <h3 class="step-title">${step.title}</h3>
-                    </div>
-                    <div class="context-box why">
-                        <div class="context-label">💡 Why This Matters</div>
-                        <p>${step.why}</p>
-                    </div>
-                    <div class="context-box what">
-                        <div class="context-label">📋 What You'll Do</div>
-                        <p>${step.what}</p>
-                    </div>
-                    <div class="context-box how">
-                        <div class="context-label">🛠️ How To Do It</div>
-                        <div>${step.how}</div>
-                    </div>
-                    <div class="context-box verify">
-                        <div class="context-label">✅ Verification Checklist</div>
-                        ${step.verify}
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('contentContainer').innerHTML = `
-                <div class="phase-header">
-                    <h1 class="phase-title">${phase.name}</h1>
-                    <p class="phase-description">${phase.description}</p>
-                </div>
-                ${stepsHTML}
-            `;
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        
-        // Load default phase
-        showPhase('preflight');
+
+        function showErrorMessage(title, message) {
+            const contentContainer = document.getElementById('contentContainer');
+            if (contentContainer) {
+                contentContainer.innerHTML = `
+                    <div style="max-width: 800px; margin: 4rem auto; padding: 3rem; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+                        <h2 style="color: #ef4444; font-size: 2rem; margin-bottom: 1rem;">${title}</h2>
+                        <p style="color: #cbd5e1; font-size: 1.1rem; margin-bottom: 2rem;">${message}</p>
+                        <a href="provider-selection.html" style="display: inline-block; background: #60a5fa; color: #0f172a; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                            ← Return to Provider Selection
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize page with URL parameter validation
+        function initializePage() {
+            try {
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const provider = urlParams.get('provider');
+                const migrationType = urlParams.get('type');
+                const source = urlParams.get('source');
+                const target = urlParams.get('target');
+
+                // Update provider badge based on parameters
+                const providerBadge = document.querySelector('.provider-badge');
+                if (providerBadge) {
+                    if (migrationType === 'onprem' && provider) {
+                        const providerNames = {
+                            'aws': 'AWS Enterprise Migration',
+                            'azure': 'Azure Enterprise Migration',
+                            'gcp': 'GCP Enterprise Migration'
+                        };
+                        providerBadge.textContent = providerNames[provider.toLowerCase()] || 'Cloud Migration';
+                        providerBadge.className = `provider-badge ${provider.toLowerCase()}`;
+                    } else if (migrationType === 'cloud2cloud' && source && target) {
+                        const providerEmojis = { 'aws': '🟠', 'azure': '🔵', 'gcp': '🔴' };
+                        providerBadge.textContent = `${providerEmojis[source] || '☁️'} ${source.toUpperCase()} → ${providerEmojis[target] || '☁️'} ${target.toUpperCase()}`;
+                        providerBadge.className = 'provider-badge';
+                    }
+                }
+
+                // Log initialization for debugging
+                console.info('Page initialized with parameters:', { provider, migrationType, source, target });
+
+                // Load default phase
+                showPhase('preflight');
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                showErrorMessage('Initialization Error', 'Failed to load the migration guide. Please try again.');
+            }
+        }
+
+        // Initialize page when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
     </script>
 </body>
 </html>

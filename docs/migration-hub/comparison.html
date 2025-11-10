@@ -288,9 +288,9 @@
         </header>
         
         <div class="toggle-container">
-            <button class="view-button active" onclick="toggleView('comparison')">Side-by-Side Comparison</button>
-            <button class="view-button" onclick="toggleView('original')">Original Only</button>
-            <button class="view-button" onclick="toggleView('enhanced')">3D Enhanced Only</button>
+            <button class="view-button active" onclick="toggleView('comparison', event)">Side-by-Side Comparison</button>
+            <button class="view-button" onclick="toggleView('original', event)">Original Only</button>
+            <button class="view-button" onclick="toggleView('enhanced', event)">3D Enhanced Only</button>
         </div>
         
         <div id="comparison-view" class="full-view active">
@@ -406,23 +406,47 @@
     </div>
     
     <script>
-        function toggleView(view) {
+        function toggleView(view, event) {
+            // Remove active class from all buttons
             const buttons = document.querySelectorAll('.view-button');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
+
+            // Add active class to clicked button if event is provided
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find button by view name if event is not available
+                const viewNames = ['comparison', 'original', 'enhanced'];
+                const buttonIndex = viewNames.indexOf(view);
+                if (buttonIndex >= 0 && buttons[buttonIndex]) {
+                    buttons[buttonIndex].classList.add('active');
+                }
+            }
+
+            // Hide all views
             document.getElementById('comparison-view').classList.remove('active');
             document.getElementById('original-view').classList.remove('active');
             document.getElementById('enhanced-view').classList.remove('active');
-            
-            if (view === 'comparison') {
+
+            // Show selected view with validation
+            const viewElement = document.getElementById(`${view}-view`);
+            if (viewElement) {
+                viewElement.classList.add('active');
+            } else {
+                console.error('Invalid view:', view);
+                // Fallback to comparison view
                 document.getElementById('comparison-view').classList.add('active');
-            } else if (view === 'original') {
-                document.getElementById('original-view').classList.add('active');
-            } else if (view === 'enhanced') {
-                document.getElementById('enhanced-view').classList.add('active');
+                if (buttons[0]) buttons[0].classList.add('active');
             }
         }
+
+        // Set default view on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const comparisonView = document.getElementById('comparison-view');
+            if (comparisonView && !comparisonView.classList.contains('active')) {
+                comparisonView.classList.add('active');
+            }
+        });
     </script>
 </body>
 </html>

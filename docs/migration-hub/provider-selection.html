@@ -319,8 +319,8 @@
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const migrationType = urlParams.get('type');
-        
-        // Update UI based on migration type
+
+        // Update UI based on migration type with error handling
         if (migrationType === 'onprem') {
             document.getElementById('routeBadge').textContent = '🏢 → ☁️ On-Premises to Cloud';
             document.getElementById('pageTitle').textContent = 'Select Your Target Cloud Provider';
@@ -331,15 +331,42 @@
             document.getElementById('pageTitle').textContent = 'Select Your Migration Route';
             document.getElementById('pageSubtitle').textContent = 'Choose your source and destination cloud providers';
             document.getElementById('cloud2CloudMatrix').style.display = 'block';
+        } else {
+            // Handle invalid or missing migration type parameter
+            document.getElementById('routeBadge').textContent = '⚠️ Invalid Selection';
+            document.getElementById('routeBadge').style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            document.getElementById('pageTitle').textContent = 'Invalid Migration Path';
+            document.getElementById('pageSubtitle').innerHTML = `
+                The migration type parameter is missing or invalid.<br>
+                <a href="landing.html" style="color: #60a5fa; text-decoration: underline; font-weight: 600;">
+                    ← Return to Migration Hub
+                </a> to select a valid migration path.
+            `;
+
+            // Log error for debugging
+            console.error('Invalid migration type parameter:', migrationType);
+            console.info('Valid values: "onprem" or "cloud2cloud"');
         }
-        
+
         function navigateToGuide(provider) {
-            window.location.href = `detailed-guide.html?provider=${provider}&type=onprem`;
+            if (!provider) {
+                console.error('Provider parameter is required');
+                return;
+            }
+            window.location.href = `detailed-guide.html?provider=${encodeURIComponent(provider)}&type=onprem`;
         }
-        
+
         function navigateToRoute(route) {
+            if (!route || !route.includes('-to-')) {
+                console.error('Invalid route parameter:', route);
+                return;
+            }
             const [source, target] = route.split('-to-');
-            window.location.href = `detailed-guide.html?source=${source}&target=${target}&type=cloud2cloud`;
+            if (!source || !target) {
+                console.error('Source and target are required');
+                return;
+            }
+            window.location.href = `detailed-guide.html?source=${encodeURIComponent(source)}&target=${encodeURIComponent(target)}&type=cloud2cloud`;
         }
     </script>
 </body>
